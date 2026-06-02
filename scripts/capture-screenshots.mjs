@@ -43,6 +43,19 @@ const TARGETS = [
   ["build", "07-audit-approve", CONSOLE + "/audit/approve", DESKTOP],
   ["build", "08-compatibility", CONSOLE + "/firmware/compatibility", DESKTOP],
   ["build", "09-ota-monitor", CONSOLE + "/firmware/ota", DESKTOP],
+  // ---- Build 신규/미캡처 ----
+  ["build", "10-onboard", CONSOLE + "/audit/onboard", DESKTOP],
+  ["build", "11-capability", CONSOLE + "/audit/capability", DESKTOP],
+  ["build", "12-protocol", CONSOLE + "/audit/protocol", DESKTOP],
+  ["build", "13-conformance", CONSOLE + "/audit/conformance", DESKTOP],
+  ["build", "14-audit-package", CONSOLE + "/audit/package", DESKTOP],
+  ["build", "15-firmware-register", CONSOLE + "/firmware/register", DESKTOP],
+  ["build", "16-static-analysis", CONSOLE + "/firmware/static-analysis", DESKTOP],
+  // ---- Ops 신규/미캡처 ----
+  ["ops", "09-registry", CONSOLE + "/control/registry", DESKTOP],
+  ["ops", "10-twin", CONSOLE + "/control/twin", DESKTOP],
+  ["ops", "11-incident-stream", CONSOLE + "/incident/stream", DESKTOP],
+  ["ops", "12-incident-action", CONSOLE + "/incident/INC-20260601-0229/action", DESKTOP],
   // ---- Field ----
   ["field", "01-hmi-home", FIELD + "/hmi", TABLET],
   ["field", "02-operate", FIELD + "/hmi/operate", TABLET],
@@ -50,6 +63,7 @@ const TARGETS = [
   ["field", "04-calibrate", FIELD + "/hmi/calibrate", TABLET],
   ["field", "05-estop", FIELD + "/hmi/estop", TABLET],
   ["field", "06-telemetry", FIELD + "/telemetry", TABLET],
+  ["field", "07-gateway", FIELD + "/telemetry/gateway", TABLET],
   // ---- Hub ----
   ["hub", "00-landing", HUB + "/", HUBVP],
 ];

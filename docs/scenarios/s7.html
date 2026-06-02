@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STATION 시나리오 S7 — 신규 벤더 합류 · 무중단 통합</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"/>
+<link rel="stylesheet" href="scenario.css"/></head><body>
+<div class="topbar"><div class="wrap"><span class="wm">station<span class="dim">/통합 시나리오</span></span><span class="spacer"></span><a href="index.html">← 시나리오 목록</a></div></div>
+<div class="wrap">
+  <div class="ribbon office"><span class="ico">🏢</span><div><div class="stage">S7 · 사무실→관제실→현장</div><div class="title">신규 벤더 합류 — 무중단 통합</div></div>
+    <div class="meta"><span class="org-badge"><span class="k">행위자</span> 신규 제조사·통합담당</span><span class="combo-badge">신규 모듈 <b>1회 등록</b> → 전 조합 자동 합류</span></div></div>
+
+  <p>프로젝트 중간에 <strong>새 제조사가 새 모듈(예: 신규 비전 카메라 <code>MOD-CAM-V02</code>)</strong>을 들고 합류하는 상황이다 — 이런 일은 컨소시엄·다년 사업에서 매우 흔하다. 기존 N개 모듈(메타·에이지·대동·KIRO·농과원)과 일일이 페어 연동하는 대신, STATION의 <strong>표준 계약에 한 번만</strong> 맞추면 기존 플릿에 <strong>무중단으로</strong> 합류한다. 작업은 <strong>사무실(등록·검증)</strong>에서 시작해 <strong>관제실(통합 대시보드 자동 등장)</strong>을 거쳐 <strong>현장(canary 투입)</strong>까지 자연스럽게 확장되며, 추가 통합 개발은 0이다.</p>
+
+  <div class="exc confirm">
+    <div class="h"><span class="pill" style="background:var(--st-normal)">CORE</span> 핵심</div>
+    <div class="why">기존 N개 모듈마다 페어 연동(<b style="color:var(--st-normal)">O(N)</b>)이 아니라, 표준 계약 <b style="color:var(--st-normal)">1회 등록(O(1))</b>으로 합류 — 어느 기존 조합에 붙는지는 호환성 레지스트리가 자동 매칭한다. "이런 경우(중도 합류)가 많다"를 "손쉽게(1회 등록)"로 직접 증명하는 반복성 패턴이다.</div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="step"><div class="num">1</div><div class="body">
+      <div class="act">신규 벤더·모듈 등록 — Capability/Protocol 1회 정의</div>
+      <div class="desc">새 제조사를 벤더로, <code>MOD-CAM-V02</code>를 모듈로 레지스트리에 등록하고 <code>module_id</code> 스파인을 발급받는다. 이 모듈이 받을 <strong>명령(commands)</strong>·내보낼 <strong>텔레메트리</strong>를 Capability로, <strong>transport·topic_map·ack/timeout</strong>을 Protocol로 <strong>딱 한 번</strong> 선언한다. 기존 모듈들과 개별로 맞출 필요가 없다 — 모두 동일한 표준 한 면에만 맞추면 된다.</div>
+      <div class="ilink"><span class="node">신규 모듈(MOD-CAM-V02)</span><span class="arrow">→</span><span class="via">Capability·Protocol(1회)</span><span class="arrow">→</span><span class="node">계약 레지스트리</span></div>
+      <span class="screen-tag">화면: Module Registry · 신규 벤더/모듈 등록</span>
+      <figure class="shot"><img src="../reports/screenshots/build/10-onboard.png" alt="신규 벤더 온보딩"/><figcaption><b>신규 벤더 온보딩</b> — 운영 중단 없이 새 모듈 등록</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">2</div><div class="body">
+      <div class="act">Conformance·Audit 승인</div>
+      <div class="desc">선언한 계약이 실물과 일치하는지 <strong>Conformance</strong>로 자동 검증하고, 결과를 <strong>Audit Package</strong>로 묶어 승인을 요청한다. 신규 벤더라도 기존 모듈과 <strong>완전히 동일한 게이트</strong>를 통과해야 운영으로 전환된다 — 합류가 쉬워도 품질 기준은 같다.</div>
+      <div class="ilink"><span class="node">선언 계약</span><span class="arrow">→</span><span class="via">Conformance·Audit</span><span class="arrow">→</span><span class="node">approved 모듈</span></div>
+      <span class="screen-tag">화면: Audit 승인 (G5 게이트)</span>
+      <figure class="shot"><img src="../reports/screenshots/build/07-audit-approve.png" alt="Audit 승인"/><figcaption><b>Audit 승인</b> — G5 게이트 — 운영 전환 승인</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">3</div><div class="body">
+      <div class="act">호환성 매트릭스로 기존 조합과 합치 확인</div>
+      <div class="desc">approved된 신규 모듈/펌웨어가 <strong>어느 기존 로봇 조합(로봇·모듈·HMI·Telemetry)</strong>에 붙는지 호환성 규칙으로 자동 판정한다. 운영자가 일일이 대조하지 않아도, 레지스트리가 합치 가능한 조합을 신호등으로 보여 준다 — 이것이 O(N²) 수작업을 없애는 지점이다.</div>
+      <div class="ilink"><span class="node">신규 펌웨어/모듈</span><span class="arrow">→</span><span class="via">호환성 규칙</span><span class="arrow">→</span><span class="node">기존 조합 매칭</span></div>
+      <span class="screen-tag">화면: 호환성 매트릭스</span>
+      <figure class="shot"><img src="../reports/screenshots/build/08-compatibility.png" alt="호환성 매트릭스"/><figcaption><b>호환성 매트릭스</b> — 기존 조합과의 계약 호환 검증</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">4</div><div class="body">
+      <div class="act">통합 대시보드에 자동 등장 — 추가 개발 0</div>
+      <div class="desc">운영 전환된 신규 모듈 로봇이 별도 통합 작업 없이 <strong>통합 관제 대시보드</strong>의 작업 계획·배정 화면에 곧바로 나타난다. 기존 다중 로봇 옆에 신규 모듈 로봇이 자연스럽게 합류하며, 작업 배정 대상으로 즉시 선택된다.</div>
+      <div class="ilink"><span class="node">운영 전환 모듈</span><span class="arrow">→</span><span class="via">통합 관제</span><span class="arrow">→</span><span class="node">작업 계획·배정 자동 합류</span></div>
+      <span class="screen-tag">화면: 통합 관제 · 작업 계획·배정</span>
+      <figure class="shot"><img src="../reports/screenshots/ops/03-control-workplan.png" alt="작업 계획"/><figcaption><b>작업 계획</b> — 신규 모듈 포함 작업 편성</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">5</div><div class="body">
+      <div class="act">canary 1대 우선 투입</div>
+      <div class="desc">전 플릿 일괄 투입 대신 <strong>현장에 canary 1대</strong>를 먼저 배정해 실제 작업·통신·텔레메트리를 소수 규모로 검증한다. 이상 없음이 확인되면 동일 모듈을 점진 확대한다 — 무중단 합류를 안전망으로 마무리한다.</div>
+      <div class="ilink"><span class="node">신규 모듈 로봇</span><span class="arrow">→</span><span class="via">canary 투입·검증</span><span class="arrow">→</span><span class="node">점진 확대</span></div>
+      <span class="screen-tag">화면: 현장 canary 배정·검증</span>
+      <figure class="shot"><img src="../reports/screenshots/build/04-deploy-plan.png" alt="배포 계획"/><figcaption><b>배포 계획</b> — 단계적(canary) 무중단 배포</figcaption></figure>
+    </div></div>
+
+  </div>
+
+  <div class="exc confirm">
+    <div class="h"><span class="pill">CONFIRM</span> 신규 벤더 미매핑 error code</div>
+    <div class="why">신규 벤더가 내보내는 <b>미매핑 error code</b>가 발견되면 Audit이 <b>confirm/blocked</b>로 표시한다 — 표준 event_code로 변환되지 않는 오류는 관제에서 의미 없는 코드로 새어 나갈 수 있어, 운영 전환 전에 시스템이 짚어 준다.</div>
+    <div class="fix"><b>해결:</b> <b>ErrorCodeMap</b>에 <code>vendor_code → 표준 event_code</code> 매핑을 추가한 뒤 Conformance를 재검증한다 → 모든 오류가 표준 코드로 정렬되면 Audit 승인·운영 전환.</div>
+  </div>
+
+  <div class="handoff"><span class="arrow">→</span> 다음 단계: <a href="s8.html">S8 · 모듈 버전 업그레이드 — 호환성 게이트·canary·롤백</a></div>
+  <footer>STATION 통합 시나리오 · 비아 · RS-2025-02219411</footer>
+</div></body></html>

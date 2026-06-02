@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STATION 시나리오 S1 — 산출물 표준 온보딩</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"/>
+<link rel="stylesheet" href="scenario.css"/></head><body>
+<div class="topbar"><div class="wrap"><span class="wm">station<span class="dim">/통합 시나리오</span></span><span class="spacer"></span><a href="index.html">← 시나리오 목록</a></div></div>
+<div class="wrap">
+  <div class="ribbon office"><span class="ico">🏢</span><div><div class="stage">S1 · 사무실/개발실</div><div class="title">산출물 표준 온보딩 — 이음의 출발</div></div>
+    <div class="meta"><span class="org-badge"><span class="k">행위자</span> 제조사 개발자(5기관)</span><span class="combo-badge">이 모듈은 <b>6종 계약</b> 중 Capability·Protocol 등록</span></div></div>
+
+  <p>컨소시엄 5개 기관 — 메타파머스(매니퓰레이터·AI인식)·에이지로보틱스(모바일·충전)·대동로보틱스(측위LPS·맵)·KIRO(적심 엔드이펙터)·국립농업과학원(적과 엔드이펙터) — 이 <strong>따로 만든 모듈(이기종 산출물)</strong>을 STATION이 "같은 언어로 말하게" <strong>표준 계약</strong>으로 등록하는 첫 단계다. 여기서는 예시로 <strong>메타파머스 적과 매니퓰레이터(MOD-ARM-A2)</strong>를 온보딩하며, 모든 계약은 공유 ID인 <code>module_id</code> 스파인에 묶인다.</p>
+
+  <div class="timeline">
+
+    <div class="step"><div class="num">1</div><div class="body">
+      <div class="act">신규 모듈 제작 완료</div>
+      <div class="desc">제조사가 매니퓰레이터/엔드이펙터를 하드웨어·구동 펌웨어까지 완성한다. 완성된 실물은 아직 "각자의 언어"로만 말하므로, 플랫폼이 알아들을 수 있는 표준 형식으로 능력을 선언해야 한다.</div>
+      <div class="ilink"><span class="node">메타 매니퓰레이터(이기종 산출물)</span><span class="arrow">→</span><span class="via">Capability Profile</span><span class="arrow">→</span><span class="node">플랫폼 표준</span></div>
+      <span class="screen-tag">화면: Build 개발자 킷 홈</span>
+      <figure class="shot"><img src="../reports/screenshots/build/10-onboard.png" alt="모듈 온보딩 마법사"/><figcaption><b>모듈 온보딩 마법사</b> — 제조사·모듈 등록 시작 — Build 개발자 킷</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">2</div><div class="body">
+      <div class="act">벤더·모듈 등록 — module_id 발급</div>
+      <div class="desc">제조사(벤더)와 모듈을 레지스트리에 등록하면 전 계약을 묶는 공유 ID <code>module_id</code>가 발급된다. 이 ID가 이후 Capability·Protocol·Telemetry·Command·Firmware·Calibration 6종 계약을 하나로 꿰는 스파인이 된다.</div>
+      <div class="ilink"><span class="node">모듈</span><span class="arrow">→</span><span class="via">module_id 스파인</span><span class="arrow">→</span><span class="node">Module Registry</span></div>
+      <span class="screen-tag">화면: Module Registry · 벤더/모듈 등록</span>
+      <figure class="shot"><img src="../reports/screenshots/build/10-onboard.png" alt="모듈 온보딩 — module_id 발급"/><figcaption><b>모듈 온보딩 — module_id 발급</b> — 벤더·모듈 등록 단계에서 공유 ID 스파인 발급</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">3</div><div class="body">
+      <div class="act">Capability·Protocol Profile 정의</div>
+      <div class="desc">모듈이 받을 수 있는 <strong>명령(commands)</strong>·내보낼 <strong>텔레메트리(telemetry_schema)</strong>·요구 <strong>캘리브레이션(calibration_requirements)</strong>을 Capability로, <strong>transport(MQTT·ROS2·DDS)·topic_map·ack/timeout</strong>을 Protocol로 선언한다. 두 계약이 모듈의 "할 수 있는 일"과 "말하는 방식"을 표준 형식으로 고정한다.</div>
+      <div class="ilink"><span class="node">모듈 명령·신호</span><span class="arrow">→</span><span class="via">Capability + Protocol</span><span class="arrow">→</span><span class="node">표준 계약</span></div>
+      <span class="screen-tag">화면: Capability/Protocol Profile 편집기</span>
+      <figure class="shot"><img src="../reports/screenshots/build/11-capability.png" alt="Capability Profile 편집기"/><figcaption><b>Capability Profile 편집기</b> — 명령·텔레메트리·캘리브 요구 선언</figcaption></figure>
+      <figure class="shot"><img src="../reports/screenshots/build/12-protocol.png" alt="프로토콜 빌더"/><figcaption><b>프로토콜 빌더</b> — transport·topic·ack/timeout 선언</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">4</div><div class="body">
+      <div class="act">Conformance 테스트 실행</div>
+      <div class="desc">선언한 계약이 실제 모듈과 일치하는지 자동 검증한다 — <strong>스키마 적합성·heartbeat·command ack·error mapping</strong>을 항목별로 실행해 통과/실패와 점수를 산출한다. 실패 항목은 그대로 통합 차단 사유가 되므로, 표준화의 실질적 게이트다.</div>
+      <div class="ilink"><span class="node">선언 계약</span><span class="arrow">→</span><span class="via">Conformance Suite</span><span class="arrow">→</span><span class="node">검증 결과·점수</span></div>
+      <span class="screen-tag">화면: Conformance 테스트 러너</span>
+      <figure class="shot"><img src="../reports/screenshots/build/13-conformance.png" alt="Conformance 테스트 러너"/><figcaption><b>Conformance 테스트 러너</b> — 스키마·heartbeat·ack·error mapping 검증</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">5</div><div class="body">
+      <div class="act">Audit Package 빌드·승인</div>
+      <div class="desc">계약 정의·테스트 아티팩트·conformance 점수를 묶어 <strong>Audit Package</strong>로 빌드하고 승인 요청한다. 이 패키지가 한 모듈의 통합을 한 번 검증해 두면, 이후 동일 모듈은 어디서나 같은 방식으로 붙는 <strong>반복 가능한 산출물</strong>이 된다.</div>
+      <div class="ilink"><span class="node">검증 결과</span><span class="arrow">→</span><span class="via">Audit Package</span><span class="arrow">→</span><span class="node">반복 가능 산출물</span></div>
+      <span class="screen-tag">화면: Audit 승인 (G5 게이트)</span>
+      <figure class="shot"><img src="../reports/screenshots/build/14-audit-package.png" alt="Audit Package 빌드"/><figcaption><b>Audit Package 빌드</b> — 계약·테스트·점수 묶음 산출물</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">6</div><div class="body">
+      <div class="act">Module Registry 운영 가능 전환 (G5)</div>
+      <div class="desc">Audit Package가 <code>approved</code>가 되면 모듈은 운영 상태로 전환되어 어떤 조합에도 표준 매칭으로 붙는다. 추가 맞춤 개발 없이 레지스트리에서 곧바로 호출되는 — 통합의 <strong>반복성</strong>이 확보되는 지점이다.</div>
+      <div class="ilink"><span class="node">approved Audit</span><span class="arrow">→</span><span class="via">G5 운영 전환</span><span class="arrow">→</span><span class="node">어디서나 조합 가능</span></div>
+      <span class="screen-tag">화면: Module Registry · 운영 상태</span>
+      <figure class="shot"><img src="../reports/screenshots/build/07-audit-approve.png" alt="Audit 승인 → 운영 전환"/><figcaption><b>Audit 승인 → 운영 전환</b> — G5 게이트 통과 시 Module Registry 운영 가능</figcaption></figure>
+    </div></div>
+
+  </div>
+
+  <div class="exc">
+    <div class="h"><span class="pill">BLOCKED</span> 운영 전환 차단 — AuditPackage 미승인</div>
+    <div class="why">AuditPackage 미승인: <b>conformance 92 &lt; 95</b>(임계치) — error mapping 항목 실패로 모듈이 운영 상태로 전환되지 않는다. 승인되지 않은 모듈은 어떤 조합에도 붙을 수 없어, 불완전한 통합이 운영으로 새어 나가는 것을 시스템이 자동 차단한다.</div>
+    <div class="fix"><b>해결:</b> 실패한 conformance 테스트(error mapping)를 수정 후 재실행해 95 이상으로 끌어올리거나, 이슈 보드에 담당자를 지정해 추적·해소한다 → 점수 충족 시 G5 승인 재요청.</div>
+  </div>
+
+  <div class="handoff"><span class="arrow">→</span> 다음 단계: <a href="s2.html">S2 · 이기종 펌웨어 통합 검증·배포</a></div>
+  <footer>STATION 통합 시나리오 · 비아 · RS-2025-02219411</footer>
+</div></body></html>

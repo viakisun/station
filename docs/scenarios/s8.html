@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STATION 시나리오 S8 — 모듈 버전 업그레이드 · 호환성 게이트·canary·롤백</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"/>
+<link rel="stylesheet" href="scenario.css"/></head><body>
+<div class="topbar"><div class="wrap"><span class="wm">station<span class="dim">/통합 시나리오</span></span><span class="spacer"></span><a href="index.html">← 시나리오 목록</a></div></div>
+<div class="wrap">
+  <div class="ribbon office"><span class="ico">🏢</span><div><div class="stage">S8 · 사무실</div><div class="title">버전 업그레이드 — 호환성 게이트·canary·롤백</div></div>
+    <div class="meta"><span class="org-badge"><span class="k">행위자</span> 배포관리자·운영자</span><span class="combo-badge">버전 skew를 게이트가 <b>자동 차단</b></span></div></div>
+
+  <p>기존 모듈의 펌웨어/Capability 버전 업(예: <code>FW-CAM-2.4.1 → 2.4.2</code>)을 <strong>현장 깨짐 없이</strong> 안전하게 적용하는 상황이다 — 운영 중 버전 갱신 역시 매우 흔한 일이다. 문제는 새 버전이 일부 조합과만 호환되거나, map/parameter 버전이 어긋난 채 배포되면 현장에서 통합이 깨진다는 것. STATION은 <strong>버전 불일치(skew)를 게이트가 배포 전 자동 차단</strong>하고, <strong>정적분석 → 호환성 게이트 → canary 배포 → OTA 모니터 → 실패 시 자동 롤백</strong>까지 안전망을 단계마다 건다.</p>
+
+  <div class="exc confirm">
+    <div class="h"><span class="pill" style="background:var(--st-normal)">CORE</span> 핵심</div>
+    <div class="why">버전 skew(<b style="color:var(--st-normal)">map·parameter·펌웨어</b>)를 <b style="color:var(--st-normal)">VersionCompatibility 게이트</b>가 배포 전 자동 차단 — 현장에서 깨지는 통합 사고를 사전에 방지한다. "이런 경우(버전 업)가 많다"를 "손쉽게(게이트가 알아서 차단)"로 증명하는 확장성·안전망 패턴이다.</div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="step"><div class="num">1</div><div class="body">
+      <div class="act">새 버전 등록·정적분석</div>
+      <div class="desc">신규 펌웨어 <code>FW-CAM-2.4.2</code>를 <strong>version·checksum·compatibility_rules</strong>를 담은 Firmware Manifest로 등록하면 자동 정적분석이 실행된다. critical/major/minor finding이 분류되고, 동시에 이 버전이 갱신하는 <strong>호환성 규칙</strong>이 레지스트리에 반영된다.</div>
+      <div class="ilink"><span class="node">새 펌웨어 버전</span><span class="arrow">→</span><span class="via">Firmware Manifest</span><span class="arrow">→</span><span class="node">호환성 규칙 갱신</span></div>
+      <span class="screen-tag">화면: Firmware 대시보드 · 새 버전 등록</span>
+      <figure class="shot"><img src="../reports/screenshots/build/15-firmware-register.png" alt="펌웨어 등록 마법사"/><figcaption><b>펌웨어 등록 마법사</b> — 신버전 manifest 등록</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">2</div><div class="body">
+      <div class="act">호환성 게이트 (VersionCompat)</div>
+      <div class="desc">새 버전이 <strong>어느 로봇/모듈/HMI 조합</strong>에 영향을 주는지 VersionCompatibility 게이트가 자동 판정한다 — 호환되는 조합은 통과, map/parameter가 어긋난 조합은 <strong>warn 또는 blocked</strong>로 신호등에 뜬다. 어긋난 채 배포되는 일을 게이트가 사전에 막는다.</div>
+      <div class="ilink"><span class="node">새 버전</span><span class="arrow">→</span><span class="via">VersionCompat 게이트</span><span class="arrow">→</span><span class="node">영향 조합(warn/blocked)</span></div>
+      <span class="screen-tag">화면: 호환성 매트릭스</span>
+      <figure class="shot"><img src="../reports/screenshots/build/08-compatibility.png" alt="호환성 매트릭스"/><figcaption><b>호환성 매트릭스</b> — 신버전 계약 호환 검증</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">3</div><div class="body">
+      <div class="act">배포 계획 — canary</div>
+      <div class="desc">게이트를 통과한 영향 조합 중에서 <strong>canary 그룹부터</strong> 점진 배포하도록 OTA 계획을 세운다 — <strong>canary 비율·롤아웃 단계·롤백 조건</strong>을 정의해, 전 플릿 일괄 대신 소수 대상에서 먼저 새 버전을 검증한다.</div>
+      <div class="ilink"><span class="node">통과 조합</span><span class="arrow">→</span><span class="via">OTA Plan (canary)</span><span class="arrow">→</span><span class="node">canary 그룹 우선</span></div>
+      <span class="screen-tag">화면: OTA 배포 계획</span>
+      <figure class="shot"><img src="../reports/screenshots/build/04-deploy-plan.png" alt="배포 계획"/><figcaption><b>배포 계획</b> — canary→전체 단계 배포</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">4</div><div class="body">
+      <div class="act">OTA 진행 모니터</div>
+      <div class="desc">배포가 시작되면 <strong>대상별 단계(다운로드·검증·적용·재기동)</strong>를 실시간 추적하고, 실패하는 대상을 즉시 감지한다. 각 대상의 성공/실패·진행률을 한 화면에서 보며 롤백 조건에 걸리는 대상을 감시한다.</div>
+      <div class="ilink"><span class="node">canary 배포</span><span class="arrow">→</span><span class="via">진행 모니터</span><span class="arrow">→</span><span class="node">대상별 단계·실패 감지</span></div>
+      <span class="screen-tag">화면: OTA 진행 모니터</span>
+      <figure class="shot"><img src="../reports/screenshots/build/09-ota-monitor.png" alt="OTA 모니터"/><figcaption><b>OTA 모니터</b> — 배포 진행·성공률 실시간</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">5</div><div class="body">
+      <div class="act">실패 시 자동 롤백</div>
+      <div class="desc">canary에서 롤백 조건을 만족하면 해당 대상을 <strong>이전 안정 버전</strong>으로 자동 복구하고, 누가·언제·왜 롤백했는지 <strong>감사 기록</strong>을 남긴다. 새 버전이 현장 전체로 번지기 전에 차단되어, 버전 업이 운영을 깨지 않는다.</div>
+      <div class="ilink"><span class="node">canary 이상 감지</span><span class="arrow">→</span><span class="via">Rollback</span><span class="arrow">→</span><span class="node">이전 안정 버전·감사 기록</span></div>
+      <span class="screen-tag">화면: 롤백</span>
+      <figure class="shot"><img src="../reports/screenshots/build/05-rollback.png" alt="롤백"/><figcaption><b>롤백</b> — 실패 시 직전 안정 버전 복귀</figcaption></figure>
+    </div></div>
+
+  </div>
+
+  <div class="exc">
+    <div class="h"><span class="pill">BLOCKED</span> VersionCompatibility — 버전 불일치</div>
+    <div class="why">VersionCompatibility — <b>map_version / parameter_version 불일치</b> 대상이 존재한다: 새 펌웨어와 맵·파라미터 버전이 어긋난 조합이 있어, 해당 대상으로의 <b>배포가 차단</b>(또는 confirm)된다. 어긋난 버전 조합이 현장에 나가 통합이 깨지는 사고를 게이트가 원천 차단한다.</div>
+    <div class="fix"><b>해결:</b> 불일치 대상의 <b>맵/파라미터를 새 버전에 맞춰 동기화</b>한 뒤 호환성 게이트를 재평가한다 → 전 대상 버전이 정합되면 배포 차단이 풀려 재배포.</div>
+  </div>
+
+  <div class="handoff"><span class="arrow">→</span> 운영으로: <a href="s4.html">S4 통합 관제</a></div>
+  <footer>STATION 통합 시나리오 · 비아 · RS-2025-02219411</footer>
+</div></body></html>

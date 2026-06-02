@@ -27,3 +27,7 @@ next-env.d.ts
 
 # local-only claude settings (permissions)
 .claude/settings.local.json
+
+# confidential / artifacts (do NOT publish to public repo)
+_reference/plans/
+docs/scenarios.zip

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S6 · 이기종 가로지르는 문제 추적·개선 — STATION 통합 시나리오</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" />
+<link rel="stylesheet" href="scenario.css" />
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <span class="wm">station<span class="dim">/통합 시나리오</span></span>
+  <span class="spacer"></span>
+  <a href="index.html">← 전체 시나리오</a><a href="s5.html">S5</a><a href="index.html">전체 →</a>
+</div></div>
+
+<div class="wrap">
+
+  <!-- ============ place ribbon ============ -->
+  <div class="ribbon field">
+    <span class="ico">🛠</span>
+    <div>
+      <div class="stage">S6 · 현장·관제</div>
+      <div class="title">이기종 가로지르는 문제 추적·개선</div>
+    </div>
+    <div class="meta">
+      <span class="org-badge"><span class="k">행위자</span> 오퍼레이터·유지보수·관제</span>
+      <span class="combo-badge">어느 모듈 문제든 <b>한 시스템</b>에서</span>
+    </div>
+  </div>
+
+  <!-- ============ intro ============ -->
+  <p style="font-size:15px;max-width:780px">어느 기관 모듈에서 문제가 나도 — <strong><code>work_session_id</code>·<code>module_id</code> 스파인</strong> 덕에 <strong>한 시스템</strong>에서 원인까지 추적·조치하고, 필요 시 <strong>펌웨어 개선으로 연결(폐루프)</strong>한다. 메타·에이지·대동·KIRO/농과원 어느 벤더의 모듈이 원인이어도, 이벤트→장애→원인→조치→Close가 같은 흐름으로 흐른다.</p>
+
+  <!-- ============ timeline ============ -->
+  <div class="timeline">
+
+    <!-- step 1 -->
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="act">작업 중 이상 이벤트</div>
+        <div class="desc">작업 중 이상이 감지된다 — <strong>비전 프레임드롭</strong>(KIRO 엔드이펙터) 또는 <strong>관절 과열</strong>(메타 매니퓰). 이벤트는 스파인에 묶여 관제 이벤트 스트림으로 흐른다.</div>
+        <div class="ilink">
+          <span class="node">모듈 이상</span><span class="arrow">→</span>
+          <span class="via">Event 스파인 (work_session_id)</span><span class="arrow">→</span>
+          <span class="node">관제 이벤트 스트림</span>
+        </div>
+        <span class="screen-tag">⚠ Ops · 장애 운영 대시보드 (JJ-U02)</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/04-incident-dashboard.png" alt="장애 대시보드"/><figcaption><b>장애 대시보드</b> — 발생 incident 클러스터·우선순위</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 2 -->
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="act">Event → Incident 승격</div>
+        <div class="desc"><strong>critical 이벤트</strong>가 장애(Incident)로 승격된다. 승격된 장애는 G7 게이트와 연동돼, 해당 로봇·모듈로의 신규 작업 배정을 freeze한다.</div>
+        <div class="ilink">
+          <span class="node">critical 이벤트</span><span class="arrow">→</span>
+          <span class="via">승격 + G7 freeze</span><span class="arrow">→</span>
+          <span class="node">Incident</span>
+        </div>
+        <span class="screen-tag">⛗ Ops · Event → Incident 승격</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/11-incident-stream.png" alt="이벤트 스트림"/><figcaption><b>이벤트 스트림</b> — 원시 이벤트 타임라인(audit≠event)</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 3 -->
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="act">원인 분류 · 영향 범위</div>
+        <div class="desc">어느 <code>module_id</code>·<code>firmware_id</code>가 원인인지 taxonomy tree로 추적하고, 같은 모듈을 쓰는 다른 로봇까지 <strong>영향 범위</strong>를 산정한다.</div>
+        <div class="ilink">
+          <span class="node">이벤트</span><span class="arrow">→</span>
+          <span class="via">원인 taxonomy (module_id·firmware_id)</span><span class="arrow">→</span>
+          <span class="node">원인 모듈·펌웨어</span>
+        </div>
+        <span class="screen-tag">⌥ Ops · 원인 분류·영향 범위</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/06-incident-cause.png" alt="원인 분석"/><figcaption><b>원인 분석</b> — 근본원인 분류 체계 매핑</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 4 -->
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <div class="act">조치 가이드 / 현장 캘리브</div>
+        <div class="desc">분류된 원인에 맞는 <strong>표준 조치</strong>를 수행한다. 현장에서 처리 가능한 경우 캘리브레이션을 재수행하고, 모듈 교체·점검이 필요하면 유지보수로 연결한다.</div>
+        <div class="ilink">
+          <span class="node">원인 모듈</span><span class="arrow">→</span>
+          <span class="via">표준 조치 가이드</span><span class="arrow">→</span>
+          <span class="node">현장 캘리브·유지보수</span>
+        </div>
+        <span class="screen-tag">⛏ Field · 조치 가이드 / 현장 캘리브</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/12-incident-action.png" alt="조치·작업 지시"/><figcaption><b>조치·작업 지시</b> — 캘리브 재보정 등 조치 발행</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 5 -->
+    <div class="step">
+      <div class="num">5</div>
+      <div class="body">
+        <div class="act">긴급정지 상황</div>
+        <div class="desc"><strong>e-stop</strong>이 발동하면 전체화면이 잠긴다. <strong>현장 오퍼레이터는 해제 불가(하드 거부)</strong> — 해제하려면 <strong>현장 관리자 인증</strong>이 필요하다. 권한이 없는 사용자에게는 해제 동작 자체가 보이지 않는다.</div>
+        <div class="ilink">
+          <span class="node">e-stop</span><span class="arrow">→</span>
+          <span class="via">권한·복구 체크리스트</span><span class="arrow">→</span>
+          <span class="node">관리자 해제</span>
+        </div>
+        <span class="screen-tag">⛔ Field · 긴급정지 (e-stop 잠금)</span>
+        <figure class="shot"><img src="../reports/screenshots/field/05-estop.png" alt="현장 e-stop"/><figcaption><b>현장 e-stop</b> — 위험 시 현장 안전 정지</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 6 -->
+    <div class="step">
+      <div class="num">6</div>
+      <div class="body">
+        <div class="act">재발 확인 · Close</div>
+        <div class="desc">조치 후 재발 여부를 확인하고 장애를 닫는다. <strong>재발/waiver 게이트</strong>를 통과해야 closed 상태가 되며, 필요 시 <strong>펌웨어 개선으로 연결(→ S2 루프)</strong>해 폐루프를 완성한다.</div>
+        <div class="ilink">
+          <span class="node">조치 완료</span><span class="arrow">→</span>
+          <span class="via">재발/waiver 게이트</span><span class="arrow">→</span>
+          <span class="node">closed → 펌웨어 개선 루프</span>
+        </div>
+        <span class="screen-tag">⛒ Ops · 장애 Close (재발/waiver 게이트)</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/08-incident-close.png" alt="Incident Close"/><figcaption><b>Incident Close</b> — 재발방지 확인 후 종결</figcaption></figure>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ exception ============ -->
+  <div class="exc">
+    <div class="h"><span class="pill">BLOCKED</span> 권한 하드 거부 — e-stop 해제 불가</div>
+    <div class="why">현장 오퍼레이터의 <b>e-stop 해제는 시각·동작 모두 차단</b>된다. 해제 버튼이 보이지 않고, 시도해도 동작하지 않는다(하드 거부).</div>
+    <div class="fix"><b style="color:var(--st-critical)">해결:</b> 현장 관리자 권한 인증 + 복구 체크리스트 완료 후에만 해제할 수 있다.</div>
+  </div>
+
+  <!-- ============ handoff ============ -->
+  <div class="handoff">
+    <span class="arrow">→</span>
+    <span>개선 루프: <a href="s2.html">S2 펌웨어 개선</a> / <a href="s1.html">S1 재온보딩</a></span>
+  </div>
+
+  <footer>STATION 통합 시나리오 · 비아(주식회사 비아) · 과채류 적과·적심 지능로봇 통합관제 (RS-2025-02219411) · 2026</footer>
+</div>
+</body>
+</html>

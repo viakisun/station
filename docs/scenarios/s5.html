@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S5 · 조합 로봇 현장 운용 — STATION 통합 시나리오</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" />
+<link rel="stylesheet" href="scenario.css" />
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <span class="wm">station<span class="dim">/통합 시나리오</span></span>
+  <span class="spacer"></span>
+  <a href="index.html">← 전체 시나리오</a><a href="s4.html">S4</a><a href="s6.html">S6 →</a>
+</div></div>
+
+<div class="wrap">
+
+  <!-- ============ place ribbon ============ -->
+  <div class="ribbon house">
+    <span class="ico">🌱</span>
+    <div>
+      <div class="stage">S5 · 현장</div>
+      <div class="title">조합 로봇 현장 운용</div>
+    </div>
+    <div class="meta">
+      <span class="org-badge"><span class="k">행위자</span> 현장 오퍼레이터</span>
+      <span class="combo-badge">조합 로봇 <b>1</b>대 현장 운용</span>
+    </div>
+  </div>
+
+  <!-- ============ intro ============ -->
+  <p style="font-size:15px;max-width:780px">관제에서 <strong>조립·배정된 로봇</strong>을 현장에서 태블릿 HMI로 운용한다. 작업을 시작하기 전에 — 모든 <strong>이음(경로·버전·캘리브·안전)</strong>이 맞는지 한 화면에서 최종 확인한다. 이기종 모듈로 조립된 로봇이라도, 오퍼레이터에게는 <strong>하나의 작업 흐름</strong>으로만 보인다.</p>
+
+  <!-- ============ timeline ============ -->
+  <div class="timeline">
+
+    <!-- step 1 -->
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="act">작업 패키지 수신</div>
+        <div class="desc">관제(S4)에서 전송된 작업이 태블릿에 도착한다. 어디서 온 작업인지 <strong>출처 칩(from Ops · RBT-…)</strong>으로 분명히 표시돼, 현장과 관제가 같은 세션 컨텍스트를 공유한다.</div>
+        <div class="ilink">
+          <span class="node">관제 작업</span><span class="arrow">→</span>
+          <span class="via">ctx 핸드오프 (robot_id·work_session_id)</span><span class="arrow">→</span>
+          <span class="node">현장 태블릿</span>
+        </div>
+        <span class="screen-tag">⌂ Field · HMI 홈 허브 (JJ-U01)</span>
+        <figure class="shot"><img src="../reports/screenshots/field/01-hmi-home.png" alt="HMI 홈"/><figcaption><b>HMI 홈</b> — 현장 태블릿 작업 시작 화면</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 2 -->
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="act">시작 전 Gate Check</div>
+        <div class="desc">작업을 시작하기 전, <strong>경로검증(G1)·펌웨어 버전(G3)·캘리브레이션(G4)·장애 freeze(G7)</strong> 4종 게이트를 일괄 표시한다. 모든 게이트가 통과해야만 시작 가능 상태가 된다.</div>
+        <div class="ilink">
+          <span class="node">작업 패키지</span><span class="arrow">→</span>
+          <span class="via">Gate (자동 호환검증)</span><span class="arrow">→</span>
+          <span class="node">시작 가능 여부</span>
+        </div>
+        <span class="screen-tag">⛉ Field · Gate Check (G1·G3·G4·G7)</span>
+        <figure class="shot"><img src="../reports/screenshots/field/02-operate.png" alt="작업 실행(Gate)"/><figcaption><b>작업 실행(Gate)</b> — 작업 시작 전 안전 게이트</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 3 -->
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="act">필수 캘리브레이션 수행</div>
+        <div class="desc">단계형 위저드를 따라 엔드이펙터(KIRO/농과원) 캘리브레이션을 수행하고, <strong>hold로 저장</strong>한다. 저장 시 <code>calibration_profile_id</code>가 생성돼 작업 준비가 완료된다.</div>
+        <div class="ilink">
+          <span class="node">엔드이펙터</span><span class="arrow">→</span>
+          <span class="via">Calibration Profile (calibration_profile_id)</span><span class="arrow">→</span>
+          <span class="node">작업 준비 완료</span>
+        </div>
+        <span class="screen-tag">◎ Field · Calibration Wizard (G4)</span>
+        <figure class="shot"><img src="../reports/screenshots/field/04-calibrate.png" alt="캘리브레이션"/><figcaption><b>캘리브레이션</b> — 엔드이펙터 보정 — 작업 전 필수</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 4 -->
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <div class="act">hold-to-confirm 작업 시작</div>
+        <div class="desc">위험 액션은 <strong>길게 눌러(hold-to-confirm)</strong> 실행한다. 실수 클릭을 막고, 누가 언제 무엇을 시작했는지 <strong>Audit 고지</strong>가 함께 남는다.</div>
+        <div class="ilink">
+          <span class="node">시작 액션</span><span class="arrow">→</span>
+          <span class="via">hold-to-confirm + Audit</span><span class="arrow">→</span>
+          <span class="node">작업 개시</span>
+        </div>
+        <span class="screen-tag">⏻ Field · hold-to-confirm 시작</span>
+        <figure class="shot"><img src="../reports/screenshots/field/02-operate.png" alt="작업 시작"/><figcaption><b>작업 시작</b> — 작업 실행 — 진행 상태 표시</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 5 -->
+    <div class="step">
+      <div class="num">5</div>
+      <div class="body">
+        <div class="act">자율 적과/적심 진행</div>
+        <div class="desc">로봇이 자율적으로 적과·적심 작업을 진행한다. <strong>진행률·다음 행동</strong>이 화면 상단에 고정 표시돼, 오퍼레이터는 한눈에 상황을 파악한다.</div>
+        <div class="ilink">
+          <span class="node">자율 작업</span><span class="arrow">→</span>
+          <span class="via">진행률·다음 행동 고정 표시</span><span class="arrow">→</span>
+          <span class="node">현장 모니터링</span>
+        </div>
+        <span class="screen-tag">▶ Field · 자율 적과/적심 진행</span>
+        <figure class="shot"><img src="../reports/screenshots/field/02-operate.png" alt="작업 진행"/><figcaption><b>작업 진행</b> — 실시간 진행률·텔레메트리</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 6 -->
+    <div class="step">
+      <div class="num">6</div>
+      <div class="body">
+        <div class="act">일시정지 / 재개</div>
+        <div class="desc">작업 중 언제든 일시정지·재개가 가능하다. <strong>위험 전이마다 hold</strong>를 요구해, 정지·재개가 의도된 동작임을 보장한다.</div>
+        <div class="ilink">
+          <span class="node">일시정지·재개</span><span class="arrow">→</span>
+          <span class="via">위험 전이마다 hold</span><span class="arrow">→</span>
+          <span class="node">안전한 상태 전이</span>
+        </div>
+        <span class="screen-tag">⏸ Field · 일시정지 / 재개</span>
+        <figure class="shot"><img src="../reports/screenshots/field/05-estop.png" alt="정지/재개·e-stop"/><figcaption><b>정지/재개·e-stop</b> — 안전 정지·인터록 해제 후 재개</figcaption></figure>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ exception ============ -->
+  <div class="exc confirm">
+    <div class="h"><span class="pill">CONFIRM</span> G3 — 파라미터 버전 불일치</div>
+    <div class="why"><b style="color:var(--st-notice)">G3</b> parameter 버전 불일치(<code>p11</code> ≠ <code>p12</code>) → <b style="color:var(--st-notice)">confirm_required</b>. 시작 전 게이트에서 버전 차이가 감지되면 확인을 요구한다.</div>
+    <div class="fix"><b style="color:var(--st-notice)">해결:</b> 파라미터를 동기화한 뒤 진행한다. (G4 캘리브 미완은 <b style="color:var(--st-critical)">blocked</b>로 시작 자체가 차단된다.)</div>
+  </div>
+
+  <!-- ============ handoff ============ -->
+  <div class="handoff">
+    <span class="arrow">→</span>
+    <span>작업 중 문제가 발생하면 — <a href="s6.html">S6 · 이기종 가로지르는 문제 추적·개선</a>으로 이어진다.</span>
+  </div>
+
+  <footer>STATION 통합 시나리오 · 비아(주식회사 비아) · 과채류 적과·적심 지능로봇 통합관제 (RS-2025-02219411) · 2026</footer>
+</div>
+</body>
+</html>

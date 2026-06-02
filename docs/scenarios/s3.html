@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S3 · 실물 전 조합 가상 통합·시험가동 — STATION 통합 시나리오</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" />
+<link rel="stylesheet" href="scenario.css" />
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <span class="wm">station<span class="dim">/통합 시나리오</span></span>
+  <span class="spacer"></span>
+  <a href="index.html">← 전체 시나리오</a><a href="s2.html">S2</a><a href="s4.html">S4 →</a>
+</div></div>
+
+<div class="wrap">
+
+  <!-- ============ place ribbon ============ -->
+  <div class="ribbon sim">
+    <span class="ico">🖥</span>
+    <div>
+      <div class="stage">S3 · 시뮬레이션</div>
+      <div class="title">실물 전 조합 가상 통합·시험가동</div>
+    </div>
+    <div class="meta">
+      <span class="org-badge"><span class="k">행위자</span> UNIST·제조사</span>
+      <span class="combo-badge">이 조합은 <b>72</b>가지 중 <b>1</b></span>
+    </div>
+  </div>
+
+  <!-- ============ intro ============ -->
+  <p style="font-size:15px;max-width:780px">실제 로봇 하드웨어가 조립되기 전에, <strong>디지털트윈 + 텔레메트리 게이트웨이</strong>로 이 조합 — {에이지 모바일 · 메타 매니퓰 · 엔드이펙터} — 이 서로 맞물려 동작하는지 미리 검증한다. 가상 온실에서 <strong>자율주행·인식·작업·이벤트 대응</strong>을 시험 가동해, 실물 투입 전에 통합 결함과 신호 매핑 오류를 걸러낸다.</p>
+
+  <!-- ============ timeline ============ -->
+  <div class="timeline">
+
+    <!-- step 1 -->
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="act">디지털트윈에 조합 모듈 배치</div>
+        <div class="desc">가상 온실 모델에 이번 조합의 {모바일·매니퓰·엔드이펙터}를 배치하고 자율주행·작업을 시뮬레이션한다. 실물 없이 조합의 물리·동작 적합성을 먼저 본다.</div>
+        <figure class="shot"><img src="../reports/screenshots/ops/10-twin.png" alt="디지털트윈 (2D MVP)"/><figcaption><b>디지털트윈 (2D MVP)</b> — 가상 온실에 조합 로봇 배치·배회</figcaption></figure>
+        <span class="screen-tag">▣ Sim · 디지털트윈</span>
+      </div>
+    </div>
+
+    <!-- step 2 -->
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="act">텔레메트리 게이트웨이로 가상 신호 송출 → 표준 채널 매핑</div>
+        <div class="desc">시뮬레이터가 만든 원천 신호(raw)를 게이트웨이가 받아 STATION 표준 채널로 매핑한다. 채널·단위·샘플링이 계약대로 흘러야 이후 관제가 동작한다.</div>
+        <div class="ilink">
+          <span class="node">원천 신호(raw)</span><span class="arrow">→</span>
+          <span class="via">Telemetry Channel</span><span class="arrow">→</span>
+          <span class="node">표준 채널</span>
+        </div>
+        <figure class="shot"><img src="../reports/screenshots/field/07-gateway.png" alt="텔레메트리 게이트웨이"/><figcaption><b>텔레메트리 게이트웨이</b> — 원천 신호 → 표준 채널 매핑(JJ-P02)</figcaption></figure>
+        <span class="screen-tag">⌁ Sim · Telemetry 게이트웨이 (JJ-P02)</span>
+      </div>
+    </div>
+
+    <!-- step 3 -->
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="act">자율주행·인식·경로 시뮬레이션</div>
+        <div class="desc">가상 신호가 표준 채널로 들어오면, 관제 맵 위에서 로봇의 자율주행·인식·경로를 2D 트윈 기반으로 시험한다. 경로 충돌·인식 누락을 실물 전에 점검한다.</div>
+        <figure class="shot"><img src="../reports/screenshots/ops/02-control-map.png" alt="실시간 관제 맵"/><figcaption><b>실시간 관제 맵</b> — 트윈 신호가 관제로 미러링</figcaption></figure>
+        <span class="screen-tag">⌖ Sim · 관제 맵 (2D 트윈)</span>
+      </div>
+    </div>
+
+    <!-- step 4 -->
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <div class="act">데이터 품질·지연 진단</div>
+        <div class="desc">게이트웨이 인입 데이터의 <strong>누락·drift·단위 오류·지연</strong>을 점검한다. 표준 채널로 매핑된 값이 실제로 신뢰 가능한 품질인지 — 관제·작업 판단의 토대를 검증한다.</div>
+        <div class="ilink">
+          <span class="node">인입 데이터</span><span class="arrow">→</span>
+          <span class="via">Telemetry · quality</span><span class="arrow">→</span>
+          <span class="node">품질 진단(누락·drift·단위·지연)</span>
+        </div>
+        <span class="screen-tag">⌗ Sim · 데이터 품질 진단</span>
+        <figure class="shot"><img src="../reports/screenshots/field/06-telemetry.png" alt="텔레메트리 품질"/><figcaption><b>텔레메트리 품질</b> — 채널 단위·샘플링·품질 확인</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 5 -->
+    <div class="step">
+      <div class="num">5</div>
+      <div class="body">
+        <div class="act">가상 이벤트 주입</div>
+        <div class="desc">배터리 방전·전복 같은 가상 이벤트를 시뮬레이터에 주입해, Event 스파인을 타고 관제 알림이 제대로 발생·전파되는지 확인한다. 실제 사고 전에 알림 경로를 검증하는 단계.</div>
+        <div class="ilink">
+          <span class="node">가상 이벤트</span><span class="arrow">→</span>
+          <span class="via">Event 스파인</span><span class="arrow">→</span>
+          <span class="node">관제 알림</span>
+        </div>
+        <span class="screen-tag">⚠ Sim · 가상 이벤트 주입·알림</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/10-twin.png" alt="디지털트윈 시뮬레이션"/><figcaption><b>디지털트윈 시뮬레이션</b> — 가상 이벤트 주입 → 관제 알림 발생</figcaption></figure>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ exception ============ -->
+  <div class="exc confirm">
+    <div class="h"><span class="pill">CONFIRM</span> 채널 단위 미정의 — 게이트웨이 확인 처리</div>
+    <div class="why">매핑 중 일부 채널에서 <b>단위 미정의(unit mismatch)</b> 발생 — 원천 신호 단위와 표준 채널 단위가 어긋나 게이트웨이가 <b>confirm(hold)</b>으로 잡는다.</div>
+    <div class="fix"><b style="color:var(--st-notice)">해결:</b> 단위 변환 규칙(예: mm→m, raw→%)을 지정한 뒤 해당 채널을 재매핑하면 표준 채널로 정상 인입된다.</div>
+  </div>
+
+  <!-- ============ handoff ============ -->
+  <div class="handoff">
+    <span class="arrow">→</span>
+    <span>가상 통합·시험가동 통과 — 실물 로봇으로 <a href="s4.html">S4 · 이기종 다중 로봇 통합 관제</a>로 이어진다.</span>
+  </div>
+
+  <footer>STATION 통합 시나리오 · 비아(주식회사 비아) · 과채류 적과·적심 지능로봇 통합관제 (RS-2025-02219411) · 2026</footer>
+</div>
+</body>
+</html>

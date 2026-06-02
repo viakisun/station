@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STATION 시나리오 S2 — 이기종 펌웨어 통합 검증·배포</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"/>
+<link rel="stylesheet" href="scenario.css"/></head><body>
+<div class="topbar"><div class="wrap"><span class="wm">station<span class="dim">/통합 시나리오</span></span><span class="spacer"></span><a href="index.html">← 시나리오 목록</a></div></div>
+<div class="wrap">
+  <div class="ribbon office"><span class="ico">🏢</span><div><div class="stage">S2 · 사무실/개발실</div><div class="title">이기종 펌웨어 통합 검증·배포</div></div>
+    <div class="meta"><span class="org-badge"><span class="k">행위자</span> 배포 관리자</span><span class="org-badge"><span class="k">산출물</span> JJ-U03</span><span class="combo-badge">이 모듈은 <b>6종 계약</b> 중 Firmware Manifest 게이트</span></div></div>
+
+  <p>메타파머스·에이지로보틱스·대동로보틱스·KIRO·농업과학원 — 서로 다른 제조사 모듈의 펌웨어를 <strong>한 도구로 안전하게 검증·배포</strong>한다. <strong>정적분석 → 호환성 매트릭스 → 릴리즈 승인(게이트) → OTA 배포 → 실패 시 롤백</strong>까지, 이기종 펌웨어가 잘못된 조합으로 현장에 나가지 않도록 단계마다 자동 게이트가 작동한다. 모든 펌웨어는 <code>module_id</code> 스파인에 묶인 <strong>Firmware Manifest</strong> 계약으로 등록된다.</p>
+
+  <div class="timeline">
+
+    <div class="step"><div class="num">1</div><div class="body">
+      <div class="act">펌웨어 등록 — Manifest·checksum</div>
+      <div class="desc">제조사 펌웨어 바이너리를 <strong>version·checksum·compatibility_rules</strong>를 담은 Firmware Manifest로 등록한다. checksum으로 무결성을, manifest로 어떤 모듈·버전을 위한 펌웨어인지를 명시해 레지스트리에 귀속시킨다.</div>
+      <div class="ilink"><span class="node">모듈 펌웨어</span><span class="arrow">→</span><span class="via">Firmware Manifest</span><span class="arrow">→</span><span class="node">레지스트리</span></div>
+      <span class="screen-tag">화면: Firmware 대시보드</span>
+      <figure class="shot"><img src="../reports/screenshots/build/15-firmware-register.png" alt="펌웨어 등록 마법사"/><figcaption><b>펌웨어 등록 마법사</b> — manifest·checksum 등록</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">2</div><div class="body">
+      <div class="act">정적분석 결과 확인</div>
+      <div class="desc">등록된 펌웨어에 자동 정적분석이 실행되어 <strong>critical/major/minor finding</strong>을 분류한다. critical finding이 남아 있으면 릴리즈 승인 게이트(G2)에서 그대로 차단 사유가 되며, 화면은 사유와 해결행동을 함께 제시한다.</div>
+      <div class="ilink"><span class="node">펌웨어 바이너리</span><span class="arrow">→</span><span class="via">Static Analysis</span><span class="arrow">→</span><span class="node">finding 등급</span></div>
+      <span class="screen-tag">화면: 정적분석 결과</span>
+      <figure class="shot"><img src="../reports/screenshots/build/16-static-analysis.png" alt="펌웨어 정적분석"/><figcaption><b>펌웨어 정적분석</b> — 취약점·금지 API·서명 검사</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">3</div><div class="body">
+      <div class="act">호환성 매트릭스 확인</div>
+      <div class="desc">이 펌웨어가 <strong>어느 로봇 / 모듈 / HMI / Telemetry 조합</strong>에 배포 가능한지를 호환성 규칙으로 자동 매핑한다. compatible/incompatible를 신호등으로 보여 주어, 잘못된 조합에 펌웨어가 흘러가는 것을 사전에 막는다.</div>
+      <div class="ilink"><span class="node">펌웨어</span><span class="arrow">→</span><span class="via">호환성 규칙</span><span class="arrow">→</span><span class="node">대상 조합(로봇·모듈·HMI·Telemetry)</span></div>
+      <span class="screen-tag">화면: 호환성 매트릭스</span>
+      <figure class="shot"><img src="../reports/screenshots/build/08-compatibility.png" alt="호환성 매트릭스"/><figcaption><b>호환성 매트릭스</b> — 모듈·로봇 조합 계약 호환</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">4</div><div class="body">
+      <div class="act">릴리즈 승인 (G2)</div>
+      <div class="desc"><strong>정적분석·호환성·Audit</strong> 세 조건이 모두 통과해야 릴리즈가 승인된다. 하나라도 미충족이면 승인이 막히고, 화면은 어떤 조건이 왜 막혔는지(사유)와 무엇을 해야 하는지(해결행동)를 함께 안내한다.</div>
+      <div class="ilink"><span class="node">정적분석·호환·Audit</span><span class="arrow">→</span><span class="via">G2 릴리즈 승인</span><span class="arrow">→</span><span class="node">배포 가능 릴리즈</span></div>
+      <span class="screen-tag">화면: 릴리즈 승인 — pass</span>
+      <figure class="shot"><img src="../reports/screenshots/build/02-release-approve-pass.png" alt="릴리즈 승인 pass"/><figcaption><b>릴리즈 승인</b> — G4 게이트 — 분석 통과 승인</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">5</div><div class="body">
+      <div class="act">OTA 배포 계획 수립</div>
+      <div class="desc">승인된 릴리즈로 OTA 배포 계획을 세운다 — <strong>canary 비율·롤아웃 단계·롤백 조건(G6/G7)</strong>을 정의해 소수 대상부터 점진 배포하고, 이상 지표 시 자동 롤백되도록 안전망을 건다.</div>
+      <div class="ilink"><span class="node">승인 릴리즈</span><span class="arrow">→</span><span class="via">OTA Plan (canary·rollback)</span><span class="arrow">→</span><span class="node">대상 플릿</span></div>
+      <span class="screen-tag">화면: OTA 배포 계획</span>
+      <figure class="shot"><img src="../reports/screenshots/build/04-deploy-plan.png" alt="OTA 배포 계획"/><figcaption><b>배포 계획</b> — canary→전체 단계 편성</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">6</div><div class="body">
+      <div class="act">OTA 진행 모니터</div>
+      <div class="desc">배포가 시작되면 <strong>대상별 단계(다운로드·검증·적용·재기동)</strong>를 실시간 추적한다. 각 대상의 성공/실패와 진행률을 한 화면에서 보며, 롤백 조건에 걸리는 대상이 있는지 감시한다.</div>
+      <div class="ilink"><span class="node">OTA Plan</span><span class="arrow">→</span><span class="via">진행 모니터</span><span class="arrow">→</span><span class="node">대상별 단계 상태</span></div>
+      <span class="screen-tag">화면: OTA 진행 모니터</span>
+      <figure class="shot"><img src="../reports/screenshots/build/09-ota-monitor.png" alt="OTA 진행 모니터"/><figcaption><b>OTA 모니터</b> — 배포 진행·성공률 실시간</figcaption></figure>
+    </div></div>
+
+    <div class="step"><div class="num">7</div><div class="body">
+      <div class="act">실패 시 롤백</div>
+      <div class="desc">롤백 조건을 만족하면 해당 대상을 <strong>이전 안정 버전</strong>으로 되돌리고, 누가·언제·왜 롤백했는지 <strong>감사 기록</strong>을 남긴다. 이기종 펌웨어라도 동일한 안전망·추적성으로 운영을 보호한다.</div>
+      <div class="ilink"><span class="node">이상 감지(G6/G7)</span><span class="arrow">→</span><span class="via">Rollback</span><span class="arrow">→</span><span class="node">이전 안정 버전·감사 기록</span></div>
+      <span class="screen-tag">화면: 롤백</span>
+      <figure class="shot"><img src="../reports/screenshots/build/05-rollback.png" alt="롤백"/><figcaption><b>롤백</b> — 실패 시 직전 안정 버전 복귀</figcaption></figure>
+    </div></div>
+
+  </div>
+
+  <div class="exc">
+    <div class="h"><span class="pill">G2 BLOCKED</span> 배포 계획 생성 차단</div>
+    <div class="why">G2 — <b>정적분석 critical 2건 미해결</b> + <b>Audit 미승인</b>: 릴리즈 승인 두 조건이 동시에 미충족이라 OTA 배포 계획 생성 자체가 차단된다. 검증되지 않은 펌웨어가 이기종 플릿에 배포되는 것을 시스템이 원천 차단한다.</div>
+    <div class="fix"><b>해결:</b> 정적분석 상세로 진입해 critical finding을 수정하거나 근거와 함께 <b>waiver(예외 승인)</b>를 요청하고, 누락된 <b>Audit Package를 승인</b>받는다 → 두 조건 충족 시 G2 재승인·배포 계획 생성.</div>
+  </div>
+
+  <div class="handoff"><span class="arrow">→</span> 다음 단계: <a href="s3.html">S3 · 실물 전 조합 가상 통합·시험가동</a></div>
+  <footer>STATION 통합 시나리오 · 비아 · RS-2025-02219411</footer>
+</div></body></html>

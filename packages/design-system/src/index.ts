@@ -21,3 +21,4 @@ export {
   type GateSeverity,
   type GateAction,
 } from "./ux";
+export { WizardStepper, WizardFrame, type WizardStep } from "./Wizard";

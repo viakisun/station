@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S4 · 이기종 다중 로봇 통합 관제 — STATION 통합 시나리오</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" />
+<link rel="stylesheet" href="scenario.css" />
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <span class="wm">station<span class="dim">/통합 시나리오</span></span>
+  <span class="spacer"></span>
+  <a href="index.html">← 전체 시나리오</a><a href="s3.html">S3</a><a href="s5.html">S5 →</a>
+</div></div>
+
+<div class="wrap">
+
+  <!-- ============ place ribbon ============ -->
+  <div class="ribbon control">
+    <span class="ico">🖥</span>
+    <div>
+      <div class="stage">S4 · 관제실</div>
+      <div class="title">이기종 다중 로봇 통합 관제 ★핵심</div>
+    </div>
+    <div class="meta">
+      <span class="org-badge"><span class="k">행위자</span> 비아 운영자</span>
+      <span class="combo-badge">이기종 <b>N</b>대 → <b>한 화면</b></span>
+    </div>
+  </div>
+
+  <!-- ============ intro ============ -->
+  <p style="font-size:15px;max-width:780px">메타·에이지·대동·KIRO·농과원의 <strong>서로 다른 산출물로 조립된 로봇들</strong>을 — 비아 운영자가 <strong>한 화면에서 하나처럼</strong> 관제한다. 이기종 N대가 각기 다른 벤더 모듈로 구성됐어도, 6종 표준 계약으로 매칭돼 통합 대시보드·맵·작업계획이 동일하게 작동한다. <strong>이 시나리오가 STATION이 "잇는" 일을 가장 직접적으로 보여주는 핵심 장면</strong>이다.</p>
+
+  <!-- ============ timeline ============ -->
+  <div class="timeline">
+
+    <!-- step 1 -->
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="act">현장 로봇 Device Registry 페어링·등록</div>
+        <div class="desc">현장에 투입된 이기종 로봇을 Device Registry에 페어링·등록하고, <strong>어느 벤더 모듈로 구성됐는지(조합)</strong>를 확정한다. 이후 모든 관제·작업은 이 조합 정의를 따른다.</div>
+        <div class="ilink">
+          <span class="node">이기종 로봇</span><span class="arrow">→</span>
+          <span class="via">module_id / robot_id 스파인</span><span class="arrow">→</span>
+          <span class="node">Device Registry</span>
+        </div>
+        <span class="screen-tag">⛁ Control · Device Registry</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/09-registry.png" alt="Device Registry·페어링"/><figcaption><b>Device Registry·페어링</b> — 로봇 등록·구성 모듈·페어링</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 2 -->
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="act">텔레메트리 게이트웨이 데이터 인입 확인</div>
+        <div class="desc">등록된 로봇·센서의 데이터가 게이트웨이를 통해 <strong>표준 채널</strong>로 흘러들어오는지 확인한다. 벤더가 달라도 같은 채널 스키마로 들어와야 한 화면 통합이 가능하다.</div>
+        <div class="ilink">
+          <span class="node">로봇·센서 데이터</span><span class="arrow">→</span>
+          <span class="via">Telemetry Channel(게이트웨이)</span><span class="arrow">→</span>
+          <span class="node">표준 채널 인입</span>
+        </div>
+        <span class="screen-tag">⌁ Control · 텔레메트리 인입</span>
+        <figure class="shot"><img src="../reports/screenshots/field/07-gateway.png" alt="텔레메트리 게이트웨이"/><figcaption><b>텔레메트리 게이트웨이</b> — 현장 원천 신호 → 표준 채널</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 3 -->
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="act">통합 대시보드 — 다중 로봇을 한 화면</div>
+        <div class="desc">메타 매니퓰 + 에이지 모바일 + 대동 측위 + 엔드이펙터로 구성된 다중 로봇의 KPI·상태를 한 화면에 통합한다. 이기종이라는 사실이 운영자에게는 보이지 않는다 — 그것이 통합관제의 핵심.</div>
+        <div class="ilink">
+          <span class="node">이기종 로봇들</span><span class="arrow">→</span>
+          <span class="via">전 계약 매칭</span><span class="arrow">→</span>
+          <span class="node">통합 관제 한 화면</span>
+        </div>
+        <span class="screen-tag">▦ Control · 통합 대시보드 (JJ-U01)</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/01-control-dashboard.png" alt="Ops 관제 대시보드"/><figcaption><b>Ops 관제 대시보드</b> — 이기종 다중 로봇 통합 현황</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 4 -->
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <div class="act">작업 계획·로봇 배정</div>
+        <div class="desc">작업을 계획하고 적합한 로봇을 배정한다. STATION이 <strong>추천</strong>을 제시하고, 배정 전 게이트(<strong>경로검증·펌웨어 버전·캘리브레이션·장애 freeze</strong>)를 통과해야만 확정된다.</div>
+        <div class="ilink">
+          <span class="node">작업 계획</span><span class="arrow">→</span>
+          <span class="via">추천 + 게이트(경로·버전·캘리브·장애)</span><span class="arrow">→</span>
+          <span class="node">로봇 배정</span>
+        </div>
+        <span class="screen-tag">▤ Control · 작업 계획 (JJ-U01)</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/03-control-workplan.png" alt="작업 계획"/><figcaption><b>작업 계획</b> — 다중 로봇 작업 편성</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 5 -->
+    <div class="step">
+      <div class="num">5</div>
+      <div class="body">
+        <div class="act">실시간 맵·다중 로봇 협업 스케줄</div>
+        <div class="desc">배정된 로봇들의 위치·작업을 실시간 맵에서 보며, 다중 로봇이 충돌 없이 협업하도록 스케줄을 조율한다. 측위(대동)가 달라도 표준 좌표로 한 맵에 모인다.</div>
+        <span class="screen-tag">⌖ Control · 실시간 맵·협업 스케줄</span>
+        <figure class="shot"><img src="../reports/screenshots/ops/02-control-map.png" alt="실시간 관제 맵"/><figcaption><b>실시간 관제 맵</b> — 로봇 위치·경로·작업 실시간</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- step 6 -->
+    <div class="step">
+      <div class="num">6</div>
+      <div class="body">
+        <div class="act">현장으로 작업 전송 — Context 핸드오프</div>
+        <div class="desc">확정된 작업을 현장 태블릿으로 전송한다. ctx 쿼리로 <code>robot_id</code>·<code>work_session_id</code>를 운반해, 관제실과 현장이 같은 세션 컨텍스트를 공유한다(끊김 없는 핸드오프).</div>
+        <div class="ilink">
+          <span class="node">작업</span><span class="arrow">→</span>
+          <span class="via">ctx 핸드오프 (robot_id·work_session_id)</span><span class="arrow">→</span>
+          <span class="node">현장 태블릿</span>
+        </div>
+        <span class="screen-tag">⇄ Control · Context 핸드오프 → 현장</span>
+        <figure class="shot"><img src="../reports/screenshots/field/03-operate-handoff.png" alt="HMI 인계(handoff)"/><figcaption><b>HMI 인계(handoff)</b> — 관제→현장 컨텍스트 전달</figcaption></figure>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ exception ============ -->
+  <div class="exc">
+    <div class="h"><span class="pill">BLOCKED</span> G1 / G7 — 배정 불가</div>
+    <div class="why"><b>G1</b> 미검증 경로이거나, <b>G7</b> 대상 로봇에 <b>open critical incident</b>가 있으면 — 작업 배정이 차단된다. 미검증·장애 중 로봇으로는 작업을 내보낼 수 없다.</div>
+    <div class="fix"><b style="color:var(--st-critical)">해결:</b> 경로를 재검증하거나(G1), 장애 상세로 이동해 incident를 처리·해제(G7)한 뒤 배정을 재시도한다.</div>
+  </div>
+
+  <!-- ============ handoff ============ -->
+  <div class="handoff">
+    <span class="arrow">→</span>
+    <span>작업이 현장으로 전송됨 — <a href="s5.html">S5 · 조합 로봇 현장 운용</a>으로 이어진다.</span>
+  </div>
+
+  <footer>STATION 통합 시나리오 · 비아(주식회사 비아) · 과채류 적과·적심 지능로봇 통합관제 (RS-2025-02219411) · 2026</footer>
+</div>
+</body>
+</html>

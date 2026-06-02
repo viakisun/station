@@ -5,6 +5,7 @@ export * from "./selectors";
 export * from "./gates";
 export * from "./ctx";
 export * from "./data/mockups";
+export * from "./data/mockups2";
 export { CONTROL, type ControlData } from "./data/control";
 export { INCIDENT, type IncidentData, type Incident } from "./data/incident";
 export { TELEMETRY, type TelemetryData } from "./data/telemetry";
