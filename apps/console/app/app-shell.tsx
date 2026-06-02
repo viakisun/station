@@ -3,7 +3,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ConsoleShell } from "@station/shell";
 import { encodeCtx, type ContextEnvelope } from "@station/domain";
 
-const FIELD_URL = process.env.NEXT_PUBLIC_FIELD_URL || "http://localhost:3002";
+const FIELD_URL = process.env.NEXT_PUBLIC_FIELD_URL || "http://localhost:7332";
 
 const WORKSPACES = ["control", "audit", "incident", "firmware"];
 

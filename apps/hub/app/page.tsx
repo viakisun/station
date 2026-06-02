@@ -6,8 +6,8 @@
    ============================================================ */
 import { useEffect } from "react";
 
-const CONSOLE_URL = process.env.NEXT_PUBLIC_CONSOLE_URL || "http://localhost:3001";
-const FIELD_URL = process.env.NEXT_PUBLIC_FIELD_URL || "http://localhost:3002";
+const CONSOLE_URL = process.env.NEXT_PUBLIC_CONSOLE_URL || "http://localhost:7331";
+const FIELD_URL = process.env.NEXT_PUBLIC_FIELD_URL || "http://localhost:7332";
 
 export default function HubPage() {
   useEffect(() => {

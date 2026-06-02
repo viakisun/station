@@ -11,9 +11,9 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "docs", "reports", "screenshots");
 
-const CONSOLE = "http://localhost:3001";
-const FIELD = "http://localhost:3002";
-const HUB = "http://localhost:3000";
+const CONSOLE = "http://localhost:7331";
+const FIELD = "http://localhost:7332";
+const HUB = "http://localhost:7330";
 
 const CTX = encodeURIComponent(
   JSON.stringify({ origin: "ops", robot_id: "RBT-THIN-0001", work_session_id: "WKS-20260601-00045" }),
