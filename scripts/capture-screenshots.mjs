@@ -79,7 +79,38 @@ const run = async () => {
     try {
       await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
       await page.waitForTimeout(1300); // 애니메이션/타이머 안정화
-      await page.screenshot({ path: join(dir, name + ".png"), fullPage: true });
+      // 콘텐츠 실제 높이로 crop — 셸이 100vh라 짧은 화면은 빈 여백이 크게 남는다.
+      // <main>의 자식(실제 콘텐츠) 바닥 + 좌측 nav 바닥 중 큰 값까지만 잘라 빈 띠 제거.
+      const contentH = await page.evaluate(() => {
+        // 셸이 100vh라 짧은 화면은 콘텐츠 아래 빈 띠가 크게 남고, 맨 아래 이벤트 바가 따로 붙는다.
+        // 실제로 칠해진 leaf 요소들의 y구간을 모아, "콘텐츠 → 큰 빈 간격" 첫 지점에서 자른다.
+        const vh = window.innerHeight;
+        const GAP = 80; // 이보다 큰 수직 공백이 나오면 그 위에서 컷
+        const ivs = [];
+        for (const el of document.body.querySelectorAll("*")) {
+          if (el.children.length) continue; // leaf만(실제 렌더 원자: 텍스트·아이콘·인풋)
+          const cs = getComputedStyle(el);
+          if (cs.visibility === "hidden" || cs.display === "none" || +cs.opacity === 0) continue;
+          const r = el.getBoundingClientRect();
+          if (r.width < 2 || r.height < 2 || r.bottom <= 0 || r.top >= vh) continue;
+          ivs.push([Math.max(0, r.top), Math.min(vh, r.bottom)]);
+        }
+        if (!ivs.length) return null;
+        ivs.sort((a, b) => a[0] - b[0]);
+        let curBot = ivs[0][1];
+        for (let i = 1; i < ivs.length; i++) {
+          const [t, btm] = ivs[i];
+          if (t > curBot + GAP) break; // 첫 큰 공백 → 여기까지가 콘텐츠
+          if (btm > curBot) curBot = btm;
+        }
+        return curBot > 120 ? Math.ceil(curBot) : null;
+      });
+      const vh = viewport.height;
+      const clip =
+        contentH && contentH > 0 && contentH <= vh
+          ? { clip: { x: 0, y: 0, width: viewport.width, height: Math.min(contentH + 16, vh) } }
+          : { fullPage: true };
+      await page.screenshot({ path: join(dir, name + ".png"), ...clip });
       ok++;
       console.log("✓", product + "/" + name);
     } catch (e) {
