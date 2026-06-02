@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STATION — Multi-Robot Developer Platform</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="tokens.css" />
+  <style>
+    :root { --font-ui: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { overflow-y: auto; font-family: var(--font-ui); }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+    /* top bar */
+    .topbar { height: 48px; background: var(--surface); border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 20; display: flex; align-items: center; }
+    .topbar .wrap { display: flex; align-items: center; gap: 14px; width: 100%; }
+    .wm { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 1px; }
+    .wm .dimx { color: var(--ink-3); }
+    .region { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); white-space: nowrap;
+      font-size: 11px; color: var(--ink-2); padding: 3px 8px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px; }
+    .navlink { font-size: 12.5px; color: var(--ink-2); text-decoration: none; font-weight: 500; }
+    .navlink:hover { color: var(--ink); }
+    .ghost-btn { font-family: var(--font-mono); font-size: 12px; height: 30px; padding: 0 12px; border: 1px solid var(--line-strong); white-space: nowrap;
+      background: var(--surface); border-radius: 3px; color: var(--ink); display: inline-flex; align-items: center; gap: 7px; }
+    .ghost-btn:hover { background: var(--surface-2); }
+    .ink-btn { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .ink-btn:hover { background: #000; }
+
+    /* hero */
+    .hero { padding: 44px 0 26px; display: grid; grid-template-columns: 1fr 420px; gap: 40px; align-items: center; }
+    .ascii-wm { font-size: 13px; color: var(--ink); margin: 0 0 24px; font-weight: 700; }
+    .eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 1px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .eyebrow .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand-live); }
+    h1.title { font-size: 33px; font-weight: 800; letter-spacing: -1px; line-height: 1.12; margin: 0 0 16px; }
+    h1.title em { font-style: normal; color: var(--ink-3); }
+    .lede { font-size: 15px; color: var(--ink-2); line-height: 1.6; margin: 0 0 22px; max-width: 540px; }
+    .cta-row { display: flex; gap: 10px; align-items: center; }
+    .install { display: flex; align-items: center; gap: 10px; margin-top: 22px; font-family: var(--font-mono); font-size: 12.5px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 11px 13px; max-width: 420px; }
+    .install .pmt { color: var(--brand-live); }
+    .install .cmd { color: var(--ink); flex: 1; }
+    .install .copy { color: var(--ink-3); cursor: pointer; font-size: 11px; }
+    .install .copy:hover { color: var(--ink); }
+
+    /* hero terminal */
+    .hero-term { height: 290px; display: flex; flex-direction: column; }
+    .hero-term .term-body { flex: 1; }
+
+    /* section label */
+    .sec-label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: .6px;
+      margin: 40px 0 16px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+    .sec-label::before { content: "//"; color: var(--line-strong); }
+    .sec-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+    /* keys panel */
+    .keys-panel { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); overflow: hidden; }
+    .keys-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+    .keys-head h3 { font-size: 14px; font-weight: 700; margin: 0; }
+    .keys-head .sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+    .keys-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 9px; }
+    .kbtn { font-family: var(--font-mono); font-size: 11px; height: 26px; padding: 0 9px; border: 1px solid var(--line-strong);
+      background: var(--surface); border-radius: 3px; color: var(--ink-2); display: inline-flex; align-items: center; gap: 5px; }
+    .kbtn:hover { background: var(--surface-2); color: var(--ink); }
+    .kscope { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); white-space: nowrap; }
+
+    /* module/console cards */
+    .mods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .mod { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-md); padding: 18px; text-decoration: none;
+      color: inherit; display: flex; flex-direction: column; gap: 13px; transition: border-color .14s, transform .14s; position: relative; }
+    .mod:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+    .mod:hover .mod-open { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .mod-wide { grid-column: span 2; }
+    .mod-top { display: flex; align-items: center; gap: 10px; }
+    .mod-idx { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); font-weight: 700; }
+    .mod-name { font-size: 15.5px; font-weight: 700; letter-spacing: -.2px; }
+    .mod-code { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--ink-3); padding: 2px 6px;
+      background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px; white-space: nowrap; }
+    .mod-ep { font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); }
+    .mod-ep .m { color: var(--brand-live); font-weight: 600; }
+    .mod-desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+    .mod-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding-top: 2px; }
+    .mod-meta { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); display: inline-flex; align-items: center; gap: 6px; }
+    .mod-open { font-family: var(--font-mono); font-size: 11.5px; height: 30px; padding: 0 12px; border: 1px solid var(--line-strong);
+      border-radius: 3px; display: inline-flex; align-items: center; gap: 7px; transition: all .14s; }
+
+    /* status dot */
+    .sdot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+
+    /* debug console section */
+    .debug-wrap { height: 240px; display: flex; flex-direction: column; }
+    .debug-wrap .term-body { flex: 1; }
+
+    footer { display: flex; align-items: center; justify-content: space-between; padding: 26px 0 48px; margin-top: 40px;
+      border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); }
+    footer a { color: var(--ink-2); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-term { height: 220px; }
+      .mods { grid-template-columns: 1fr; }
+      .mod-wide { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ░░ top bar ░░ -->
+  <div class="topbar">
+    <div class="wrap">
+      <span class="wm">station<span class="dimx">/hub</span></span>
+      <span class="region"><span class="sdot" style="background:var(--brand-live)"></span> ap-southeast-2 · Sydney</span>
+      <div style="flex:1"></div>
+      <a class="navlink" href="#consoles">Consoles</a>
+      <a class="navlink" href="#keys">Keys</a>
+      <a class="navlink" href="#logs">Logs</a>
+      <a class="navlink" href="#" style="font-family:var(--font-mono);white-space:nowrap">Docs ↗</a>
+      <button class="ghost-btn ink-btn">$ station login</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- ░░ hero ░░ -->
+    <section class="hero">
+      <div>
+        <pre class="ascii ascii-wm" id="asciiWm"></pre>
+        <div class="eyebrow"><span class="pulse-dot live-pulse"></span> v2.0 · GLOBAL DEVELOPER PLATFORM</div>
+        <h1 class="title">Build your own control surface<br/><em>for heterogeneous farm-robot fleets.</em></h1>
+        <p class="lede">STATION gives you the primitives — device identity, capability profiles, telemetry channels, command contracts, incident streams — behind a single API. We ship the building blocks and reference consoles. <strong>You build the UI you actually want.</strong></p>
+        <div class="cta-row">
+          <button class="ghost-btn ink-btn" style="height:38px;font-size:13px" onclick="document.getElementById('consoles').scrollIntoView({behavior:'smooth'})">Open a console →</button>
+          <button class="ghost-btn" style="height:38px;font-size:13px">Read the docs</button>
+        </div>
+        <div class="install">
+          <span class="pmt">$</span><span class="cmd" id="installCmd">npm i @station/sdk</span>
+          <span class="copy" onclick="copyTxt('npm i @station/sdk', this)">copy</span>
+        </div>
+      </div>
+      <div class="term hero-term">
+        <div class="term-head">
+          <span class="term-dot" style="background:#f0584b"></span>
+          <span class="term-dot" style="background:#f5be4f"></span>
+          <span class="term-dot" style="background:#5fc454"></span>
+          <span style="margin-left:6px">station — bash</span>
+          <span style="margin-left:auto" class="l-dim">80×24</span>
+        </div>
+        <div class="term-body" id="heroTerm"></div>
+      </div>
+    </section>
+
+    <!-- ░░ keys ░░ -->
+    <a id="keys"></a>
+    <div class="sec-label">credentials</div>
+    <div class="keys-panel">
+      <div class="keys-head">
+        <div>
+          <h3>API &amp; access keys</h3>
+          <div class="sub">Authenticate the SDK, your own UI, and field devices against the STATION control plane.</div>
+        </div>
+        <button class="kbtn" style="height:30px"><span style="font-size:13px">+</span> Create key</button>
+      </div>
+      <div class="keys-body" id="keysBody"></div>
+    </div>
+
+    <!-- ░░ consoles ░░ -->
+    <a id="consoles"></a>
+    <div class="sec-label">reference consoles · bring-your-own-UI</div>
+    <div class="mods" id="mods"></div>
+
+    <!-- ░░ debug/log console ░░ -->
+    <a id="logs"></a>
+    <div class="sec-label">live event stream · control plane</div>
+    <div class="term debug-wrap">
+      <div class="term-head">
+        <span class="sdot live-pulse" style="background:var(--brand-live)"></span>
+        <span>GET /v1/events?stream=true</span>
+        <span style="margin-left:auto" class="l-dim" id="logCount">0 events</span>
+        <span class="l-dim" style="margin-left:14px">region=ap-southeast-2</span>
+      </div>
+      <div class="term-body" id="debugTerm"></div>
+    </div>
+
+    <footer>
+      <span>STATION · multi-robot developer platform · made in Australia 🇦🇺</span>
+      <span><a href="#">status</a> · <a href="#">docs</a> · <a href="#">sdk</a> · v2.0.0 · region ap-southeast-2</span>
+    </footer>
+  </div>
+
+  <script>
+    // ---- ASCII wordmark (ANSI-shadow style) ----
+    document.getElementById('asciiWm').textContent =
+[
+" ___  ____  ____  ____  __  _____  _  _ ",
+"/ __)(_  _)(  _ \\(_  _)(  )(  _  )( \\( )",
+"\\__ \\  )(   )(_) )  )(   )(  )(_)(  )  ( ",
+"(___/ (__) (____/  (__) (__)(_____)(_)\\_)"
+].join("\n");
+
+    function copyTxt(t, el){ navigator.clipboard && navigator.clipboard.writeText(t); const o=el.textContent; el.textContent="copied ✓"; setTimeout(()=>el.textContent=o,1200); }
+
+    // ---- keys ----
+    const KEYS = [
+      { tag:"SESSION_KEY", val:"sk_demo_xxxxxxxxxxxxxxxxxxxxxxxxxxxx", scope:"session · 24h ttl", masked:false, live:true },
+      { tag:"API_KEY",     val:"api_demo_xxxxxxxxxxxxxxxxxxxxxxxxxxxx", scope:"robots:read · telemetry:read · commands:write", masked:false, live:true },
+      { tag:"SECRET_KEY",  val:"whdemo_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", scope:"webhook signing · server-side only", masked:true, live:true },
+      { tag:"DEVICE_KEY",  val:"dev_demo_xxxxxxxxxxxxxxxxxxxxxxxxxxxx", scope:"HMI-FIELD-07 · commissioning", masked:false, live:false },
+    ];
+    function renderKeys(){
+      const wrap = document.getElementById('keysBody');
+      wrap.innerHTML = '';
+      KEYS.forEach((k,i)=>{
+        const row = document.createElement('div'); row.className='keyrow';
+        const masked = k.masked;
+        const shown = masked ? '•'.repeat(34) : k.val;
+        row.innerHTML =
+          '<span class="ktag">'+k.tag+'</span>'+
+          '<span class="sdot" style="background:'+(k.live?'var(--brand-live)':'var(--ink-3)')+'"></span>'+
+          '<span class="keyval '+(masked?'masked':'')+'" data-full="'+k.val+'" data-masked="'+masked+'">'+shown+'</span>'+
+          '<span class="kscope">'+k.scope+'</span>'+
+          '<button class="kbtn reveal">'+(masked?'reveal':'hide')+'</button>'+
+          '<button class="kbtn copy">copy</button>'+
+          '<button class="kbtn rotate">rotate</button>';
+        wrap.appendChild(row);
+        const valEl = row.querySelector('.keyval');
+        let isMasked = masked;
+        row.querySelector('.reveal').onclick = ()=>{
+          isMasked = !isMasked;
+          valEl.textContent = isMasked ? '•'.repeat(34) : k.val;
+          valEl.classList.toggle('masked', isMasked);
+          row.querySelector('.reveal').textContent = isMasked ? 'reveal' : 'hide';
+        };
+        row.querySelector('.copy').onclick = (e)=> copyTxt(k.val, e.target);
+        row.querySelector('.rotate').onclick = (e)=>{ e.target.textContent='rotating…'; setTimeout(()=>e.target.textContent='rotated ✓',900); };
+      });
+    }
+    renderKeys();
+
+    // ---- consoles ----
+    const MODS = [
+      { idx:"01", name:"Fleet Control", code:"C01", ep:"/v1/robots · /v1/work-sessions", href:"farm-control/index.html",
+        desc:"Realtime map, work sessions, route & multi-robot orchestration for registered heterogeneous robots.",
+        meta:"desktop · live", dot:"var(--brand-live)", metaText:"10 robots online", wide:false },
+      { idx:"02", name:"Verify & Release", code:"C02·C04", ep:"/v1/audit · /v1/firmware", href:"release-console/index.html",
+        desc:"Conformance test runner, Audit Package builder, firmware static analysis, compatibility matrix & OTA rollout.",
+        meta:"desktop · ci", dot:"var(--st-warning)", metaText:"1 release blocked", wide:false },
+      { idx:"03", name:"Commissioning HMI", code:"H01", ep:"/v1/devices · /v1/registry", href:"hmi-console/index.html",
+        desc:"Field tablet wizard — pair the robot, identify modules with a dev key, match compatible versions, register to control.",
+        meta:"tablet · field", dot:"var(--ink-3)", metaText:"commission wizard", wide:false },
+      { idx:"04", name:"Telemetry Setup", code:"T01", ep:"/v1/channels · /v1/quality", href:"telemetry-console/index.html",
+        desc:"Map raw signals to standard channels, calibrate sensors, set sampling & thresholds, diagnose data quality.",
+        meta:"tablet · edge", dot:"var(--brand-live)", metaText:"quality 96.3%", wide:false },
+      { idx:"05", name:"Incidents & Quality", code:"C03", ep:"/v1/incidents · /v1/events", href:"incident-console/index.html",
+        desc:"Where events from all four consoles converge. Live event stream, unified root-cause timeline across work/command/telemetry/HMI/firmware, and standard action guides.",
+        meta:"desktop · ops", dot:"var(--st-critical)", metaText:"2 critical · 1 SLA breach", wide:true },
+    ];
+    function renderMods(){
+      const wrap = document.getElementById('mods'); wrap.innerHTML='';
+      MODS.forEach(m=>{
+        const a = document.createElement('a'); a.className='mod'+(m.wide?' mod-wide':''); a.href=m.href;
+        a.innerHTML =
+          '<div class="mod-top"><span class="mod-idx">'+m.idx+'</span><span class="mod-name">'+m.name+'</span><span class="mod-code">'+m.code+'</span></div>'+
+          '<div class="mod-ep"><span class="m">SDK</span> '+m.ep+'</div>'+
+          '<div class="mod-desc"'+(m.wide?' style="max-width:660px"':'')+'>'+m.desc+'</div>'+
+          '<div class="mod-foot"><span class="mod-meta"><span class="sdot" style="background:'+m.dot+'"></span>'+m.metaText+'</span>'+
+          '<span class="mod-open">open ↗</span></div>';
+        wrap.appendChild(a);
+      });
+    }
+    renderMods();
+
+    // ---- hero terminal (typed boot sequence) ----
+    const heroLines = [
+      ['$ station login', 'l-green'],
+      ['  ✓ authenticated — org=greenhouse-jinju region=ap-southeast-2', 'l-dim'],
+      ['$ station robots list --status=online', 'l-green'],
+      ['  RBT-THIN-0001   thinning   GH-A   working    78%', ''],
+      ['  RBT-PINCH-0003  pinching   GH-A   paused     41%', ''],
+      ['  RBT-THIN-0005   thinning   GH-B   working    64%', ''],
+      ['  … 7 more', 'l-dim'],
+      ['$ station events tail --severity=warn+', 'l-green'],
+      ['  [08:51:22] NAV-SAFETY-INTERLOCK  RBT-THIN-0008  emergency', 'l-red'],
+      ['  [08:48:10] CAM-FRAME-DROP        RBT-PINCH-0004 critical', 'l-amber'],
+      ['  streaming…', 'l-dim'],
+    ];
+    typeInto(document.getElementById('heroTerm'), heroLines, true);
+
+    function typeInto(el, lines, caret){
+      el.innerHTML=''; let i=0;
+      function next(){
+        if(i>=lines.length){ if(caret){ const c=document.createElement('span'); c.className='caret'; c.textContent='█'; c.style.color='var(--term-green)'; el.appendChild(c);} return; }
+        const [txt, cls] = lines[i];
+        const d=document.createElement('div'); if(cls) d.className=cls; d.textContent=txt; el.appendChild(d);
+        el.scrollTop=el.scrollHeight; i++;
+        setTimeout(next, txt.startsWith('$')? 360 : 150);
+      }
+      next();
+    }
+
+    // ---- live debug/log stream ----
+    const SRC = ['robot','telemetry','firmware','hmi','deploy'];
+    const SAMPLES = [
+      ['POST /v1/robots/RBT-THIN-0001/commands {resume}', '200', 'l-green'],
+      ['evt CAM-FRAME-DROP RBT-PINCH-0004 dropRate=0.18', 'critical', 'l-amber'],
+      ['GET /v1/channels/TCH-gh-humidity value=74.2', '200', 'l-dim'],
+      ['deploy OTA FW-CAM-2.4.2 canary 3/6', '202', 'l-blue'],
+      ['evt NAV-SAFETY-INTERLOCK RBT-THIN-0008', 'emergency', 'l-red'],
+      ['POST /v1/incidents promote INC-...0229', '201', 'l-green'],
+      ['hmi HMI-A-01 calibration.snapshot saved', '200', 'l-dim'],
+      ['analysis FW-EEP-3.1.0 critical=2 → blocked', '409', 'l-red'],
+      ['GET /v1/work-sessions?status=running n=4', '200', 'l-dim'],
+      ['evt EE-FORCE-DRIFT RBT-THIN-0001 force=11.8N', 'warning', 'l-amber'],
+    ];
+    let logN = 0;
+    const dbg = document.getElementById('debugTerm');
+    function pad2(n){ return n<10?'0'+n:''+n; }
+    function ts(){ const d=new Date(); return pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds()); }
+    function pushLog(){
+      const s = SAMPLES[Math.floor(Math.random()*SAMPLES.length)];
+      const d = document.createElement('div'); if(s[2]) d.className=s[2];
+      d.textContent = ts()+'  '+s[1].padEnd(9)+'  '+s[0];
+      dbg.appendChild(d);
+      while(dbg.children.length>60) dbg.removeChild(dbg.firstChild);
+      dbg.scrollTop = dbg.scrollHeight;
+      logN++; document.getElementById('logCount').textContent = logN+' events';
+    }
+    // seed
+    for(let i=0;i<10;i++) pushLog();
+    setInterval(pushLog, 1500);
+  </script>
+</body>
+</html>
