@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SDV-RIG-2026-001 — 생육분석 로봇 SDV 레퍼런스 리그 (제작 도면 세트)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"/>
+<style>
+  :root{--ink:#16181d;--ink-2:#3d434d;--ink-3:#7b828c;--line:#cfd3da;--line2:#9aa1ab;--hair:#e7e9ee;
+    --via:#1f6feb;--age:#d97706;--meta:#16a34a;--daedong:#8b5cf6;--emer:#b01c2e;--mono:"JetBrains Mono",monospace}
+  *{box-sizing:border-box} body{margin:0;background:#5b6068;color:var(--ink);font-family:Pretendard,system-ui,sans-serif;font-size:12px}
+  .mono{font-family:var(--mono)}
+  .bar{background:#0f1115;color:#fff;padding:9px 18px;display:flex;gap:12px;align-items:center}
+  .bar .wm{font-weight:800}.bar .dim{color:#9aa3af}.bar .sp{flex:1}.bar a{color:#cbd5e1;text-decoration:none;font-size:11.5px}
+  .stack{padding:18px;display:flex;flex-direction:column;gap:18px;align-items:center}
+  /* ===== 엔지니어링 시트 ===== */
+  .sheet{position:relative;width:100%;max-width:1190px;aspect-ratio:420/297;background:#fff;box-shadow:0 6px 22px rgba(0,0,0,.3)}
+  .frame{position:absolute;inset:8px;border:2px solid var(--ink)}
+  .frame::before{content:"";position:absolute;inset:5px;border:0.8px solid var(--ink)}
+  .zone{position:absolute;font-family:var(--mono);font-size:8.5px;color:var(--ink-2);font-weight:700}
+  .content{position:absolute;inset:12px;display:flex;flex-direction:column}
+  .ttl{font-size:13px;font-weight:800;letter-spacing:-.2px;margin:0 0 1px}
+  .ttl small{font-weight:600;color:var(--ink-3);font-size:11px}
+  /* title block */
+  .tb{position:absolute;right:13px;bottom:13px;width:430px;border:1.4px solid var(--ink);background:#fff;font-size:9.5px;line-height:1.25}
+  .tb table{width:100%;border-collapse:collapse}
+  .tb td{border:0.6px solid var(--line2);padding:2px 5px;vertical-align:top}
+  .tb .lab{color:var(--ink-3);font-size:7.5px;text-transform:uppercase;letter-spacing:.3px;display:block}
+  .tb .big{font-size:11px;font-weight:800}
+  .tb .co{font-weight:800;font-size:11px} .tb .co span{color:var(--via)}
+  /* revision */
+  .rev{position:absolute;right:13px;bottom:118px;width:430px;border:1px solid var(--ink);font-size:8.5px}
+  .rev table{width:100%;border-collapse:collapse} .rev td,.rev th{border:0.6px solid var(--line2);padding:2px 5px}
+  .rev th{background:#f1f3f6;font-size:7.5px;text-transform:uppercase;color:var(--ink-3);text-align:left}
+  /* drawing area */
+  .dwgrow{display:flex;gap:12px;flex:1;min-height:0}
+  .dwg{flex:1;min-width:0;display:flex;flex-direction:column}
+  .dwg svg{width:100%;height:auto}
+  .side{width:300px;flex:none;display:flex;flex-direction:column;gap:8px}
+  table.eng{width:100%;border-collapse:collapse;font-size:9px}
+  table.eng th{background:#eef0f3;border:0.6px solid var(--line2);padding:2px 5px;text-align:left;font-size:7.8px;text-transform:uppercase;letter-spacing:.2px;color:var(--ink-3)}
+  table.eng td{border:0.6px solid var(--line2);padding:2px 5px;vertical-align:top}
+  table.eng td.it{text-align:center;font-weight:800;font-family:var(--mono)}
+  .seclab{font-size:9px;font-weight:800;letter-spacing:.3px;color:var(--ink-2);margin:0 0 3px;text-transform:uppercase}
+  .notes{font-size:9px;line-height:1.5;color:var(--ink-2)} .notes b{color:var(--ink)}
+  .notes ol{margin:3px 0 0;padding-left:16px} .notes li{margin-bottom:1px}
+  .nk{font-family:var(--mono);font-size:8px;font-weight:700;color:#fff;border-radius:3px;padding:0 4px}
+  .red{color:var(--emer);font-weight:700}
+  @media print{
+    @page{size:A3 landscape;margin:0}
+    body{background:#fff} .bar{display:none} .stack{padding:0;gap:0}
+    .sheet{max-width:none;width:100%;height:297mm;aspect-ratio:auto;box-shadow:none;break-after:page;page-break-after:always}
+    .sheet:last-child{break-after:auto}
+    -webkit-print-color-adjust:exact;print-color-adjust:exact
+  }
+</style></head>
+<body>
+<div class="bar"><span class="wm">SDV-RIG-2026-001<span class="dim"> / 제작 도면 세트</span></span><span class="sp"></span>
+  <a href="sdv-rig-build-guide.md">제작 가이드(MD)</a><a href="sdv-crop-growth-rig.html">아키텍처 설계도</a></div>
+<div class="stack">
+
+  <!-- ===================== SHEET 1 — PLACEMENT ===================== -->
+  <div class="sheet"><div class="frame">
+    <div class="content">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1.4px solid var(--ink);padding-bottom:4px;margin-bottom:8px">
+        <div class="ttl">SHEET 1 · 부품 배치도 <small>Component Placement (top view, 단일 판넬)</small></div>
+        <div class="mono" style="font-size:9px;color:var(--ink-3)">단위 mm · 좌표=좌상단 모서리(0,0) · 격자 25mm · 척도 ≈1:2(A3)</div>
+      </div>
+      <div class="dwgrow">
+        <div class="dwg"><svg id="plate" viewBox="0 0 1080 720" role="img" aria-label="placement"></svg></div>
+        <div class="side">
+          <div>
+            <div class="seclab">Parts List (밸룬 번호)</div>
+            <table class="eng"><thead><tr><th style="width:24px">ITEM</th><th style="width:30px">QTY</th><th>품명</th><th style="width:54px">노드</th></tr></thead><tbody id="plist"></tbody></table>
+          </div>
+          <div class="notes" style="margin-top:auto;padding-top:6px;border-top:0.8px solid var(--hair)">
+            <b>치수 기준:</b> 각 부품에 표기된 (x,y) 좌표·풋프린트(W×H)로 위치 확정. 인쇄 척도는 참고용.<br>
+            <b>특징:</b> 외부 거치대 없이 <b>터치 디스플레이·카메라 포함 전 부품을 단일 판넬에 부착</b>.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rev"><table><thead><tr><th style="width:34px">REV</th><th style="width:74px">DATE</th><th>DESCRIPTION</th><th style="width:42px">BY</th></tr></thead>
+      <tbody><tr><td class="mono" style="text-align:center;font-weight:800">A</td><td class="mono">2026-06-03</td><td>최초 발행 (Phase A 레퍼런스 리그)</td><td>VIA</td></tr></tbody></table></div>
+    <div class="tb"><table>
+      <tr><td colspan="3" class="co">VIASOFT · <span>STATION SDV</span></td><td colspan="2" class="big">SDV-RIG-2026-001</td></tr>
+      <tr><td colspan="3"><span class="lab">Title</span>생육분석 로봇 SDV 레퍼런스 리그 — 부품 배치도</td><td><span class="lab">Rev</span><b>A</b></td><td><span class="lab">Sheet</span><b>1 / 3</b></td></tr>
+      <tr><td><span class="lab">Size</span>A3</td><td><span class="lab">Scale</span>≈1:2</td><td><span class="lab">Unit</span>mm</td><td><span class="lab">Proj</span>3rd∠</td><td><span class="lab">Date</span>2026-06-03</td></tr>
+      <tr><td colspan="2"><span class="lab">Drawn</span>VIA / R&D</td><td colspan="2"><span class="lab">Checked</span>—</td><td><span class="lab">Appd</span>—</td></tr>
+    </table></div>
+  </div></div>
+
+  <!-- ===================== SHEET 2 — INTERCONNECT ===================== -->
+  <div class="sheet"><div class="frame">
+    <div class="content">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1.4px solid var(--ink);padding-bottom:4px;margin-bottom:8px">
+        <div class="ttl">SHEET 2 · 결선도 <small>Interconnect — Power · E-stop · Data</small></div>
+        <div class="mono" style="font-size:9px;color:var(--ink-3)">전원 16/18/20AWG · CAN twisted pair 120Ω · star ground</div>
+      </div>
+      <div class="dwgrow">
+        <div class="dwg"><svg id="wire" viewBox="0 0 760 600" role="img" aria-label="interconnect"></svg></div>
+        <div class="side">
+          <div><div class="seclab">전원 결선</div>
+          <table class="eng"><thead><tr><th>FROM</th><th>TO</th><th>전선</th></tr></thead><tbody>
+            <tr><td>24V (+)</td><td>퓨즈 IN</td><td>16AWG 적·XT60</td></tr>
+            <tr><td>퓨즈 10A</td><td class="red">모터버스(E-stop)</td><td>16AWG 적</td></tr>
+            <tr><td>퓨즈 5A</td><td>DC-DC 12V IN</td><td>18AWG</td></tr>
+            <tr><td>퓨즈 5A</td><td>DC-DC 5V IN</td><td>18AWG</td></tr>
+            <tr><td>5V OUT</td><td>RPi5 ×2·Jetson</td><td>18AWG 개별</td></tr>
+            <tr><td>GND</td><td>버스바(1점)</td><td>16AWG 흑</td></tr>
+          </tbody></table></div>
+          <div><div class="seclab">데이터 결선</div>
+          <table class="eng"><thead><tr><th>FROM → TO</th><th>케이블</th></tr></thead><tbody>
+            <tr><td>MCU CAN → Agent(CAN HAT)</td><td>twisted · <b>120Ω×2</b></td></tr>
+            <tr><td>Jetson·Agent·HMI → Eth SW</td><td>RJ45 Cat6</td></tr>
+            <tr><td>LTE → Agent</td><td>USB-A</td></tr>
+            <tr><td>카메라 → Jetson</td><td>USB3 / CSI</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+    <div class="tb"><table>
+      <tr><td colspan="3" class="co">VIASOFT · <span>STATION SDV</span></td><td colspan="2" class="big">SDV-RIG-2026-001</td></tr>
+      <tr><td colspan="3"><span class="lab">Title</span>생육분석 로봇 SDV 레퍼런스 리그 — 결선도</td><td><span class="lab">Rev</span><b>A</b></td><td><span class="lab">Sheet</span><b>2 / 3</b></td></tr>
+      <tr><td><span class="lab">Size</span>A3</td><td><span class="lab">Scale</span>NTS</td><td><span class="lab">Unit</span>mm</td><td><span class="lab">Proj</span>3rd∠</td><td><span class="lab">Date</span>2026-06-03</td></tr>
+      <tr><td colspan="2"><span class="lab">Drawn</span>VIA / R&D</td><td colspan="2"><span class="lab">Checked</span>—</td><td><span class="lab">Appd</span>—</td></tr>
+    </table></div>
+  </div></div>
+
+  <!-- ===================== SHEET 3 — BOM · NOTES ===================== -->
+  <div class="sheet"><div class="frame">
+    <div class="content">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1.4px solid var(--ink);padding-bottom:4px;margin-bottom:8px">
+        <div class="ttl">SHEET 3 · BOM · 일반 주기 · 조립 순서 <small>Bill of Materials · General Notes · Assembly</small></div>
+      </div>
+      <div class="dwgrow">
+        <div class="dwg" style="flex:1.3">
+          <div class="seclab">Bill of Materials (BOM)</div>
+          <table class="eng"><thead><tr><th style="width:24px">ITEM</th><th style="width:28px">QTY</th><th>품명 / 규격</th><th>참조 / 대안</th><th style="width:48px">노드</th></tr></thead><tbody id="bom"></tbody></table>
+        </div>
+        <div class="side" style="width:330px">
+          <div><div class="seclab">일반 주기 (General Notes)</div>
+          <div class="notes"><ol>
+            <li>치수 단위 <b>mm</b>. 일반공차 ISO 2768-m.</li>
+            <li><b>전 부품을 단일 판넬(600×400×4)에 부착</b> — 디스플레이·카메라 포함, 외부 거치대 없음.</li>
+            <li>보드 고정 M2.5/M3 스탠드오프 11mm. 디스플레이 면브래킷, 카메라 전방 브래킷.</li>
+            <li><b class="red">E-stop은 물리 회로</b>로 모터 전원/enable 차단(SW 비의존). MCU·Agent는 보고만.</li>
+            <li>CAN 버스 <b>양끝 120Ω 종단</b>, 선형 토폴로지, 분기 최소.</li>
+            <li><b>star ground</b> 1점 접지. 모터 전원과 컴퓨트 전원 도메인 분리.</li>
+            <li>모든 케이블·단자·보드 <b>라벨 부착</b>(NODE-*·24V/5V/GND·CAN/ETH).</li>
+            <li>권한 우선순위: 물리 E-stop &gt; Agent 정책 &gt; HMI &gt; Cloud &gt; ACU.</li>
+          </ol></div></div>
+          <div><div class="seclab">조립 순서</div>
+          <div class="notes">① 판넬·DIN레일·채널 → ② 전원·E-stop·DC-DC → ③ 출력전압 12/5V 확인(무부하) → ④ E-stop 차단 확인 → ⑤ 보드 고정·개별 부팅 → ⑥ CAN/Eth/USB·120Ω → ⑦ 카메라·디스플레이 → ⑧ 라벨·체크리스트·통전.</div></div>
+          <div><div class="seclab red">통전 전 체크 (필수)</div>
+          <div class="notes">☐ GND 1점·쇼트無 ☐ 12/5V 정상 ☐ <span class="red">E-stop→모터 차단</span> ☐ 퓨즈 정격 ☐ CAN≈60Ω ☐ 모터 분리 첫부팅</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tb"><table>
+      <tr><td colspan="3" class="co">VIASOFT · <span>STATION SDV</span></td><td colspan="2" class="big">SDV-RIG-2026-001</td></tr>
+      <tr><td colspan="3"><span class="lab">Title</span>생육분석 로봇 SDV 레퍼런스 리그 — BOM·주기</td><td><span class="lab">Rev</span><b>A</b></td><td><span class="lab">Sheet</span><b>3 / 3</b></td></tr>
+      <tr><td><span class="lab">Size</span>A3</td><td><span class="lab">Scale</span>NTS</td><td><span class="lab">Unit</span>mm</td><td><span class="lab">Proj</span>3rd∠</td><td><span class="lab">Date</span>2026-06-03</td></tr>
+      <tr><td colspan="2"><span class="lab">Drawn</span>VIA / R&D</td><td colspan="2"><span class="lab">Checked</span>—</td><td><span class="lab">Appd</span>—</td></tr>
+    </table></div>
+  </div></div>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+function mk(svg,t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;}
+function tx(svg,x,y,s,a={}){const e=document.createElementNS(NS,"text");for(const k in a)e.setAttribute(k,a[k]);e.setAttribute("x",x);e.setAttribute("y",y);e.textContent=s;svg.appendChild(e);return e;}
+
+/* ---------- SHEET 1 : placement with dimensions + balloons ---------- */
+(function(){
+const svg=document.getElementById("plate");
+const SC=1.55, X0=86, Y0=70, PW=600*SC, PH=400*SC;   // 1mm=1.55px, panel 600×400
+mk(svg,"defs",{}).innerHTML='<marker id="d1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3d434d"/></marker>';
+mk(svg,"rect",{x:X0,y:Y0,width:PW,height:PH,rx:8,fill:"#f3f4f6",stroke:"#9aa1ab","stroke-width":1.6});
+for(let mm=0;mm<=600;mm+=25)mk(svg,"line",{x1:X0+mm*SC,y1:Y0,x2:X0+mm*SC,y2:Y0+PH,stroke:"#e3e6ea","stroke-width":mm%100===0?0.8:0.4});
+for(let mm=0;mm<=400;mm+=25)mk(svg,"line",{x1:X0,y1:Y0+mm*SC,x2:X0+PW,y2:Y0+mm*SC,stroke:"#e3e6ea","stroke-width":mm%100===0?0.8:0.4});
+mk(svg,"rect",{x:X0+15*SC,y:Y0+15*SC,width:PW-30*SC,height:PH-30*SC,rx:5,fill:"none",stroke:"#c4c8cf","stroke-dasharray":"5 4"});
+mk(svg,"rect",{x:X0+15*SC,y:Y0+8*SC,width:560*SC,height:8*SC,rx:2,fill:"#d7dbe1"});
+tx(svg,X0+19*SC,Y0+14*SC,"DIN rail",{"font-size":7.5,fill:"#7b828c","font-family":"JetBrains Mono"});
+// dimension lines (overall)
+const dimY=Y0-22;
+mk(svg,"line",{x1:X0,y1:dimY,x2:X0+PW,y2:dimY,stroke:"#3d434d","stroke-width":0.8,"marker-start":"url(#d1)","marker-end":"url(#d1)"});
+mk(svg,"line",{x1:X0,y1:dimY,x2:X0,y2:Y0,stroke:"#3d434d","stroke-width":0.5});mk(svg,"line",{x1:X0+PW,y1:dimY,x2:X0+PW,y2:Y0,stroke:"#3d434d","stroke-width":0.5});
+tx(svg,X0+PW/2,dimY-4,"600",{"font-size":10,"font-weight":700,fill:"#16181d","text-anchor":"middle","font-family":"JetBrains Mono"});
+const dimX=X0-24;
+mk(svg,"line",{x1:dimX,y1:Y0,x2:dimX,y2:Y0+PH,stroke:"#3d434d","stroke-width":0.8,"marker-start":"url(#d1)","marker-end":"url(#d1)"});
+mk(svg,"line",{x1:dimX,y1:Y0,x2:X0,y2:Y0,stroke:"#3d434d","stroke-width":0.5});mk(svg,"line",{x1:dimX,y1:Y0+PH,x2:X0,y2:Y0+PH,stroke:"#3d434d","stroke-width":0.5});
+tx(svg,dimX-4,Y0+PH/2,"400",{"font-size":10,"font-weight":700,fill:"#16181d","text-anchor":"middle","font-family":"JetBrains Mono","transform":`rotate(-90 ${dimX-4} ${Y0+PH/2})`});
+// components
+const COMP=[
+ {id:1,n:"단자대+퓨즈",x:20,y:18,w:90,h:46,c:"#2b3140",nd:"전원"},
+ {id:2,n:"DC-DC 24→12V",x:125,y:18,w:65,h:42,c:"#2b3140",nd:"전원"},
+ {id:3,n:"DC-DC 24→5V",x:200,y:18,w:65,h:42,c:"#2b3140",nd:"전원"},
+ {id:5,n:"Eth switch",x:360,y:16,w:100,h:62,c:"#2b3140",nd:"통신"},
+ {id:6,n:"WiFi AP",x:475,y:16,w:55,h:62,c:"#2b3140",nd:"통신"},
+ {id:7,n:"카메라",x:540,y:16,w:52,h:62,c:"#16a34a",nd:"VPU"},
+ {id:8,n:"터치 디스플레이 10.1\"",x:20,y:115,w:250,h:165,c:"#1f6feb",nd:"HMI"},
+ {id:9,n:"MCU · Portenta",x:300,y:115,w:114,h:97,c:"#d97706",nd:"MCU"},
+ {id:10,n:"Jetson Orin Nano",x:300,y:228,w:105,h:90,c:"#16a34a",nd:"VPU+ACU"},
+ {id:11,n:"Local Agent · RPi5",x:435,y:115,w:85,h:56,c:"#1f6feb",nd:"AGENT"},
+ {id:12,n:"HMI 컴퓨트 · RPi5",x:435,y:185,w:85,h:56,c:"#1f6feb",nd:"HMI"},
+ {id:13,n:"LTE Telemetry",x:435,y:255,w:70,h:40,c:"#2b3140",nd:"TEL"},
+ {id:14,n:"LPU(옵션)",x:435,y:312,w:85,h:56,c:"#8b5cf6",nd:"LPU"},
+];
+function balloon(px,py,id){mk(svg,"circle",{cx:px,cy:py,r:9,fill:"#fff",stroke:"#16181d","stroke-width":1.1});tx(svg,px,py+3,id,{"font-size":9,"font-weight":800,fill:"#16181d","text-anchor":"middle","font-family":"JetBrains Mono"});}
+COMP.forEach(c=>{const X=X0+c.x*SC,Y=Y0+c.y*SC,W=c.w*SC,H=c.h*SC,big=c.w>=160;
+  mk(svg,"rect",{x:X,y:Y,width:W,height:H,rx:6,fill:c.c,opacity:.96});
+  tx(svg,X+W/2,Y+H/2-(big?12:3),c.n,{"font-size":big?13:11,"font-weight":800,fill:"#fff","text-anchor":"middle"});
+  tx(svg,X+W/2,Y+H/2+(big?6:11),`(${c.x},${c.y})  ${c.w}×${c.h}`,{"font-size":big?10:8.5,fill:"#fff","text-anchor":"middle",opacity:.85,"font-family":"JetBrains Mono"});
+  balloon(X-3,Y-3,c.id);});
+// E-STOP
+const ex=X0+315*SC,ey=Y0+42*SC;mk(svg,"circle",{cx:ex,cy:ey,r:26,fill:"#b01c2e"});tx(svg,ex,ey+3,"E-STOP",{"font-size":10,"font-weight":800,fill:"#fff","text-anchor":"middle"});balloon(ex-22,ey-20,4);
+tx(svg,ex,ey+40,"(290,18) Ø22",{"font-size":8.5,fill:"#b01c2e","text-anchor":"middle","font-weight":700,"font-family":"JetBrains Mono"});
+// display width dim
+const dly=Y0+288*SC;mk(svg,"line",{x1:X0+20*SC,y1:dly,x2:X0+270*SC,y2:dly,stroke:"#3d434d","stroke-width":0.7,"marker-start":"url(#d1)","marker-end":"url(#d1)"});
+tx(svg,X0+145*SC,dly+10,"250",{"font-size":8.5,"font-weight":700,fill:"#16181d","text-anchor":"middle","font-family":"JetBrains Mono"});
+// parts list
+const PL=[[1,"단자대 + 퓨즈블록","전원"],[2,"DC-DC 24→12V","전원"],[3,"DC-DC 24→5V","전원"],[4,"E-STOP Ø22 2NC","안전"],[5,"Ethernet 5-port switch","통신"],[6,"WiFi AP","통신"],[7,"카메라 RGB/NIR","VPU"],[8,"터치 디스플레이 10.1\"","HMI"],[9,"MCU · Portenta MC","MCU"],[10,"Jetson Orin Nano","VPU+ACU"],[11,"Local Agent · RPi5","AGENT"],[12,"HMI 컴퓨트 · RPi5","HMI"],[13,"LTE Telemetry 모뎀","TEL"],[14,"LPU SBC (옵션)","LPU"]];
+document.getElementById("plist").innerHTML=PL.map(r=>`<tr><td class="it">${r[0]}</td><td style="text-align:center">1</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+})();
+
+/* ---------- SHEET 2 : interconnect block diagram ---------- */
+(function(){
+const svg=document.getElementById("wire");
+mk(svg,"defs",{}).innerHTML='<marker id="w1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7b828c"/></marker><marker id="wr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b01c2e"/></marker>';
+function box(x,y,w,h,t,fill,fc){mk(svg,"rect",{x,y,width:w,height:h,rx:6,fill,stroke:"#9aa1ab","stroke-width":0.8});tx(svg,x+w/2,y+h/2+3,t,{"font-size":10,"font-weight":700,fill:fc||"#16181d","text-anchor":"middle"});}
+// power tree (top)
+box(20,20,110,34,"24V Battery","#0f1115","#fff");box(150,20,60,34,"Fuse","#fff");
+mk(svg,"line",{x1:130,y1:37,x2:150,y2:37,stroke:"#7b828c","stroke-width":1.4});
+box(240,8,150,28,"Motor Power (E-stop)","#fdecea","#b01c2e");box(240,44,150,26,"DC-DC 12V","#f1f3f6");box(240,76,150,26,"DC-DC 5V","#f1f3f6");
+mk(svg,"line",{x1:210,y1:37,x2:240,y2:22,stroke:"#b01c2e","stroke-width":1.4});mk(svg,"line",{x1:210,y1:37,x2:240,y2:57,stroke:"#7b828c","stroke-width":1.2});mk(svg,"line",{x1:210,y1:37,x2:240,y2:89,stroke:"#7b828c","stroke-width":1.2});
+tx(svg,640,30,"전원 트리 (24V → 분기)",{"font-size":10,"font-weight":800,fill:"#3d434d","text-anchor":"middle"});
+// e-stop chain
+mk(svg,"circle",{cx:60,cy:150,r:24,fill:"#b01c2e"});tx(svg,60,153,"E-STOP",{"font-size":9,"font-weight":800,fill:"#fff","text-anchor":"middle"});
+box(130,128,130,44,"Safety Relay","#fff","#b01c2e");box(300,128,150,44,"Motor Enable 차단","#fdecea","#b01c2e");
+mk(svg,"line",{x1:84,y1:150,x2:130,y2:150,stroke:"#b01c2e","stroke-width":2,"marker-end":"url(#wr)"});
+mk(svg,"line",{x1:260,y1:150,x2:300,y2:150,stroke:"#b01c2e","stroke-width":2,"marker-end":"url(#wr)"});
+mk(svg,"line",{x1:195,y1:172,x2:195,y2:200,stroke:"#7b828c","stroke-width":1,"stroke-dasharray":"3 3","marker-end":"url(#w1)"});
+box(130,200,130,30,"MCU emergency in","#f1f3f6");
+tx(svg,510,150,"E-stop 회로 (물리 우선)",{"font-size":10,"font-weight":800,fill:"#b01c2e","text-anchor":"middle"});
+tx(svg,510,166,"① 물리 차단  ② SW 보고",{"font-size":8.5,fill:"#7b828c","text-anchor":"middle"});
+// data bus
+box(300,300,160,52,"Local Agent (RPi5)","#0f1115","#fff");
+const nodes=[["MCU","#d97706",40,420],["LPU","#8b5cf6",180,420],["VPU","#16a34a",320,420],["ACU","#16a34a",460,420],["Telemetry","#1f6feb",600,420]];
+nodes.forEach(n=>{box(n[2],n[3],110,40,n[0],n[1],"#fff");});
+box(560,300,160,46,"HMI (RPi+Touch)","#e7f0ff","#1f6feb");
+mk(svg,"line",{x1:460,y1:326,x2:560,y2:326,stroke:"#7b828c","stroke-width":1.4,"marker-end":"url(#w1)"});tx(svg,510,320,"WiFi/WS",{"font-size":8,fill:"#7b828c","text-anchor":"middle"});
+mk(svg,"path",{d:"M95,420 L95,392 L300,392 L340,352",fill:"none",stroke:"#d97706","stroke-width":1.6,"marker-end":"url(#w1)"});tx(svg,150,386,"CAN/RS485 · 120Ω",{"font-size":8,fill:"#d97706","text-anchor":"middle","font-weight":700});
+["#8b5cf6","#16a34a","#16a34a","#1f6feb"].forEach((c,i)=>{const nx=nodes[i+1][2]+55;mk(svg,"path",{d:`M${nx},420 L${nx},378 L${380+i*5},352`,fill:"none",stroke:c,"stroke-width":1.4,"marker-end":"url(#w1)"});});
+tx(svg,520,392,"Ethernet / ROS2·DDS",{"font-size":8,fill:"#16a34a","text-anchor":"middle","font-weight":700});
+tx(svg,380,486,"데이터 버스 (노드 → Local Agent → HMI)",{"font-size":10,"font-weight":800,fill:"#3d434d","text-anchor":"middle"});
+})();
+
+/* ---------- SHEET 3 : BOM ---------- */
+(function(){
+const BOM=[
+ [1,1,"단자대 + 퓨즈블록 (메인10A·분기5A)","DIN 단자대","전원"],
+ [2,1,"DC-DC 24→12V 컨버터","≥5A","전원"],
+ [3,1,"DC-DC 24→5V 컨버터","≥5A","전원"],
+ [4,1,"E-STOP Ø22 2NC + Safety relay","2채널","안전"],
+ [5,1,"Ethernet 5-port switch","기가","통신"],
+ [6,1,"WiFi AP / 소형 라우터","—","통신"],
+ [7,1,"카메라 RGB/NIR","USB3/CSI","VPU"],
+ [8,1,"터치 디스플레이 10.1\" 정전","HDMI/USB","HMI"],
+ [9,1,"MCU — Arduino Portenta Machine Control","대안 STM32 Nucleo+CAN","MCU"],
+ [10,1,"VPU+ACU — Jetson Orin Nano Super DevKit","vpu·acu 프로세스 분리","VPU+ACU"],
+ [11,1,"Local Agent — Raspberry Pi 5 8GB","CAN HAT 포함","AGENT"],
+ [12,1,"HMI 컴퓨트 — Raspberry Pi 5","web-kiosk","HMI"],
+ [13,1,"LTE Telemetry 모뎀","Quectel EC25 등","TEL"],
+ [14,1,"LPU SBC + LiDAR/UWB/IMU (옵션)","측위","LPU"],
+ [15,1,"판넬 600×400×4 알루미늄/복합 + DIN레일 + 스탠드오프","M2.5/M3","기구"],
+ [16,1,"배선 set (16/18/20AWG·CAN twisted·Cat6·120Ω·라벨)","—","배선"],
+];
+document.getElementById("bom").innerHTML=BOM.map(r=>`<tr><td class="it">${r[0]}</td><td style="text-align:center">${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join("");
+})();
+</script>
+</body></html>
