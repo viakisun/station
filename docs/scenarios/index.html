@@ -34,7 +34,7 @@
 
   <!-- ============ A. 통합 모델 ============ -->
   <h2 id="model">A. 무엇을 · 무엇으로 잇는가 — 6종 표준 계약</h2>
-  <p>서로 다른 제조사 산출물을 "같은 언어로 말하게" 하는 6개의 이음새. 각 계약은 <code>module_id</code> 스파인에 묶인다.</p>
+  <p>서로 다른 기관 노드 산출물을 "같은 언어로 말하게" 하는 6개의 이음새. 각 계약은 <code>module_id</code> 스파인에 묶인다.</p>
   <div class="grid2" id="contracts"></div>
 
   <h3 style="margin-top:22px">통합 데이터 스파인</h3>
@@ -78,7 +78,7 @@
       </div>
     </div>
   </div>
-  <p style="font-size:12.5px;color:var(--ink-3)">→ <strong>신규 벤더 합류 비용 O(N) → O(1)</strong>. plan.pdf 성과지표 "다중 로봇 통합관제 시스템 구축"·비아 2차년도 "통합관제 SW 시제품"과 직접 연결.</p>
+  <p style="font-size:12.5px;color:var(--ink-3)">→ <strong>신규 기관/노드 합류 비용 O(N) → O(1)</strong>. plan.pdf 성과지표 "다중 로봇 통합관제 시스템 구축"·비아 2차년도 "통합관제 SW 시제품"과 직접 연결.</p>
 
   <!-- ============ Configurator ============ -->
   <h2 id="config">조합 구성기 — 직접 이어보기</h2>
@@ -94,7 +94,7 @@
 
   <!-- ============ Scenarios ============ -->
   <h2 id="scenarios">C. 통합 시나리오 8종 — 장소·순서로 보는 "잇는" 행위</h2>
-  <p>생애주기 6종(개발실→사무실→시뮬→관제실→온실→현장) + 통합 패턴 2종(신규 벤더 합류 · 버전 업그레이드).</p>
+  <p>생애주기 6종(개발실→사무실→시뮬→관제실→온실→현장) + 통합 패턴 2종(신규 기관/노드 합류 · 버전 업그레이드).</p>
   <div class="cards" id="scards"></div>
 
   <!-- ============ Traceability ============ -->
@@ -102,7 +102,7 @@
   <p>시나리오 ↔ 기관 ↔ 표준 계약 ↔ STATION 화면 ↔ JJ 산출물 ↔ plan.pdf. 빠짐없는 연결 증명.</p>
   <div style="overflow:auto">
   <table class="matrix">
-    <thead><tr><th>시나리오</th><th>기관</th><th>잇는 계약</th><th>STATION 화면</th><th>JJ 산출물</th></tr></thead>
+    <thead><tr><th>시나리오</th><th>행위자(ORG-*)</th><th>owner_org</th><th>node</th><th>잇는 계약</th><th>STATION 화면</th></tr></thead>
     <tbody id="trace-body"></tbody>
   </table>
   </div>
@@ -113,12 +113,12 @@
 <script>
 // ---- 6 contracts ----
 const CONTRACTS = [
-  {name:"Capability Profile", conn:"메타 매니퓰·엔드이펙터의 '할 수 있는 일'", schema:"commands[] · telemetry_schema · parameter_schema · calibration_requirements", at:"Build C02"},
-  {name:"Protocol Profile", conn:"에이지/대동 모듈의 통신 계약", schema:"transport(MQTT·ROS2·DDS) · topic_map · payload_schema · ack/timeout · security", at:"Build C02"},
-  {name:"Telemetry Channel", conn:"모든 모듈의 원천 신호 → 표준 채널", schema:"raw_signal → standard_channel · unit · sampling · quality", at:"Telemetry T01"},
-  {name:"Command Contract", conn:"매니퓰레이터 제어 명령", schema:"verb(START·PAUSE·CALIBRATE·ESTOP) · ack · safety_interlock", at:"Field·Ops"},
-  {name:"Firmware Manifest", conn:"모듈 펌웨어 + 호환성", schema:"version · checksum · compatibility_rules · static_analysis", at:"Build C04"},
-  {name:"Calibration Profile", conn:"엔드이펙터·센서 보정", schema:"target · parameter_set · version · audit_link", at:"Field H01·T01"},
+  {name:"Capability Profile", conn:"ORG-META VPU·ACU WorkModule의 '할 수 있는 일'", schema:"commands[] · telemetry_schema · parameter_schema · calibration_requirements", at:"Build C02"},
+  {name:"Protocol Profile", conn:"ORG-AGE MCU·ORG-DAEDONG LPU 노드의 통신 계약", schema:"transport(MQTT·ROS2·DDS) · topic_map · payload_schema · ack/timeout · security", at:"Build C02"},
+  {name:"Telemetry Channel", conn:"전 노드 원천 신호 → ORG-VIA Telemetry 표준 채널", schema:"raw_signal → standard_channel · unit · sampling · quality", at:"Telemetry T01"},
+  {name:"Command Contract", conn:"ORG-META ACU 제어 명령", schema:"verb(START·PAUSE·CALIBRATE·ESTOP) · ack · safety_interlock", at:"Field·Ops"},
+  {name:"Firmware Manifest", conn:"노드 펌웨어 + 호환성", schema:"version · checksum · compatibility_rules · static_analysis", at:"Build C04"},
+  {name:"Calibration Profile", conn:"ORG-KIRO/NAS EE·센서 보정", schema:"target · parameter_set · version · audit_link", at:"Field H01·T01"},
 ];
 document.getElementById('contracts').innerHTML = CONTRACTS.map(c=>
   `<div class="contract"><div class="name">${c.name}<span class="badge">${c.at}</span></div>
@@ -131,10 +131,10 @@ grid(document.getElementById('cost-n'),'std',i=>i%6===0); // one per row ~N
 
 // ---- configurator ----
 const OPTS = {
-  mobile:{label:"모바일 (에이지)", v:[["P2","에이지 P2"],["P3","에이지 P3"]]},
-  manip:{label:"매니퓰 (메타)", v:[["X1","메타 X1 (적과)"],["X2","메타 X2 (적과·적심)"]]},
-  ee:{label:"엔드이펙터", v:[["thin_nics","농과원 적과EE"],["pinch_kiro","KIRO 적심EE"]]},
-  nav:{label:"측위·맵 (대동)", v:[["A7","LPS · MAP-A v7"],["B5","LPS · MAP-B v5"],["C3","레일 · MAP-C v3"]]},
+  mobile:{label:"MCU · ORG-AGE 에이지", v:[["P2","에이지 P2"],["P3","에이지 P3"]]},
+  manip:{label:"ACU/WorkModule · ORG-META 메타", v:[["X1","메타 X1 (적과)"],["X2","메타 X2 (적과·적심)"]]},
+  ee:{label:"EE · ORG-KIRO/NAS(메타 변형)", v:[["thin_nics","농과원 적과EE"],["pinch_kiro","KIRO 적심EE"]]},
+  nav:{label:"LPU · ORG-DAEDONG 대동", v:[["A7","LPS · MAP-A v7"],["B5","LPS · MAP-B v5"],["C3","레일 · MAP-C v3"]]},
   fw:{label:"펌웨어", v:[["CAM242","FW-CAM-2.4.2"],["EEP310","FW-EEP-3.1.0"],["NAV406","FW-NAV-4.0.6"]]},
 };
 const COMBO = Object.values(OPTS).reduce((a,o)=>a*o.v.length,1);
@@ -150,22 +150,22 @@ function evaluate(){
   const r = {};
   // Capability: 적심EE requires X2
   r.cap = (sel.ee==="pinch_kiro" && sel.manip==="X1")
-    ? {s:"blocked", why:"적심 엔드이펙터(KIRO)는 X2 매니퓰레이터의 적심 Capability가 필요 — X1은 적과만 지원", fix:"매니퓰을 메타 X2로 변경"}
-    : {s:"pass", why:"명령·파라미터·캘리브 요구가 매니퓰 Capability와 합치"};
+    ? {s:"blocked", why:"적심 EE(ORG-KIRO 변형)는 ORG-META ACU의 X2 적심 Capability가 필요 — X1 ACU는 적과만 지원", fix:"ACU WorkModule을 ORG-META X2로 변경"}
+    : {s:"pass", why:"ORG-META ACU Capability와 명령·파라미터·캘리브 요구 계약이 호환"};
   // Protocol: always standard MQTT here
-  r.proto = {s:"pass", why:"표준 Protocol Profile(MQTT v5 · ack at-least-once) 합치"};
+  r.proto = {s:"pass", why:"ORG-AGE MCU↔ORG-META ACU 표준 Protocol(MQTT v5 · ack at-least-once) 호환"};
   // Telemetry
-  r.tel = {s:"pass", why:"원천 신호가 표준 채널로 매핑(게이트웨이)"};
+  r.tel = {s:"pass", why:"전 노드 원천 신호가 ORG-VIA Telemetry 표준 채널로 매핑"};
   // Command
-  r.cmd = {s:"pass", why:"START·PAUSE·CALIBRATE·ESTOP 계약·안전 인터록 합치"};
+  r.cmd = {s:"pass", why:"ORG-AGE MCU↔ORG-META ACU Command/Signal(START·PAUSE·CALIBRATE·ESTOP)·안전 인터록 호환"};
   // Firmware
-  r.fw = sel.fw==="EEP310" ? {s:"blocked", why:"정적분석 critical 2건 미해결 + Pinch 호환 incompatible", fix:"정적분석 상세 → waiver 또는 FW-CAM-2.4.2로 변경"}
-       : sel.fw==="NAV406" ? {s:"confirm", why:"정적분석 진행 중 — 승인 전 확인 필요", fix:"분석 완료 후 릴리즈 승인"}
-       : {s:"pass", why:"분석 passed · 호환 ok · Audit approved"};
+  r.fw = sel.fw==="EEP310" ? {s:"blocked", why:"노드 펌웨어 정적분석 critical 2건 미해결 + Pinch EE 호환 incompatible", fix:"정적분석 상세 → waiver 또는 FW-CAM-2.4.2로 변경"}
+       : sel.fw==="NAV406" ? {s:"confirm", why:"LPU 노드 펌웨어 정적분석 진행 중 — 승인 전 확인 필요", fix:"분석 완료 후 릴리즈 승인"}
+       : {s:"pass", why:"분석 passed · 노드 호환 ok · Audit approved"};
   // Calibration / Version(map)
-  r.cal = (sel.ee==="pinch_kiro") ? {s:"confirm", why:"적심 캘리브레이션 due — 현장 수행 필요(G4)", fix:"현장 HMI 캘리브레이션 허브에서 수행"}
-        : (sel.nav==="B5") ? {s:"warn", why:"MAP-B v5 검증 실패 이력 — 경로 검증 권장", fix:"맵 v4로 롤백 또는 재검증"}
-        : {s:"pass", why:"캘리브·맵 버전 합치"};
+  r.cal = (sel.ee==="pinch_kiro") ? {s:"confirm", why:"ORG-KIRO 적심 EE 캘리브레이션 due — 현장 수행 필요(G4)", fix:"현장 HMI 캘리브레이션 허브에서 수행"}
+        : (sel.nav==="B5") ? {s:"warn", why:"ORG-DAEDONG LPU MAP-B v5 측위 Signal 검증 실패 이력 — 경로 검증 권장", fix:"맵 v4로 롤백 또는 재검증"}
+        : {s:"pass", why:"ORG-DAEDONG LPU→ORG-META ACU 측위 Signal·캘리브·맵 버전 호환"};
   return r;
 }
 const NAMES = {cap:"Capability", proto:"Protocol", tel:"Telemetry", cmd:"Command", fw:"Firmware", cal:"Calibration"};
@@ -190,13 +190,13 @@ render();
 // ---- scenario cards ----
 const PLACE = {office:["🏢","var(--p-office)"], sim:["🖥","var(--p-sim)"], control:["🖥","var(--p-control)"], house:["🌱","var(--p-house)"], field:["🛠","var(--p-field)"]};
 const SCEN = [
-  ["s1","S1","office","산출물 표준 온보딩","제조사 5기관이 각 모듈을 표준 계약으로 등록 — 이음의 출발"],
-  ["s2","S2","office","이기종 펌웨어 통합 검증·배포","서로 다른 모듈 펌웨어를 한 도구로 정적분석·호환성·OTA"],
-  ["s3","S3","sim","실물 전 조합 가상 통합·시험가동","디지털트윈·텔레메트리 게이트웨이로 조합이 맞물리는지 검증"],
-  ["s4","S4","control","이기종 다중 로봇 통합 관제","여러 기관 모듈로 조립된 로봇들을 한 화면에서 하나처럼"],
+  ["s1","S1","office","산출물 표준 온보딩","각 기관이 자기 노드를 표준 계약으로 등록 — 에이지 MCU·메타 VPU/ACU/매니퓰·대동 LPU"],
+  ["s2","S2","office","이기종 펌웨어 통합 검증·배포","서로 다른 노드 펌웨어를 한 도구로 정적분석·호환성·OTA"],
+  ["s3","S3","sim","실물 전 조합 가상 통합·시험가동","에이지 MCU+메타 VPU·ACU·매니퓰·EE+대동 LPU 조립을 비아 플랫폼이 가상 통합"],
+  ["s4","S4","control","이기종 다중 로봇 통합 관제","기관 노드 조립체(MCU·VPU·ACU·LPU·Telemetry)로 만든 로봇들을 비아 관제로 통합"],
   ["s5","S5","house","조합 로봇 현장 운용","태블릿 HMI — 작업 패키지 수신·Gate Check·hold 작업"],
-  ["s6","S6","field","이기종 가로지르는 문제 추적·개선","어느 모듈에서 문제 나도 한 시스템에서 원인까지 추적"],
-  ["s7","S7","office","🆕 신규 벤더 합류 — 무중단 통합","새 제조사 모듈을 표준 1회 등록 → 기존 플릿에 무중단 합류"],
+  ["s6","S6","field","이기종 가로지르는 문제 추적·개선","장애를 노드/기관 책임으로 라우팅 — Event.source·node·code가 owner_org를 가리킴"],
+  ["s7","S7","office","🆕 신규 기관/노드 합류 — 무중단 통합","신규 기관/노드가 표준계약 1회로 합류 → 기존 플릿 무중단(O(N)→O(1))"],
   ["s8","S8","office","🆕 버전 업그레이드 — 호환성 게이트·롤백","펌웨어/Capability 버전 업 → 자동 호환 검증·canary·롤백"],
 ];
 document.getElementById('scards').innerHTML = SCEN.map(([id,code,pl,t,d])=>{
@@ -207,14 +207,14 @@ document.getElementById('scards').innerHTML = SCEN.map(([id,code,pl,t,d])=>{
 
 // ---- traceability ----
 const TRACE = [
-  ["S1","제조사 5기관","Capability·Protocol→Audit","Build 개발자킷·Audit","C02 / 통합 Audit"],
-  ["S2","배포관리자","Firmware Manifest·호환성","Release 승인·배포·롤백","JJ-U03"],
-  ["S3","UNIST·제조사","Telemetry·Protocol(가상)","디지털트윈·Telemetry","JJ-P01·P02"],
-  ["S4","비아 운영자","전 계약 매칭·Command","통합관제 대시보드·맵","통합관제·JJ-U01"],
-  ["S5","현장 오퍼레이터","Calibration·Command·Gate","Field HMI 운용·캘리브","JJ-U01"],
-  ["S6","오퍼레이터·유지보수·관제","Event/Incident 스파인","장애 관리·원인분류·e-stop","JJ-U02 + 안전"],
-  ["S7","신규 제조사·통합담당","Capability/Protocol 1회→레지스트리","Audit 승인·통합 대시보드","반복성 증명"],
-  ["S8","배포관리자·운영자","Firmware·VersionCompat 게이트","호환성·배포·OTA·롤백","확장성·안전망"],
+  ["S1","기관 5곳","ORG-AGE·META·DAEDONG·VIA·KIRO/NAS","MCU·VPU·ACU·LPU·Telemetry","ModuleManifest·Node·ProtocolProfile","Build 개발자킷·Audit"],
+  ["S2","배포관리자","(노드 owner_org)","(대상 node)","Firmware Manifest·호환성","Release 승인·배포·롤백"],
+  ["S3","메타·대동·에이지","ORG-META·DAEDONG·AGE","VPU·ACU·LPU·MCU","Signal·Command(가상)","디지털트윈·Telemetry"],
+  ["S4","비아 운영자","ORG-VIA","(전 노드)","CommandEnvelope·Signal·GateResult","통합관제 대시보드·맵"],
+  ["S5","현장 오퍼레이터","(작업 노드 owner_org)","(작업 node)","Calibration·Command·Gate","Field HMI 운용·캘리브"],
+  ["S6","오퍼레이터·유지보수·관제","(장애 노드 owner_org)","(장애 node)","Event/Incident","장애 관리·원인분류·e-stop"],
+  ["S7","신규 기관","(신규 ORG-*)","(신규 node)","ModuleManifest 1회→레지스트리","Audit 승인·통합 대시보드"],
+  ["S8","배포관리자·운영자","(노드 owner_org)","(대상 node)","Firmware·VersionCompat 게이트","호환성·배포·OTA·롤백"],
 ];
 document.getElementById('trace-body').innerHTML = TRACE.map(r=>`<tr>${r.map((c,i)=>`<td${i===0?' class="mono"':''}>${c}</td>`).join('')}</tr>`).join('');
 </script>

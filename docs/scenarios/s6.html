@@ -32,7 +32,7 @@
   </div>
 
   <!-- ============ intro ============ -->
-  <p style="font-size:15px;max-width:780px">어느 기관 모듈에서 문제가 나도 — <strong><code>work_session_id</code>·<code>module_id</code> 스파인</strong> 덕에 <strong>한 시스템</strong>에서 원인까지 추적·조치하고, 필요 시 <strong>펌웨어 개선으로 연결(폐루프)</strong>한다. 메타·에이지·대동·KIRO/농과원 어느 벤더의 모듈이 원인이어도, 이벤트→장애→원인→조치→Close가 같은 흐름으로 흐른다.</p>
+  <p style="font-size:15px;max-width:780px">어느 기관 노드에서 문제가 나도 — <strong><code>work_session_id</code>·<code>module_id</code> 스파인</strong> 덕에 <strong>한 시스템</strong>에서 원인까지 추적·조치하고, 필요 시 <strong>펌웨어 개선으로 연결(폐루프)</strong>한다. 어느 기관의 노드가 원인이어도, <code>Event.source</code>·<code>node</code>·<code>owner_org</code>가 책임을 가리키고 이벤트→장애→원인→조치→Close가 같은 흐름으로 흐른다.</p>
 
   <!-- ============ timeline ============ -->
   <div class="timeline">
@@ -42,7 +42,7 @@
       <div class="num">1</div>
       <div class="body">
         <div class="act">작업 중 이상 이벤트</div>
-        <div class="desc">작업 중 이상이 감지된다 — <strong>비전 프레임드롭</strong>(KIRO 엔드이펙터) 또는 <strong>관절 과열</strong>(메타 매니퓰). 이벤트는 스파인에 묶여 관제 이벤트 스트림으로 흐른다.</div>
+        <div class="desc">작업 중 이상이 감지된다 — <strong>비전 프레임드롭</strong>(VPU·ORG-META) 또는 <strong>관절 과열</strong>(ACU·ORG-META). 이벤트는 스파인에 묶여 관제 이벤트 스트림으로 흐른다.</div>
         <div class="ilink">
           <span class="node">모듈 이상</span><span class="arrow">→</span>
           <span class="via">Event 스파인 (work_session_id)</span><span class="arrow">→</span>
@@ -74,11 +74,11 @@
       <div class="num">3</div>
       <div class="body">
         <div class="act">원인 분류 · 영향 범위</div>
-        <div class="desc">어느 <code>module_id</code>·<code>firmware_id</code>가 원인인지 taxonomy tree로 추적하고, 같은 모듈을 쓰는 다른 로봇까지 <strong>영향 범위</strong>를 산정한다.</div>
+        <div class="desc">어느 <code>node</code>·<code>owner_org</code>·<code>firmware_id</code>가 원인인지 taxonomy tree로 추적하고, 같은 노드를 쓰는 다른 로봇까지 <strong>영향 범위</strong>를 산정한다.</div>
         <div class="ilink">
           <span class="node">이벤트</span><span class="arrow">→</span>
-          <span class="via">원인 taxonomy (module_id·firmware_id)</span><span class="arrow">→</span>
-          <span class="node">원인 모듈·펌웨어</span>
+          <span class="via">원인 taxonomy (node·owner_org·firmware_id)</span><span class="arrow">→</span>
+          <span class="node">원인 노드·기관·펌웨어</span>
         </div>
         <span class="screen-tag">⌥ Ops · 원인 분류·영향 범위</span>
         <figure class="shot"><img src="../reports/screenshots/ops/06-incident-cause.png" alt="원인 분석"/><figcaption><b>원인 분석</b> — 근본원인 분류 체계 매핑</figcaption></figure>

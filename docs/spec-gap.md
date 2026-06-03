@@ -203,3 +203,5 @@ MaintenanceTask, audit_log…). 따라서 **Phase 0(스키마 정합) + Track B(
 > **STATION Field OS 1단계 채택 완료(2026-06)** — STATION Contracts(`@station/contracts` 스키마 SSOT)·노드/기관 소유 모델·런타임 인터페이스를 비준했다([architecture/station-field-os.md](architecture/station-field-os.md), ADR-010~013). 2단계(참조 런타임 `packages/local-agent`+`apps/agent`)·3단계(Flutter HMI, `schema/`→Dart codegen)는 후속.
 >
 > **Stage 1.5 채택 완료(2026-06)** — 계약 범용화: **Robot Blueprint**(로봇=노드 조합, 새 로봇=Blueprint 1개)·**개방형 NodeKind**(표준 5종 + custom, 드론 FCU)·**platform core↔instance profile 분리**(schema=robot-agnostic, profiles=greenhouse/reference)를 비파괴로 도입했다([ADR-014](adr/ADR-014-robot-blueprint-open-node-taxonomy.md), validate 17/17). 온실 과제는 첫 적용 사례(reference deployment).
+>
+> **목업 시연(2026-06)** — 계약/어댑터를 UI로 증명: console **Local Agent 런타임 시뮬**(`/control/agent` — 노드 신호 스트림·명령 3단계 ACK·Policy 안전 룰) + **노드 적합성·SDK**(`/audit/sdk` — Conformance suites·신규 custom 노드 FCU 합류). 통합 시나리오 S1·S3·S4·S6·S7+구성기·추적성을 노드/기관 분해로 정합. 전부 fake 데이터 목업 — 실제 런타임/서버 아님(2단계 후속).

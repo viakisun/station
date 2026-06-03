@@ -10,6 +10,7 @@ const CONSOLE_SCREENS = [
   { key: "dashboard", code: "C01-00", label: "Ops dashboard", href: "/control" },
   { key: "maps",      code: "C01-01", label: "Maps · versions", href: "/control/maps" },
   { key: "work-plan", code: "C01-04", label: "Work plan",      href: "/control/work-plan" },
+  { key: "agent",     code: "FOS",    label: "Local Agent",    href: "/control/agent" },
 ];
 
 function isActive(pathname: string, href: string) {

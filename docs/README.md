@@ -9,7 +9,8 @@ STATION = **Ops·Build·Field 3제품 × 하나의 Platform Core / Integration F
 ## 1.5. STATION Field OS 통합 아키텍처
 - **[architecture/station-field-os.md](architecture/station-field-os.md)** — 농업로봇 SDV/SDR 통합 플랫폼 3층(통합/계약/운영) · 노드↔기관↔계약 모델 · Command 3단계 ACK · App Runtime · 1~3단계 로드맵. 계약 SSOT = [`@station/contracts`](../packages/contracts/README.md). ADR-010~014 비준.
 - **[architecture/station-field-os-map.html](architecture/station-field-os-map.html)** — 비아 중심 통합 아키텍처 시각 맵(**Robot Blueprint** 스트립 포함). **Robot Blueprint**(로봇=노드 조합, 새 로봇=Blueprint 1개)·**개방형 NodeKind**(표준 5종 + custom, 드론 FCU)·**platform core↔instance profile** 분리는 [ADR-014](adr/ADR-014-robot-blueprint-open-node-taxonomy.md). 온실 과제는 첫 적용 사례(reference deployment).
-- **[architecture/scenario-change-spec.md](architecture/scenario-change-spec.md)** — 통합 시나리오(S1·S3·S4·S6·S7)를 노드/기관 분해로 갱신하기 위한 변경 명세(가공 벤더→실제 기관 정합표 포함, HTML 미수정).
+- **[architecture/scenario-change-spec.md](architecture/scenario-change-spec.md)** — 통합 시나리오를 노드/기관 분해로 갱신하는 변경 명세(가공 벤더→실제 기관 정합표). **적용 완료**: S1·S3·S4·S6·S7 + 구성기·추적성(owner_org·node 컬럼)을 기관/노드 표기로 정합.
+- **STATION Field OS 목업 화면(console)** — [Local Agent 런타임 시뮬](reports/screenshots/ops/13-agent-live.png)(`/control/agent`: 노드 신호 스트림·명령 3단계 ACK·Policy 안전 룰) · [노드 적합성·SDK](reports/screenshots/build/17-node-sdk.png)(`/audit/sdk`: Conformance suites·신규 custom 노드 FCU 합류). 실제 런타임 아님 — fake 데이터 시연.
 
 ## 2. 제품별 UX/UI 과업지시서
 - [01. Ops 관제 운영 시스템](tasks/01-ops-uxui-과업지시서.md) — C01 맵·경로·작업·실시간 + C03 장애 (21화면)

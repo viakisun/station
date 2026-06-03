@@ -8,26 +8,26 @@
 <div class="topbar"><div class="wrap"><span class="wm">station<span class="dim">/통합 시나리오</span></span><span class="spacer"></span><a href="index.html">← 시나리오 목록</a></div></div>
 <div class="wrap">
   <div class="ribbon office"><span class="ico">🏢</span><div><div class="stage">S1 · 사무실/개발실</div><div class="title">산출물 표준 온보딩 — 이음의 출발</div></div>
-    <div class="meta"><span class="org-badge"><span class="k">행위자</span> 제조사 개발자(5기관)</span><span class="combo-badge">이 모듈은 <b>6종 계약</b> 중 Capability·Protocol 등록</span></div></div>
+    <div class="meta"><span class="org-badge"><span class="k">행위자</span> 기관 개발자(ORG-* 5기관)</span><span class="combo-badge">이 모듈은 <b>6종 계약</b> 중 Capability·Protocol 등록</span></div></div>
 
-  <p>컨소시엄 5개 기관 — 메타파머스(매니퓰레이터·AI인식)·에이지로보틱스(모바일·충전)·대동로보틱스(측위LPS·맵)·KIRO(적심 엔드이펙터)·국립농업과학원(적과 엔드이펙터) — 이 <strong>따로 만든 모듈(이기종 산출물)</strong>을 STATION이 "같은 언어로 말하게" <strong>표준 계약</strong>으로 등록하는 첫 단계다. 여기서는 예시로 <strong>메타파머스 적과 매니퓰레이터(MOD-ARM-A2)</strong>를 온보딩하며, 모든 계약은 공유 ID인 <code>module_id</code> 스파인에 묶인다.</p>
+  <p>컨소시엄 5개 기관이 자기 노드를 표준 계약으로 등록하는 첫 단계다 — <strong>ORG-META(VPU·ACU·WorkModule)</strong>·<strong>ORG-AGE(MCU)</strong>·<strong>ORG-DAEDONG(LPU)</strong>·<strong>ORG-KIRO/NAS(EE)</strong>. 각 기관 노드를 STATION이 "같은 언어로 말하게" <strong>표준 계약</strong>으로 등록한다. 여기서는 예시로 <strong>ORG-META ACU WorkModule(meta.module.manipulator.v1)</strong>를 온보딩하며, 매니페스트의 <code>ownerOrg</code>·<code>attachesToNode</code>가 소유·부착을 박고, 모든 계약은 공유 ID인 <code>module_id</code> 스파인에 묶인다.</p>
 
   <div class="timeline">
 
     <div class="step"><div class="num">1</div><div class="body">
       <div class="act">신규 모듈 제작 완료</div>
-      <div class="desc">제조사가 매니퓰레이터/엔드이펙터를 하드웨어·구동 펌웨어까지 완성한다. 완성된 실물은 아직 "각자의 언어"로만 말하므로, 플랫폼이 알아들을 수 있는 표준 형식으로 능력을 선언해야 한다.</div>
-      <div class="ilink"><span class="node">메타 매니퓰레이터(이기종 산출물)</span><span class="arrow">→</span><span class="via">Capability Profile</span><span class="arrow">→</span><span class="node">플랫폼 표준</span></div>
+      <div class="desc">기관이 자기 노드(ACU WorkModule/EE 등)를 하드웨어·구동 펌웨어까지 완성한다. 완성된 실물은 아직 "각자의 언어"로만 말하므로, 플랫폼이 알아들을 수 있는 표준 형식으로 능력을 선언해야 한다.</div>
+      <div class="ilink"><span class="node">ORG-META ACU WorkModule</span><span class="arrow">→</span><span class="via">Capability Profile</span><span class="arrow">→</span><span class="node">플랫폼 표준</span></div>
       <span class="screen-tag">화면: 모듈 온보딩 마법사 (Audit · Dev kit)</span>
-      <figure class="shot"><img src="../reports/screenshots/build/10-onboard.png" alt="모듈 온보딩 마법사"/><figcaption><b>모듈 온보딩 마법사</b> — 제조사·모듈 등록 시작 — Build 개발자 킷</figcaption></figure>
+      <figure class="shot"><img src="../reports/screenshots/build/10-onboard.png" alt="모듈 온보딩 마법사"/><figcaption><b>모듈 온보딩 마법사</b> — 기관·노드 등록 시작 — Build 개발자 킷</figcaption></figure>
     </div></div>
 
     <div class="step"><div class="num">2</div><div class="body">
-      <div class="act">벤더·모듈 등록 — module_id 발급</div>
-      <div class="desc">제조사(벤더)와 모듈을 레지스트리에 등록하면 전 계약을 묶는 공유 ID <code>module_id</code>가 발급된다. 이 ID가 이후 Capability·Protocol·Telemetry·Command·Firmware·Calibration 6종 계약을 하나로 꿰는 스파인이 된다.</div>
+      <div class="act">기관·노드 등록 — module_id 발급</div>
+      <div class="desc">기관(ORG-*)과 노드를 레지스트리에 등록하면 전 계약을 묶는 공유 ID <code>module_id</code>가 발급된다. 이 ID가 이후 Capability·Protocol·Telemetry·Command·Firmware·Calibration 6종 계약을 하나로 꿰는 스파인이 된다.</div>
       <div class="ilink"><span class="node">모듈</span><span class="arrow">→</span><span class="via">module_id 스파인</span><span class="arrow">→</span><span class="node">Module Registry</span></div>
-      <span class="screen-tag">화면: Module Registry · 벤더/모듈 등록</span>
-      <figure class="shot"><img src="../reports/screenshots/build/10-onboard.png" alt="모듈 온보딩 — module_id 발급"/><figcaption><b>모듈 온보딩 — module_id 발급</b> — 벤더·모듈 등록 단계에서 공유 ID 스파인 발급</figcaption></figure>
+      <span class="screen-tag">화면: Module Registry · 기관/노드 등록</span>
+      <figure class="shot"><img src="../reports/screenshots/build/10-onboard.png" alt="모듈 온보딩 — module_id 발급"/><figcaption><b>모듈 온보딩 — module_id 발급</b> — 기관·노드 등록 단계에서 공유 ID 스파인 발급</figcaption></figure>
     </div></div>
 
     <div class="step"><div class="num">3</div><div class="body">

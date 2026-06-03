@@ -56,6 +56,8 @@ const TARGETS = [
   ["ops", "10-twin", CONSOLE + "/control/twin", DESKTOP],
   ["ops", "11-incident-stream", CONSOLE + "/incident/stream", DESKTOP],
   ["ops", "12-incident-action", CONSOLE + "/incident/INC-20260601-0229/action", DESKTOP],
+  ["ops", "13-agent-live", CONSOLE + "/control/agent", DESKTOP],
+  ["build", "17-node-sdk", CONSOLE + "/audit/sdk", DESKTOP],
   // ---- Field ----
   ["field", "01-hmi-home", FIELD + "/hmi", TABLET],
   ["field", "02-operate", FIELD + "/hmi/operate", TABLET],

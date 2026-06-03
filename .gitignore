@@ -2,11 +2,11 @@
 node_modules/
 .pnpm-store/
 
-# builds
+# builds (root-anchored: nested build/ dirs like docs/reports/screenshots/build/ are NOT ignored)
 .next/
 out/
 dist/
-build/
+/build/
 
 # turbo
 .turbo/

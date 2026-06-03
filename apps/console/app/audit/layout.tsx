@@ -13,7 +13,7 @@ const ITEMS: NavItem[] = [
   { id: "c02-audit", icon: "pkg", label: "Audit Package", code: "C02-07", ready: true, href: "/audit/package" },
   { id: "c02-cap", icon: "layers", label: "Capability Profile", code: "C02-02", ready: false },
   { id: "c02-proto", icon: "branch", label: "Protocol builder", code: "C02-03", ready: false },
-  { id: "c02-sdk", icon: "code", label: "SDK · docs", code: "C02-08", ready: false },
+  { id: "c02-sdk", icon: "code", label: "SDK · 노드 적합성", code: "C02-08", ready: true, href: "/audit/sdk" },
   { id: "c02-key", icon: "key", label: "Sandbox · API keys", code: "C02-09", ready: false },
 ];
 
