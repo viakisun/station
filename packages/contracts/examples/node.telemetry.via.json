@@ -1,0 +1,15 @@
+{
+  "nodeId": "NODE-TEL-VIA",
+  "kind": "Telemetry",
+  "ownerOrg": "ORG-VIA",
+  "label": "통신 게이트웨이",
+  "role": "표준채널 업링크·관제연동·OTA 보조 (EdgeGateway v2)",
+  "signals": [
+    "env.greenhouse.temperature",
+    "env.greenhouse.humidity",
+    "env.greenhouse.co2",
+    "machine.telemetry.cloud_connected"
+  ],
+  "commands": ["telemetry.uplink.flush"],
+  "protocolRef": "PRT-MQTT-v2"
+}

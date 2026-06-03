@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/command-descriptor.json",
+  "title": "CommandDescriptor",
+  "description": "매니페스트/노드가 선언하는 '받을 수 있는 명령'(구 CapabilityProfile.CommandSpec).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verb", "ack", "timeoutMs", "safety"],
+  "properties": {
+    "verb": { "type": "string", "description": "표준 NS 동사. 예 ee.pinch, vision.capture.start" },
+    "legacyVerb": { "type": "string", "description": "기존 SCREAMING 동사 병기. 예 PINCH, START_CAPTURE" },
+    "ack": { "type": "string", "enum": ["at_least_once", "exactly_once", "at_most_once"] },
+    "timeoutMs": { "type": "number" },
+    "safety": { "type": "string", "enum": ["none", "guarded", "safety_critical"] },
+    "params": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "type"],
+        "properties": {
+          "key": { "type": "string" },
+          "type": { "type": "string" },
+          "range": { "type": "string" }
+        }
+      }
+    }
+  }
+}

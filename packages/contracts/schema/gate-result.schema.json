@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/gate-result.json",
+  "title": "GateResult",
+  "description": "Gate 4단계 평가 결과(ADR-006). domain gates.ts의 GateEval과 동형.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gate", "severity"],
+  "properties": {
+    "gate": { "type": "string", "description": "예 G4 Calibration" },
+    "severity": { "type": "string", "enum": ["pass", "warn", "confirm_required", "blocked"] },
+    "reason": { "type": "string" },
+    "blocks": { "type": "array", "items": { "type": "string" }, "description": "차단되는 대상/명령" },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label"],
+        "properties": { "label": { "type": "string" }, "href": { "type": "string" } }
+      }
+    }
+  }
+}

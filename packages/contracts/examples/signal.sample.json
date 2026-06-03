@@ -1,0 +1,8 @@
+{
+  "channel": "machine.vision.fps",
+  "value": 29.6,
+  "unit": "fps",
+  "ts": "08:12:04",
+  "quality": "good",
+  "source": { "node": "VPU", "rawKey": "cam_fps", "hex": "0x51" }
+}

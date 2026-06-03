@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/command-ack.json",
+  "title": "CommandAck",
+  "description": "명령 3단계 ACK 한 틱. received(게이트웨이 수신) → accepted(권한·상태·안전 통과·큐잉) → executed(완료). rejected/timeout은 종단.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["commandId", "stage", "ts"],
+  "properties": {
+    "commandId": { "type": "string" },
+    "stage": { "type": "string", "enum": ["received", "accepted", "executed", "rejected", "timeout"] },
+    "ts": { "type": "string" },
+    "code": { "type": "string", "description": "거부 시 표준 에러코드. 예 SAFETY_LOCK" },
+    "detail": { "type": "string" }
+  }
+}

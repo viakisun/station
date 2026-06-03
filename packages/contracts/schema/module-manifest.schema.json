@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/module-manifest.json",
+  "title": "ModuleManifest",
+  "description": "작업모듈/노드 산출물의 단일 매니페스트. 어느 기관(owner_org)이 만들었고 어느 노드에 붙으며 어떤 신호/명령/계약을 갖는지 선언한다. release.ts auditArtifacts의 manifest.json 슬롯을 형식화.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifestId", "moduleType", "version", "ownerOrg", "attachesToNode"],
+  "properties": {
+    "manifestId": {
+      "type": "string",
+      "pattern": "^[a-z]+\\.(module|node)\\.[a-z0-9_]+\\.v[0-9]+$",
+      "description": "기관 스코프 ID. 예 meta.module.manipulator.v1, age.node.mcu.v1"
+    },
+    "moduleType": { "type": "string", "description": "예 manipulator, thinning_ee, vision_cam" },
+    "version": { "type": "string" },
+    "ownerOrg": { "type": "string", "pattern": "^ORG-[A-Z]+$" },
+    "vendorAlias": { "type": "string", "pattern": "^VND-[A-Z]+$", "description": "기존 목업 벤더명 정합(선택)" },
+    "legacyModuleId": { "type": "string", "description": "기존 MOD-* 매핑(선택). 예 MOD-ARM-A2" },
+    "attachesToNode": { "type": "string", "enum": ["MCU", "VPU", "ACU", "Telemetry", "LPU"] },
+    "controller": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "kind": { "type": "string", "enum": ["MCU", "VPU", "ACU"] }, "model": { "type": "string" } }
+    },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transport", "profileRef"],
+      "properties": {
+        "transport": { "type": "string", "enum": ["MQTT", "ROS2", "DDS"] },
+        "profileRef": { "type": "string", "description": "ProtocolProfile.id" }
+      }
+    },
+    "requiredDriver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "minVersion"],
+      "properties": { "id": { "type": "string" }, "minVersion": { "type": "string" } }
+    },
+    "requiredApps": {
+      "type": "array",
+      "description": "App Runtime(인포테인먼트 런처)가 보장해야 할 모듈 앱",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "minVersion"],
+        "properties": { "id": { "type": "string" }, "minVersion": { "type": "string" } }
+      }
+    },
+    "signals": { "type": "array", "items": { "type": "string" }, "description": "표준 채널 NS 이름 목록" },
+    "commands": { "type": "array", "items": { "type": "string" }, "description": "명령 verb 목록" },
+    "calibration": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["req", "cadence"],
+        "properties": { "req": { "type": "string" }, "cadence": { "type": "string" } }
+      }
+    },
+    "firmwareRef": { "type": "string", "description": "예 FW-EEP-3.1.0" },
+    "conformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "suite": { "type": "string" }, "passRate": { "type": "number" } }
+    }
+  }
+}

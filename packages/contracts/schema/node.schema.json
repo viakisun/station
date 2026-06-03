@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/node.json",
+  "title": "Node",
+  "description": "로봇의 독립 컴퓨트 노드(기관 산출물). Local Agent가 노드 어댑터로 흡수해 표준 Signal/Command/Event로 노출한다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["nodeId", "kind", "ownerOrg", "label"],
+  "properties": {
+    "nodeId": { "type": "string", "description": "예 NODE-MCU-AGE, NODE-VPU-META" },
+    "kind": { "type": "string", "enum": ["MCU", "VPU", "ACU", "Telemetry", "LPU"] },
+    "ownerOrg": { "type": "string", "pattern": "^ORG-[A-Z]+$", "description": "이 노드를 만든 기관" },
+    "label": { "type": "string" },
+    "role": { "type": "string" },
+    "signals": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "이 노드가 내보내는 표준 채널(NS 이름). 예 machine.vision.fps"
+    },
+    "commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "이 노드가 받는 명령 verb. 예 vision.capture.start"
+    },
+    "protocolRef": { "type": "string", "description": "ProtocolProfile.id 참조" }
+  }
+}

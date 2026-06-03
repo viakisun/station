@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/organization.json",
+  "title": "Organization",
+  "description": "STATION Field OS 컨소시엄 기관. 노드/모듈 산출물의 소유 주체이자 표준계약의 인계 경계.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["orgId", "name", "role"],
+  "properties": {
+    "orgId": { "type": "string", "pattern": "^ORG-[A-Z]+$", "description": "예 ORG-VIA, ORG-META" },
+    "name": { "type": "string" },
+    "role": { "type": "string", "description": "이 기관의 산출물·역할 한 줄" },
+    "ownsNodes": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["MCU", "VPU", "ACU", "Telemetry", "LPU"] },
+      "description": "이 기관이 소유한 컴퓨트 노드. 비아(운영·통합 계층)는 비어 있을 수 있다."
+    },
+    "vendorAliases": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^VND-[A-Z]+$" },
+      "description": "기존 목업 가공 벤더명(release.ts) → 이 기관으로 정합되는 alias"
+    },
+    "platform": {
+      "type": "boolean",
+      "description": "true면 로봇 컴퓨트 노드가 아니라 운영·통합 계층(HMI·Telemetry·관제·Local Agent) 소유 기관(=비아)"
+    }
+  }
+}

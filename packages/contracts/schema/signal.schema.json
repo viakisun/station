@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/signal.json",
+  "title": "Signal",
+  "description": "런타임 신호 1 표본. Local Agent의 SignalStore가 노드 어댑터에서 받아 HMI/관제로 푸시.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["channel", "value", "ts", "quality"],
+  "properties": {
+    "channel": { "type": "string", "description": "표준 NS 이름" },
+    "value": { "type": ["number", "boolean"] },
+    "unit": { "type": "string" },
+    "ts": { "type": "string", "description": "ISO8601 또는 HH:MM:SS" },
+    "quality": { "type": "string", "enum": ["good", "warn", "bad"] },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "node": { "type": "string", "enum": ["MCU", "VPU", "ACU", "Telemetry", "LPU"] },
+        "rawKey": { "type": "string", "description": "원천 키. 예 cam_fps" },
+        "hex": { "type": "string", "description": "예 0x51" }
+      }
+    }
+  }
+}

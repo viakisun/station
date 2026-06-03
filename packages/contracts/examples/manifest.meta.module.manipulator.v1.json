@@ -1,0 +1,18 @@
+{
+  "manifestId": "meta.module.manipulator.v1",
+  "moduleType": "manipulator",
+  "version": "v1",
+  "ownerOrg": "ORG-META",
+  "vendorAlias": "VND-ARM",
+  "legacyModuleId": "MOD-ARM-A2",
+  "attachesToNode": "ACU",
+  "controller": { "kind": "ACU", "model": "ArmCtrl-A2" },
+  "protocol": { "transport": "ROS2", "profileRef": "PRT-ROS-v1" },
+  "requiredDriver": { "id": "meta.driver.arm-ros2", "minVersion": "1.0.0" },
+  "requiredApps": [{ "id": "station.app.arm-control", "minVersion": "1.0.0" }],
+  "signals": ["machine.arm.joint_temp"],
+  "commands": ["arm.move", "arm.calibrate"],
+  "calibration": [{ "req": "joint PID/offset", "cadence": "작업 전 필수" }],
+  "firmwareRef": "FW-ARM-1.9.0",
+  "conformance": { "suite": "TS-CMDACK", "passRate": 98 }
+}

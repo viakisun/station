@@ -1,0 +1,10 @@
+{
+  "nodeId": "NODE-ACU-META",
+  "kind": "ACU",
+  "ownerOrg": "ORG-META",
+  "label": "자율제어",
+  "role": "미션·경로추종·작업시퀀스·안전전환 (대동 LPU 측위를 소비)",
+  "signals": ["machine.autonomy.state", "machine.autonomy.mode", "machine.navigation.deviation"],
+  "commands": ["autonomy.mission.start", "autonomy.pause", "autonomy.slow_down"],
+  "protocolRef": "PRT-ROS-v1"
+}

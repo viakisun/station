@@ -1,0 +1,7 @@
+{
+  "orgId": "ORG-DAEDONG",
+  "name": "대동로보틱스",
+  "role": "측위(LPU) — LPS·맵, 메타 ACU가 소비",
+  "ownsNodes": ["LPU"],
+  "vendorAliases": ["VND-NAVI"]
+}

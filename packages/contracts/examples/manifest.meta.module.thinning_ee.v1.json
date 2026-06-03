@@ -1,0 +1,21 @@
+{
+  "manifestId": "meta.module.thinning_ee.v1",
+  "moduleType": "thinning_ee",
+  "version": "v1",
+  "ownerOrg": "ORG-META",
+  "vendorAlias": "VND-GREEN",
+  "legacyModuleId": "MOD-EE-THIN",
+  "attachesToNode": "ACU",
+  "controller": { "kind": "ACU" },
+  "protocol": { "transport": "MQTT", "profileRef": "PRT-MQTT-v2" },
+  "requiredDriver": { "id": "meta.driver.ee-modbus", "minVersion": "1.0.0" },
+  "requiredApps": [
+    { "id": "station.app.ee-control", "minVersion": "1.0.0" },
+    { "id": "station.app.ee-calibration", "minVersion": "1.0.0" }
+  ],
+  "signals": ["machine.ee.grip_force"],
+  "commands": ["ee.pinch", "ee.release", "ee.calibrate"],
+  "calibration": [{ "req": "grip-force zero/span", "cadence": "주 1회" }],
+  "firmwareRef": "FW-EE-3.1.2",
+  "conformance": { "suite": "TS-SAFETY", "passRate": 96 }
+}

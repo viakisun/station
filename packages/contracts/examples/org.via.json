@@ -1,0 +1,7 @@
+{
+  "orgId": "ORG-VIA",
+  "name": "비아",
+  "role": "통합 플랫폼(Local Agent·계약) + HMI · Telemetry · 관제(Ops)",
+  "ownsNodes": ["Telemetry"],
+  "platform": true
+}

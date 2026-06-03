@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/signal-channel.json",
+  "title": "SignalChannel",
+  "description": "표준 신호 채널 정의(카탈로그). 기존 TCH-* 채널 + 캘리브/정책을 표준 NS 이름으로 승격.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["channel", "label", "unit"],
+  "properties": {
+    "channel": { "type": "string", "description": "표준 NS 이름. 예 machine.vision.fps, env.greenhouse.temperature" },
+    "legacyId": { "type": "string", "description": "호환 alias. 예 TCH-cam-fps" },
+    "label": { "type": "string" },
+    "unit": { "type": "string" },
+    "group": { "type": "string", "description": "Env | Robot | ..." },
+    "node": { "type": "string", "enum": ["MCU", "VPU", "ACU", "Telemetry", "LPU"], "description": "소속 노드" },
+    "ownerOrg": { "type": "string", "pattern": "^ORG-[A-Z]+$" },
+    "calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zero", "span", "offset", "scale"],
+      "properties": {
+        "zero": { "type": "number" },
+        "span": { "type": "number" },
+        "offset": { "type": "number" },
+        "scale": { "type": "number" },
+        "due": { "type": "boolean" }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rate": { "type": "string", "description": "예 1s, 500ms" },
+        "warn": { "type": "string" },
+        "crit": { "type": "string" },
+        "smooth": { "type": "string" },
+        "promote": { "type": "boolean", "description": "임계 초과 시 Event/Incident 승격 여부" }
+      }
+    }
+  }
+}

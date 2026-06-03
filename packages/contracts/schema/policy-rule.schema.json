@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/policy-rule.json",
+  "title": "PolicyRule",
+  "description": "Local Agent PolicyEngine의 안전·운영 룰 선언(2단계 런타임이 평가). 예: VPU worker_detected → ACU slow_down → MCU speed_limit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "when", "gate"],
+  "properties": {
+    "id": { "type": "string", "description": "예 P-WORKER-PROXIMITY" },
+    "describe": { "type": "string" },
+    "when": { "type": "string", "description": "트리거 조건. 예 machine.vision.worker_detected == true" },
+    "require": { "type": "string", "description": "명령 발행 전 충족 조건(선택)" },
+    "gate": { "type": "string", "description": "연결 Gate 이름" },
+    "defaultSeverity": { "type": "string", "enum": ["pass", "warn", "confirm_required", "blocked"] }
+  }
+}

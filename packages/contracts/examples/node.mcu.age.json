@@ -1,0 +1,10 @@
+{
+  "nodeId": "NODE-MCU-AGE",
+  "kind": "MCU",
+  "ownerOrg": "ORG-AGE",
+  "label": "모바일 베이스",
+  "role": "구동·조향·충전·비상정지·엔코더 (저수준 실시간 I/O)",
+  "signals": ["machine.motion.speed", "machine.power.battery_voltage", "machine.safety.estop"],
+  "commands": ["motion.set_speed_limit", "motion.stop"],
+  "protocolRef": "PRT-MQTT-v2"
+}

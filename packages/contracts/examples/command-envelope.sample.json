@@ -1,0 +1,12 @@
+{
+  "commandId": "CMD-WKS-20260601-00045-0007",
+  "verb": "ee.pinch",
+  "target": { "node": "ACU", "module": "MOD-EE-PINCH" },
+  "workSessionId": "WKS-20260601-00045",
+  "issuedBy": { "role": "operator", "id": "op-lee" },
+  "issuedAt": "08:12:05",
+  "args": { "force_n": 12 },
+  "ack": "exactly_once",
+  "timeoutMs": 800,
+  "safety": "safety_critical"
+}

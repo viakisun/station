@@ -6,6 +6,10 @@ STATION = **Ops·Build·Field 3제품 × 하나의 Platform Core / Integration F
 ## 1. 단일 진실 공급원 (SSOT)
 - **[00. UX/UI 공통 설계 기준서](00-ux-common-standards.md)** — 제품 구조·ID 스파인·상태 체계·디자인 DNA·Gate 4단계·Audit/Event·Context handoff·권한. **모든 과업지시서가 이 문서를 단일 참조.**
 
+## 1.5. STATION Field OS 통합 아키텍처
+- **[architecture/station-field-os.md](architecture/station-field-os.md)** — 농업로봇 SDV/SDR 통합 플랫폼 3층(통합/계약/운영) · 노드↔기관↔계약 모델 · Command 3단계 ACK · App Runtime · 1~3단계 로드맵. 계약 SSOT = [`@station/contracts`](../packages/contracts/README.md). ADR-010~013 비준.
+- **[architecture/scenario-change-spec.md](architecture/scenario-change-spec.md)** — 통합 시나리오(S1·S3·S4·S6·S7)를 노드/기관 분해로 갱신하기 위한 변경 명세(가공 벤더→실제 기관 정합표 포함, HTML 미수정).
+
 ## 2. 제품별 UX/UI 과업지시서
 - [01. Ops 관제 운영 시스템](tasks/01-ops-uxui-과업지시서.md) — C01 맵·경로·작업·실시간 + C03 장애 (21화면)
 - [02. Build 개발·검증·배포 콘솔](tasks/02-build-uxui-과업지시서.md) — C02 Audit/DevKit + C04 펌웨어/OTA (22화면)
@@ -14,7 +18,8 @@ STATION = **Ops·Build·Field 3제품 × 하나의 Platform Core / Integration F
 
 ## 3. 결정 기록 (ADR)
 [adr/](adr/) — 001 제품 분리(단계적) · 002 Context 전송 · 003 실시간 프로토콜 · 004 ID 문법 ·
-005 상태 색상 · 006 Gate 4단계 · 007 Audit/Event 분리 · 008 async 전환 · 009 Incident `closed`.
+005 상태 색상 · 006 Gate 4단계 · 007 Audit/Event 분리 · 008 async 전환 · 009 Incident `closed` ·
+**010 Contracts SSOT(JSON Schema)** · **011 노드/기관 소유 모델** · **012 CommandEnvelope+3단계 ACK** · **013 신호 NS(machine.*/env.*)**.
 
 ## 4. 수행 완료 보고서 (목업 스크린샷 포함)
 - [04. Ops 수행 완료 보고서](reports/04-ops-수행완료보고서.md) — 폐루프 L1·L2, 신규 원인분류·재발·Close

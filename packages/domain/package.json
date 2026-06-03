@@ -11,6 +11,7 @@
     "lint": "echo \"(domain) no lint\" && exit 0"
   },
   "devDependencies": {
+    "@station/contracts": "workspace:*",
     "@station/tsconfig": "workspace:*",
     "typescript": "^5.7.2"
   }

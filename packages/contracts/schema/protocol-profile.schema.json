@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/protocol-profile.json",
+  "title": "ProtocolProfile",
+  "description": "노드/모듈의 통신 계약(구 mockups2 ProtocolProfileMock 승격). 노드 어댑터가 이 프로파일로 transport를 흡수.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "transport"],
+  "properties": {
+    "id": { "type": "string", "description": "예 PRT-MQTT-v2" },
+    "transport": { "type": "string", "enum": ["MQTT", "ROS2", "DDS"] },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dir", "topic", "payload"],
+        "properties": {
+          "dir": { "type": "string", "enum": ["cmd", "telemetry", "event"] },
+          "topic": { "type": "string" },
+          "payload": { "type": "string" }
+        }
+      }
+    },
+    "ack": { "type": "string", "enum": ["at_least_once", "exactly_once", "at_most_once"] },
+    "timeout": { "type": "string" },
+    "security": { "type": "string", "description": "예 TLS · X.509" },
+    "sample": { "type": "string", "description": "샘플 메시지(예시)" }
+  }
+}

@@ -3,14 +3,11 @@
    00 §5 Gate 4단계 · ADR-006. 화면은 결과를 GateNotice로 렌더.
    ============================================================ */
 import { releaseApprovals, deploymentPlans, workPackage, calibrationRequirements } from "./data/mockups";
+import type { GateResult } from "@station/contracts";
 
 export type GateSeverity = "pass" | "warn" | "confirm_required" | "blocked";
-export interface GateEval {
-  gate: string;
-  severity: GateSeverity;
-  reason?: string;
-  actions?: { label: string; href?: string }[];
-}
+/** STATION Contracts GateResult 와 동형(ADR-006). 표준 계약이 SSOT. */
+export type GateEval = GateResult;
 
 /** G2 펌웨어 릴리즈 — 분석·호환·audit 모두 통과해야 승인 가능 */
 export function gateFirmwareRelease(firmwareId: string): GateEval {

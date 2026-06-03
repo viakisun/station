@@ -1,0 +1,11 @@
+{
+  "ts": "08:51:22",
+  "severity": "emergency",
+  "source": "NODE-MCU-AGE",
+  "node": "MCU",
+  "code": "NAV-SAFETY-INTERLOCK",
+  "message": "E-stop — safety interlock tripped",
+  "channel": "machine.safety.estop",
+  "workSessionId": "WKS-20260601-00045",
+  "promotedIncidentId": "INC-20260601-0231"
+}

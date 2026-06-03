@@ -11,3 +11,6 @@ export { INCIDENT, type IncidentData, type Incident } from "./data/incident";
 export { TELEMETRY, type TelemetryData } from "./data/telemetry";
 export { RELEASE, type ReleaseData } from "./data/release";
 export { HMI, type HmiData } from "./data/hmi";
+
+// STATION Contracts 정합(비파괴 가산) — 표준 타입·로직 + mock→표준형 어댑터
+export * from "./contracts";

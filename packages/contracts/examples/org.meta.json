@@ -1,0 +1,7 @@
+{
+  "orgId": "ORG-META",
+  "name": "메타파머스",
+  "role": "VPU·ACU + 작업모듈(매니퓰레이터 + 적과/적심 엔드이펙터) — 로봇 지능+조작 일체",
+  "ownsNodes": ["VPU", "ACU"],
+  "vendorAliases": ["VND-OPTI", "VND-ARM", "VND-GREEN"]
+}

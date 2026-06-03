@@ -197,3 +197,7 @@ artifacts, Command lifecycle, DeploymentPlan/RollbackPolicy, ErrorCodeMap, Notif
 MaintenanceTask, audit_log…). 따라서 **Phase 0(스키마 정합) + Track B(시드 제너레이터로 볼륨 확대)를
 함께** 진행하면 두 번 일하지 않는다. 데이터 제너레이터는 다중 사이트/온실, 로봇 수십대, 세션 수백,
 시계열 telemetry, 장애 이력, 벤더/모듈/펌웨어/배포 이력을 결정론적 시드로 생성하도록 설계한다.
+
+---
+
+> **STATION Field OS 1단계 채택 완료(2026-06)** — STATION Contracts(`@station/contracts` 스키마 SSOT)·노드/기관 소유 모델·런타임 인터페이스를 비준했다([architecture/station-field-os.md](architecture/station-field-os.md), ADR-010~013). 2단계(참조 런타임 `packages/local-agent`+`apps/agent`)·3단계(Flutter HMI, `schema/`→Dart codegen)는 후속.

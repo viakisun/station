@@ -1,0 +1,10 @@
+{
+  "nodeId": "NODE-LPU-DAEDONG",
+  "kind": "LPU",
+  "ownerOrg": "ORG-DAEDONG",
+  "label": "측위·맵",
+  "role": "LPS 위치·맵 매칭 → 메타 ACU가 소비",
+  "signals": ["machine.localization.pose", "machine.localization.map_match"],
+  "commands": ["localization.relocalize"],
+  "protocolRef": "PRT-DDS-v1"
+}
