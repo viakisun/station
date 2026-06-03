@@ -9,7 +9,10 @@ export interface Node {
    * 예 NODE-MCU-AGE, NODE-VPU-META
    */
   nodeId: string;
-  kind: "MCU" | "VPU" | "ACU" | "Telemetry" | "LPU";
+  /**
+   * (개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)
+   */
+  kind: string;
   /**
    * 이 노드를 만든 기관
    */

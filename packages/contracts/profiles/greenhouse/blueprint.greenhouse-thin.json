@@ -1,0 +1,19 @@
+{
+  "blueprintId": "blueprint.greenhouse-thin",
+  "robotClass": "greenhouse-thinning-robot",
+  "label": "온실 적과 로봇 (thin)",
+  "description": "이동 베이스 + 측위 + 비전 + 자율제어 + 적과 매니퓰/EE. 컨소시엄 노드 조합 인스턴스.",
+  "profile": "greenhouse",
+  "nodes": [
+    { "kind": "MCU", "ownerOrg": "ORG-AGE", "role": "모바일 베이스" },
+    { "kind": "LPU", "ownerOrg": "ORG-DAEDONG", "role": "측위·맵" },
+    { "kind": "VPU", "ownerOrg": "ORG-META", "role": "비전·AI인식" },
+    { "kind": "ACU", "ownerOrg": "ORG-META", "role": "자율제어" },
+    { "kind": "Telemetry", "ownerOrg": "ORG-VIA", "role": "통신 게이트웨이" }
+  ],
+  "modules": [
+    { "manifestRef": "meta.module.manipulator.v1", "attachesToNode": "ACU" },
+    { "manifestRef": "meta.module.thinning_ee.v1", "attachesToNode": "ACU" }
+  ],
+  "requiredContracts": ["Signal", "Command", "Event", "Calibration", "ProtocolProfile"]
+}

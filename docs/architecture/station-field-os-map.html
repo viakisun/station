@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STATION Field OS — 비아 중심 통합 아키텍처 맵</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"/>
+<style>
+  :root{
+    --ink:#16181d; --ink-2:#3d434d; --ink-3:#7b828c; --line:#e7e9ee; --line-2:#d4d8df;
+    --canvas:#f6f7f9; --surface:#fff; --surface-2:#f1f3f6;
+    --via:#1f6feb; --age:#d97706; --meta:#16a34a; --daedong:#8b5cf6; --collab:#0891b2;
+    --ok:#1fa463; --warn:#e0922f; --crit:#e0533d; --brand:#16181d;
+    --mono:"JetBrains Mono",monospace; --r:12px; --r-sm:8px;
+  }
+  *{box-sizing:border-box} body{margin:0;background:var(--canvas);color:var(--ink);font-family:Pretendard,system-ui,sans-serif;font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono)}
+  .topbar{position:sticky;top:0;z-index:10;background:#0f1115;color:#fff;padding:11px 22px;display:flex;align-items:center;gap:14px}
+  .topbar .wm{font-weight:800;letter-spacing:.2px} .topbar .dim{color:#9aa3af;font-weight:600}
+  .topbar .sp{flex:1} .topbar a{color:#cbd5e1;text-decoration:none;font-size:12.5px}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px}
+  .lede{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
+  .lede h1{font-size:19px;margin:0 0 6px} .lede p{margin:0;color:var(--ink-2);font-size:13px}
+  .lede .tag{display:inline-block;font-family:var(--mono);font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;color:var(--ink-2);margin-right:5px}
+  /* legend */
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:600}
+  .dot{width:10px;height:10px;border-radius:50%}
+  /* bands */
+  .band{position:relative;margin:0 0 8px}
+  .band-l{font-size:11px;font-weight:800;letter-spacing:.4px;color:var(--ink-3);text-transform:uppercase;margin:0 0 7px;display:flex;gap:8px;align-items:center}
+  .band-l .b-org{font-family:var(--mono);font-size:10.5px;background:var(--via);color:#fff;border-radius:5px;padding:1px 6px;letter-spacing:0}
+  .row{display:grid;gap:10px}
+  .r3{grid-template-columns:repeat(3,1fr)} .r5{grid-template-columns:repeat(5,1fr)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 13px}
+  .card .h{font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:7px;margin-bottom:3px}
+  .card .s{font-size:11.5px;color:var(--ink-3)}
+  .card .meta{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
+  .pill{font-family:var(--mono);font-size:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--ink-2)}
+  /* agent hub */
+  .hub{background:#0f1115;color:#e9edf3;border:1px solid #232733;border-radius:var(--r);padding:15px 16px}
+  .hub .ht{font-weight:800;font-size:15px;display:flex;align-items:center;gap:9px}
+  .hub .live{width:8px;height:8px;border-radius:50%;background:#1fb46a;box-shadow:0 0 0 0 rgba(31,180,106,.6);animation:p 2s infinite}
+  @keyframes p{0%{box-shadow:0 0 0 0 rgba(31,180,106,.5)}70%{box-shadow:0 0 0 7px rgba(31,180,106,0)}100%{box-shadow:0 0 0 0 rgba(31,180,106,0)}}
+  .hub .hs{color:#9aa3af;font-size:12px;margin:3px 0 12px}
+  .hub-blocks{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+  .hb{background:#171a21;border:1px solid #262b36;border-radius:var(--r-sm);padding:10px}
+  .hb .t{font-weight:700;font-size:12.5px;color:#fff;margin-bottom:3px}
+  .hb .d{font-size:10.5px;color:#9aa3af;line-height:1.45}
+  /* contract lane */
+  .lane{background:linear-gradient(90deg,#eef4ff,#eafaf0);border:1px dashed var(--line-2);border-radius:var(--r-sm);padding:11px 14px;margin:8px 0}
+  .lane .lt{font-weight:800;font-size:12px;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .lane .lt .ns{font-family:var(--mono);font-size:10.5px;color:var(--via)}
+  .flows{display:flex;flex-wrap:wrap;gap:7px}
+  .flow{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:600}
+  .flow .ar{font-family:var(--mono);font-weight:800}
+  .up .ar{color:var(--ok)} .down .ar{color:var(--via)} .ev .ar{color:var(--warn)}
+  /* node cards (clickable) */
+  .node{cursor:pointer;border-left-width:4px;transition:transform .08s,box-shadow .12s}
+  .node:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,24,33,.09)}
+  .node.sel{box-shadow:0 0 0 2px var(--ink) inset,0 6px 18px rgba(20,24,33,.1)}
+  .node .kind{font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;border-radius:5px;padding:1px 6px}
+  /* connector arrows */
+  .conn{display:flex;justify-content:center;gap:30px;color:var(--ink-3);font-size:11px;font-weight:600;margin:2px 0}
+  .conn span{display:inline-flex;align-items:center;gap:5px}
+  /* detail */
+  .detail{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:0;overflow:hidden;min-height:120px}
+  .detail .dh{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  .detail .dh .nm{font-weight:800;font-size:15px} .detail .dh .org{font-size:12px;font-weight:700}
+  .detail .db{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .detail .col h4{margin:0 0 7px;font-size:11px;letter-spacing:.3px;text-transform:uppercase;color:var(--ink-3)}
+  .detail .li{font-family:var(--mono);font-size:11.5px;padding:3px 0;border-bottom:1px dashed var(--line);display:flex;gap:7px;align-items:center}
+  .detail .empty{color:var(--ink-3);padding:24px 16px;font-size:13px;text-align:center}
+  .sfx{font-size:9.5px;font-weight:700;color:var(--crit);border:1px solid var(--crit);border-radius:4px;padding:0 4px}
+  /* footer */
+  .foot{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+  .foot .ht{font-weight:800;font-size:13px;margin-bottom:8px}
+  .road{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+  .step{flex:1;min-width:180px;border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;font-size:12px}
+  .step.now{border-color:var(--ok);background:#f0faf4} .step b{display:block;margin-bottom:2px}
+  .step .st{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
+  .handoff{font-size:12.5px;color:var(--ink-2);line-height:1.7}
+  .handoff code{font-family:var(--mono);background:var(--surface-2);border-radius:4px;padding:1px 5px;font-size:11.5px}
+  .small{font-size:11px;color:var(--ink-3);margin-top:10px}
+  /* blueprint strip */
+  .bp-strip{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;margin:0 0 16px}
+  .bp-h{font-weight:800;font-size:13px;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+  .bp-h .k{font-family:var(--mono);font-size:10px;background:var(--ink);color:#fff;border-radius:5px;padding:1px 7px}
+  .bp-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .bp{border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;border-left:4px solid var(--meta)}
+  .bp.ref{border-left-color:var(--crit);background:#fdf3f1}
+  .bp .t{font-weight:800;font-size:12.5px;margin-bottom:3px}
+  .bp .c{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);line-height:1.5}
+  .bp .note{font-size:10.5px;color:var(--ink-3);margin-top:5px}
+  .bp.ref .note{color:var(--crit);font-weight:600}
+</style></head>
+<body>
+<div class="topbar"><span class="wm">STATION Field OS<span class="dim"> / 비아 중심 통합 아키텍처 맵</span></span><span class="sp"></span>
+  <a href="station-field-os.md">설계 문서 →</a></div>
+<div class="wrap">
+  <div class="lede">
+    <h1>비아의 역할 = <u>모든 로봇을 SDV로 개발할 수 있는 토대</u>를 만드는 것</h1>
+    <p>온실 멀티로봇 과제는 <b>첫 적용 사례(reference deployment)</b>일 뿐. 진짜 산출물은 <b>로봇 종류와 무관한
+      SDV/SDR(Software-Defined Robot) 플랫폼</b>이다 — 어떤 로봇이든 결국 <b>노드 구성의 차이</b>이고, 비아는 그 노드들을
+      <b>표준 계약(이음새)</b>으로 잇는 <b>Local Agent + Contracts + HMI/Telemetry/관제</b>를 robot-agnostic 코어로 제공한다.
+      아래 컨소시엄(에이지·메타파머스·대동…)은 그 코어 위에 올라간 <b>인스턴스 프로파일</b>이다.</p>
+    <div style="margin-top:10px">
+      <span class="tag">platform core = robot-agnostic</span><span class="tag">instance = 온실 컨소시엄(예시)</span><span class="tag">계약층 = STATION Contracts</span><span class="tag">통합층 = Local Agent</span>
+    </div>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <!-- ⓪ Robot Blueprint — 같은 플랫폼, 다른 로봇 -->
+  <div class="bp-strip">
+    <div class="bp-h"><span class="k">RobotBlueprint</span> 로봇 = 노드 조합 — 같은 코어가 다른 로봇을 만든다 (어떤 로봇이든 Blueprint 1개)</div>
+    <div class="bp-row">
+      <div class="bp"><div class="t">온실 적과 로봇 (thin)</div><div class="c">MCU·LPU·VPU·ACU·Telemetry + 매니퓰·적과EE</div><div class="note">컨소시엄 인스턴스 · profiles/greenhouse</div></div>
+      <div class="bp"><div class="t">온실 적심 로봇 (pinch)</div><div class="c">동일 노드 골격 · 모듈만 적심EE로 교체</div><div class="note">차이 = Blueprint 모듈 1개</div></div>
+      <div class="bp ref"><div class="t">방제 드론 (비온실)</div><div class="c"><b>FCU</b>(custom)·VPU·Telemetry + 분무모듈</div><div class="note">개방형 NodeKind 증명 — 코어엔 온실 가정 0</div></div>
+    </div>
+  </div>
+
+  <!-- 운영·경험층 (비아) -->
+  <div class="band">
+    <div class="band-l">① 운영 · 경험층 <span class="b-org">ORG-VIA</span> 비아</div>
+    <div class="row r3">
+      <div class="card" style="border-top:3px solid var(--via)"><div class="h">HMI · 인포테인먼트 셸</div><div class="s">현장 조작·게이트·App Runtime(모듈 앱 호스팅)</div><div class="meta"><span class="pill">REST/WS</span><span class="pill">requiredApps</span></div></div>
+      <div class="card" style="border-top:3px solid var(--via)"><div class="h">Telemetry · 게이트웨이</div><div class="s">표준채널 업링크·관제연동·OTA 보조</div><div class="meta"><span class="pill">env.greenhouse.*</span></div></div>
+      <div class="card" style="border-top:3px solid var(--via)"><div class="h">관제 · Ops</div><div class="s">다중 로봇·노드 통합 대시보드·장애 추적</div><div class="meta"><span class="pill">Incident</span><span class="pill">Gate</span></div></div>
+    </div>
+  </div>
+  <div class="conn"><span>▲ Signal·Event (WS)</span><span>▼ Command (REST)</span></div>
+
+  <!-- 통합층: Local Agent -->
+  <div class="band">
+    <div class="band-l">② 통합층 (RAL) <span class="b-org">ORG-VIA</span> Local Agent / Robot Gateway</div>
+    <div class="hub">
+      <div class="ht"><span class="live"></span> Local Agent <span style="font-weight:600;color:#9aa3af;font-size:12px">— 노드 프로토콜 흡수 → 표준 Signal/Command/Event</span></div>
+      <div class="hs">이기종 노드(CAN·Modbus·ROS2·MQTT)를 어댑터로 받아 단일 표준 표면으로 노출. 명령은 권한·상태·안전 게이트 후 라우팅.</div>
+      <div class="hub-blocks">
+        <div class="hb"><div class="t">SignalStore</div><div class="d">최신값·시계열·구독. 노드 신호를 HMI/관제로 푸시.</div></div>
+        <div class="hb"><div class="t">CommandRouter</div><div class="d">3단계 ACK: received→accepted→executed (rejected/timeout 종단).</div></div>
+        <div class="hb"><div class="t">EventBus</div><div class="d">알람·상태변화 발행. 임계 초과 시 Incident 승격.</div></div>
+        <div class="hb"><div class="t">PolicyEngine</div><div class="d">안전 룰. 예: worker_detected→slow_down→speed_limit.</div></div>
+        <div class="hb"><div class="t">App Runtime</div><div class="d">manifest.requiredApps를 HMI 셸에 런처로 호스팅.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 계약층 -->
+  <div class="lane">
+    <div class="lt">③ 계약층 — STATION Contracts <span class="ns">@station/contracts · 언어중립 JSON Schema(이음새)</span></div>
+    <div class="flows">
+      <span class="flow up"><span class="ar">↑</span> Signal <span class="mono" style="font-size:10px;color:var(--ink-3)">SignalChannel·quality</span></span>
+      <span class="flow down"><span class="ar">↓</span> Command <span class="mono" style="font-size:10px;color:var(--ink-3)">Envelope + 3단계 ACK</span></span>
+      <span class="flow ev"><span class="ar">↑</span> Event <span class="mono" style="font-size:10px;color:var(--ink-3)">code·severity·promote</span></span>
+      <span class="flow"><span class="ar mono">▣</span> ModuleManifest <span class="mono" style="font-size:10px;color:var(--ink-3)">owner_org·attachesToNode</span></span>
+      <span class="flow"><span class="ar mono">▣</span> ProtocolProfile · GateResult · Calibration</span>
+    </div>
+  </div>
+  <div class="conn"><span>▲ 노드가 표준계약으로 신호/이벤트 송출</span><span>▼ Agent가 표준 명령 하달</span></div>
+
+  <!-- 노드층 -->
+  <div class="band">
+    <div class="band-l">④ 노드층 — 기관 산출물 (클릭하여 계약 표면 보기)</div>
+    <div class="row r5" id="nodes"></div>
+  </div>
+
+  <div class="detail" id="detail"><div class="empty">위 노드 카드를 클릭하면 그 노드의 <b>owner_org · 표준 신호 · 명령 계약</b>이 표시됩니다.</div></div>
+
+  <div class="foot">
+    <div class="ht">계약 = 기관 간 정식 인계면</div>
+    <div class="handoff">
+      에이지 <code>MCU</code> ↔ 메타 <code>ACU</code> (Command/Signal) · 대동 <code>LPU</code> → 메타 <code>ACU</code> (측위 Signal) ·
+      메타 내부(<code>ACU↔VPU↔매니퓰</code>) · 전 노드 → 비아 <code>Telemetry/관제</code>(업링크) · 비아 <code>HMI</code>(조작·게이트).
+      새 기관/노드는 표준계약 <b>1회 등록(O(1))</b>으로 합류 — HMI는 앱만 추가, 재개발 0.
+    </div>
+    <div class="road">
+      <div class="step now"><b>1단계 — 계약 + 모델 ✅</b><span class="st">@station/contracts · 노드/기관 owner_org · 런타임 인터페이스 (완료)</span></div>
+      <div class="step"><b>2단계 — 참조 런타임</b><span class="st">packages/local-agent + apps/agent (WS/REST) · mock 노드 어댑터 · Policy 엔진 · HMI 재배선</span></div>
+      <div class="step"><b>3단계 — Flutter HMI</b><span class="st">Dart codegen · 같은 JSON API 소비 · 러기드 태블릿</span></div>
+    </div>
+    <div class="small">출처: <span class="mono">docs/architecture/station-field-os.md</span> · <span class="mono">packages/contracts/</span> · ADR-010~013. 값은 1단계 mock·계약 예시.</div>
+  </div>
+</div>
+
+<script>
+const ORGS = {
+  VIA:{id:"ORG-VIA",name:"비아",color:"var(--via)",role:"통합 플랫폼·HMI·Telemetry·관제"},
+  AGE:{id:"ORG-AGE",name:"에이지로보틱스",color:"var(--age)",role:"MCU 모바일 베이스"},
+  META:{id:"ORG-META",name:"메타파머스",color:"var(--meta)",role:"VPU·ACU·매니퓰레이터·EE"},
+  DAEDONG:{id:"ORG-DAEDONG",name:"대동로보틱스",color:"var(--daedong)",role:"LPU 측위"},
+  COLLAB:{id:"ORG-KIRO·ORG-NAS",name:"KIRO·국립농업과학원",color:"var(--collab)",role:"적심/적과 EE 변형"},
+};
+const NODES = [
+  {id:"MCU",org:"AGE",kind:"MCU",label:"모바일 베이스",role:"구동·조향·충전·비상정지·엔코더",
+   signals:["machine.motion.speed","machine.power.battery_voltage","machine.safety.estop"],
+   commands:[["motion.set_speed_limit",0],["motion.stop",1]]},
+  {id:"LPU",org:"DAEDONG",kind:"LPU",label:"측위·맵",role:"LPS 위치·맵 매칭 → ACU가 소비",
+   signals:["machine.localization.pose","machine.localization.map_match"],
+   commands:[["localization.relocalize",0]]},
+  {id:"VPU",org:"META",kind:"VPU",label:"비전·AI인식",role:"카메라·객체/작물/사람 인식",
+   signals:["machine.vision.fps","machine.vision.framedrop","machine.vision.worker_detected"],
+   commands:[["vision.capture.start",0],["vision.capture.stop",0],["vision.calibrate",1]]},
+  {id:"ACU",org:"META",kind:"ACU",label:"자율제어",role:"미션·경로추종·작업시퀀스·안전전환",
+   signals:["machine.autonomy.state","machine.autonomy.mode","machine.navigation.deviation"],
+   commands:[["autonomy.mission.start",0],["autonomy.pause",1],["autonomy.slow_down",1]]},
+  {id:"WORK",org:"META",kind:"WorkModule",label:"매니퓰레이터+EE",role:"적과/적심 작업 (KIRO·농과원 EE 변형)",
+   signals:["machine.arm.joint_temp","machine.ee.grip_force"],
+   commands:[["arm.move",1],["arm.calibrate",1],["ee.pinch",1],["ee.release",0],["ee.calibrate",1]]},
+];
+
+// legend
+document.getElementById("legend").innerHTML = Object.values(ORGS).map(o=>
+  `<span class="chip"><span class="dot" style="background:${o.color}"></span>${o.name} <span class="mono" style="font-size:10px;color:var(--ink-3)">${o.role}</span></span>`).join("");
+
+// node cards
+document.getElementById("nodes").innerHTML = NODES.map(n=>{
+  const o = ORGS[n.org];
+  return `<div class="card node" data-id="${n.id}" style="border-left-color:${o.color}">
+    <div class="h"><span class="kind" style="background:${o.color}">${n.kind}</span></div>
+    <div class="h" style="font-size:13px">${n.label}</div>
+    <div class="s">${n.role}</div>
+    <div class="meta"><span class="pill" style="color:${o.color};border-color:${o.color}">${o.id}</span>
+      <span class="pill">${n.signals.length} sig</span><span class="pill">${n.commands.length} cmd</span></div>
+  </div>`;
+}).join("");
+
+function select(id){
+  document.querySelectorAll(".node").forEach(e=>e.classList.toggle("sel", e.dataset.id===id));
+  const n = NODES.find(x=>x.id===id); const o = ORGS[n.org];
+  document.getElementById("detail").innerHTML = `
+    <div class="dh"><span class="kind" style="background:${o.color};font-size:11px">${n.kind}</span>
+      <span class="nm">${n.label}</span>
+      <span class="org" style="color:${o.color}">owner_org = ${o.id} · ${o.name}</span></div>
+    <div class="db">
+      <div class="col"><h4>↑ 표준 신호 (Signal)</h4>${n.signals.map(s=>`<div class="li">${s}</div>`).join("")}</div>
+      <div class="col"><h4>↓ 명령 계약 (Command · 3단계 ACK)</h4>${n.commands.map(c=>`<div class="li">${c[0]} ${c[1]?'<span class="sfx">safety</span>':''}</div>`).join("")}</div>
+    </div>`;
+}
+document.getElementById("nodes").addEventListener("click",e=>{const c=e.target.closest(".node");if(c)select(c.dataset.id);});
+select("WORK");
+</script>
+</body></html>

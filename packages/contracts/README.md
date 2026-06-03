@@ -9,13 +9,19 @@
 - **Dart 모델**(후속, Flutter HMI)도 같은 `schema/`에서 생성 → 콘솔(TS)·HMI(Dart)·펌웨어가 한 계약 공유.
 
 ## 구성
-- `schema/` — 표준 계약 스키마: organization · node · module-manifest · signal · command(+3단계 ACK) · event · protocol-profile · gate · namespace · id-spine.
+- `schema/` — **platform core**(robot-agnostic) 표준 계약 스키마: organization · node · **robot-blueprint** · module-manifest · signal · command(+3단계 ACK) · event · protocol-profile · gate · namespace · id-spine. 온실/드론 같은 단어가 한 글자도 없다.
+- `profiles/` — **instance** 프로파일. 로봇 종류별 **RobotBlueprint** 선언: `greenhouse/`(적과/적심, 이번 과제) · `reference/`(방제 드론, 비온실 범용 증명). [profiles/README](profiles/README.md).
 - `examples/` — 스키마를 통과하는 픽스처(조직·노드·매니페스트·신호·명령·이벤트).
 - `src/generated/` — codegen 산출 TS 타입(커밋).
+- `src/node-kinds.ts` — **개방형 NodeKind**: `STANDARD_NODE_KINDS`(권장 5종 MCU/VPU/ACU/Telemetry/LPU) + `type NodeKind = StandardNodeKind | (string & {})`(custom 허용) + `isStandardNodeKind()`.
 - `src/organizations.ts` — 컨소시엄 6기관(ORG-*) 상수 + 가공 벤더명(VND-*)→ORG-* alias.
 - `src/namespace.ts` — 표준 신호/명령 네임스페이스(`machine.*`/`env.*`) + TCH-* legacy alias 매퍼.
 - `src/ids.ts` — ID 문법 검증기(RBT/MOD/WKS/CMD/...).
 - `runtime/` — Local Agent 런타임 **인터페이스/타입만**(구현은 STATION Field OS 2단계).
+
+## Robot Blueprint — 로봇 = 노드 조합
+
+"모든 로봇을 SDV로"의 핵심 일반화: **어떤 로봇이든 Blueprint 1개로 정의된다.** `RobotBlueprint`(`schema/robot-blueprint.schema.json`)는 로봇 한 종류를 **노드 + 작업모듈 + 표준계약의 조합**(`blueprintId`·`robotClass`·`profile?`·`nodes[]`·`modules[]`·`requiredContracts[]`)으로 선언한다. 노드 `kind`는 개방형(`src/node-kinds.ts`) — 권장 5종 + custom(예 방제 드론 `FCU`). 예시 3종은 `profiles/`(greenhouse-thin·greenhouse-pinch·spray-drone). **새 로봇 합류 = Blueprint 1개 추가.** 온실 과제는 첫 적용 사례(reference deployment)다([ADR-014](../../docs/adr/ADR-014-robot-blueprint-open-node-taxonomy.md)).
 
 ## 사용
 ```bash

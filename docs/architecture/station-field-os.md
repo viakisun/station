@@ -2,13 +2,15 @@
 
 > 농업로봇용 **SDV/SDR(Software-Defined Robot)** 통합 플랫폼. 이기종 노드(에이지 MCU·메타 VPU/ACU·대동 LPU·비아 Telemetry)와 작업모듈을 **하나의 로봇·하나의 시스템**으로 잇는다.
 >
-> 관련: [ADR-010](../adr/ADR-010-contracts-ssot-json-schema.md) · [ADR-011](../adr/ADR-011-node-org-ownership-model.md) · [ADR-012](../adr/ADR-012-command-envelope-ack.md) · [ADR-013](../adr/ADR-013-signal-namespace.md) · [ADR-002](../adr/ADR-002-context-envelope-transport.md) · [ADR-003](../adr/ADR-003-realtime-protocol.md) · [ADR-006](../adr/ADR-006-gate-severity-model.md) · [ADR-007](../adr/ADR-007-audit-vs-event-log.md) · [시나리오 변경 명세](scenario-change-spec.md) · [@station/contracts](../../packages/contracts/README.md)
+> 관련: [ADR-010](../adr/ADR-010-contracts-ssot-json-schema.md) · [ADR-011](../adr/ADR-011-node-org-ownership-model.md) · [ADR-012](../adr/ADR-012-command-envelope-ack.md) · [ADR-013](../adr/ADR-013-signal-namespace.md) · [ADR-014](../adr/ADR-014-robot-blueprint-open-node-taxonomy.md) · [ADR-002](../adr/ADR-002-context-envelope-transport.md) · [ADR-003](../adr/ADR-003-realtime-protocol.md) · [ADR-006](../adr/ADR-006-gate-severity-model.md) · [ADR-007](../adr/ADR-007-audit-vs-event-log.md) · [시나리오 변경 명세](scenario-change-spec.md) · [통합 아키텍처 맵(HTML)](station-field-os-map.html) · [@station/contracts](../../packages/contracts/README.md)
 
 ---
 
 ## 1. 정체 — SDV에서 SDR로
 
 자동차가 이기종 ECU를 **소프트웨어로 정의(SDV, Software-Defined Vehicle)** 했듯, STATION Field OS는 이기종 로봇 노드를 소프트웨어로 정의한다(**SDR, Software-Defined Robot**). 하드웨어 산출물의 소유는 기관에 흩어져 있지만, 운용·계약·경험은 하나의 OS 층으로 수렴한다.
+
+> **비아의 진짜 역할 = 모든 로봇을 SDV로 개발할 토대다.** 온실 과제(적과/적심)는 이 플랫폼의 **첫 적용 사례(reference deployment)** 일 뿐이다. 물류 AMR, 방제 드론, 매니퓰레이터 전용기 등 어떤 로봇이든 같은 계약 코어 위에 올라간다. 따라서 계약 코어에는 온실 가정을 박지 않는다 — 온실은 `profiles/greenhouse/` 인스턴스에만 산다(§1.5·§2.5, [ADR-014](../adr/ADR-014-robot-blueprint-open-node-taxonomy.md)). 전체 그림은 [통합 아키텍처 맵(station-field-os-map.html)](station-field-os-map.html) — 비아 중심, RobotBlueprint 스트립 포함.
 
 ### 자동차 SDV ↔ STATION Field OS 대응표
 
@@ -42,6 +44,63 @@
 - **① 통합층 (RAL)** — Local Agent / Robot Gateway가 노드별 transport(CAN·Modbus·ROS2·MQTT·DDS)를 NodeAdapter로 흡수해 표준 Signal/Command/Event로 노출한다. 노드의 이질성이 여기서 흡수된다.
 - **② 계약층 = STATION Contracts** — `@station/contracts`. 언어중립 JSON Schema가 단일 진실 공급원(SSOT)이자 기관 사이의 **이음새**. 콘솔(TS)·HMI(Dart, 후속)·펌웨어가 한 계약을 공유한다([ADR-010](../adr/ADR-010-contracts-ssot-json-schema.md)).
 - **③ 운영·경험층** — HMI(현장 조작·게이트), Telemetry(신호 업링크), 관제(Ops). 모두 비아(ORG-VIA)가 소유한다.
+
+---
+
+## 2.5. Platform core ↔ Instance profile
+
+"모든 로봇을 SDV로"가 성립하려면 **계약 코어에 특정 로봇/도메인 가정이 없어야** 한다. 그래서 계약 패키지는 두 층으로 분리된다([profiles/README](../../packages/contracts/profiles/README.md), [ADR-014](../adr/ADR-014-robot-blueprint-open-node-taxonomy.md)).
+
+| 층 | 경로 | 성격 | 내용 |
+| --- | --- | --- | --- |
+| **Platform core** | `packages/contracts/schema/` | **robot-agnostic** | Organization·Node·**RobotBlueprint**·Signal·Command·Event·ModuleManifest·Gate·PolicyRule 등 표준 계약. **온실/드론 같은 단어가 한 글자도 없다.** |
+| **Instance profile** | `packages/contracts/profiles/` | instance(구체 배치) | 코어 위에 올라간 로봇 종류별 **RobotBlueprint** 선언. `greenhouse/`(이번 과제) · `reference/`(비온실 범용 증명). |
+
+- 온실 컨소시엄(에이지·메타·대동·KIRO·농과원)은 `profiles/greenhouse/` 안에만 존재한다. **코어는 컨소시엄·온실과 무관**하다.
+- 검증은 `pnpm --filter @station/contracts validate`가 `examples/`와 `profiles/**/*.json`을 모두 코어 스키마로 검사한다.
+
+---
+
+## 2.6. Robot Blueprint — 로봇 = 노드 조합
+
+**어떤 로봇이든 Blueprint 1개로 정의된다.** `RobotBlueprint`(`schema/robot-blueprint.schema.json` → 타입 `RobotBlueprint`)는 로봇 한 종류를 **노드 + 작업모듈 + 표준계약의 조합**으로 선언한다.
+
+```jsonc
+RobotBlueprint = {
+  blueprintId,        // ^blueprint\.[a-z0-9-]+$  (예 blueprint.greenhouse-thin)
+  robotClass,         // 예 greenhouse-thinning-robot, spray-drone
+  label, description?,
+  profile?,           // 인스턴스 프로파일(도메인). 예 greenhouse. core 와 분리.
+  nodes[]   { kind, ownerOrg, role? },        // 구성 컴퓨트 노드(kind 는 개방형 §2.7)
+  modules[] { manifestRef, attachesToNode },  // 부착 작업모듈(ModuleManifest 참조)
+  requiredContracts[]                          // 의존 표준 계약. 예 Signal·Command·Event·Calibration
+}
+```
+
+### 예시 3종 (`profiles/`)
+
+| Blueprint | robotClass | profile | nodes | modules | 비고 |
+| --- | --- | --- | --- | --- | --- |
+| [`blueprint.greenhouse-thin`](../../packages/contracts/profiles/greenhouse/blueprint.greenhouse-thin.json) | greenhouse-thinning-robot | greenhouse | MCU(AGE)·LPU(DAEDONG)·VPU(META)·ACU(META)·Telemetry(VIA) | manipulator + **thinning_ee** | 적과 로봇 |
+| [`blueprint.greenhouse-pinch`](../../packages/contracts/profiles/greenhouse/blueprint.greenhouse-pinch.json) | greenhouse-pinching-robot | greenhouse | thin과 **동일 노드 골격** | manipulator + **pinching_ee** | 적심 — thin과 차이 = 모듈 1개 교체 |
+| [`blueprint.spray-drone`](../../packages/contracts/profiles/reference/blueprint.spray-drone.json) | spray-drone | aerial | **FCU**(custom)·VPU·Telemetry(VIA) | sprayer | 비온실 참조 — 범용 증명 |
+
+- **적과↔적심**은 노드 골격이 똑같고 작업모듈(EE)만 바뀐다 — 새 로봇 = 모듈만 교체한 **Blueprint 추가**.
+- **방제 드론**은 온실 로봇이 아닌 전혀 다른 로봇도 같은 틀로 정의됨을 증명한다(custom 노드 `FCU` 사용, §2.7).
+- **새 로봇 합류 = Blueprint 1개 추가.** 물류 AMR·매니퓰 전용기도 동일하다.
+
+---
+
+## 2.7. 개방형 NodeKind
+
+노드 분류를 온실 5종에 가두면 "모든 로봇을 SDV로"가 무너진다. 그래서 `NodeKind`는 **개방형(open) taxonomy**다(`src/node-kinds.ts`, [ADR-014](../adr/ADR-014-robot-blueprint-open-node-taxonomy.md)).
+
+- **권장 표준 5종** — `STANDARD_NODE_KINDS = ["MCU", "VPU", "ACU", "Telemetry", "LPU"]`(온실 멀티로봇 기준).
+- **개방형 타입** — `type NodeKind = StandardNodeKind | (string & {})`. 표준 5종은 자동완성되고, 그 외 임의 문자열(custom)도 허용한다. 방제 드론의 `FCU`(flight control unit)가 그 예다.
+- **판별자** — `isStandardNodeKind(kind): kind is StandardNodeKind`로 표준/custom을 구분한다.
+- 스키마에서도 `Node.kind`·`RobotBlueprint.nodes[].kind`를 **string(개방형)** 으로 둔다(기존 닫힌 5-enum을 개방). 도메인 어댑터 `packages/domain/src/adapters/modules-to-nodes.ts`도 이 `NodeKind`를 `@station/contracts`에서 import해 쓴다.
+
+제3자 노드(드론 FCU, 외부 벤더 컴퓨트)를 계약 변경 없이 수용한다.
 
 ---
 

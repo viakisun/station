@@ -2,11 +2,11 @@
    기존 모듈(MOD-*)·표준채널(TCH-*) → 노드(MCU/VPU/ACU/Telemetry/LPU) 분류 + owner_org
    (비파괴: release.ts mock 을 읽어 표준 Node[] 로 투영)
    ============================================================ */
-import type { Node } from "@station/contracts";
+import type { Node, NodeKind } from "@station/contracts";
 import { toNamespace } from "@station/contracts";
 import { RELEASE } from "../data/release";
 
-export type NodeKind = "MCU" | "VPU" | "ACU" | "Telemetry" | "LPU";
+// NodeKind 는 @station/contracts(개방형)에서 가져온다. 여기선 표준 5종만 사용.
 
 /** MOD-* → 부착 노드. 매니퓰레이터/엔드이펙터(ARM/EE)는 ACU에 붙는다. */
 export function moduleNode(moduleId: string): NodeKind {

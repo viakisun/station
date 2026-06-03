@@ -10,5 +10,6 @@ export * from "./node";
 export * from "./organization";
 export * from "./policy-rule";
 export * from "./protocol-profile";
+export * from "./robot-blueprint";
 export * from "./signal-channel";
 export * from "./signal";

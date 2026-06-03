@@ -11,7 +11,10 @@ export interface CommandEnvelope {
   commandId: string;
   verb: string;
   target: {
-    node: "MCU" | "VPU" | "ACU" | "Telemetry" | "LPU";
+    /**
+     * (개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)
+     */
+    node: string;
     /**
      * 예 MOD-EE-PINCH (선택)
      */

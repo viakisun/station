@@ -1,0 +1,14 @@
+{
+  "blueprintId": "blueprint.spray-drone",
+  "robotClass": "spray-drone",
+  "label": "방제 드론 (비온실 참조 — 범용 증명)",
+  "description": "온실 로봇이 아닌 전혀 다른 로봇도 같은 Blueprint 틀로 정의됨을 증명. custom 노드종류 'FCU'(비행제어)를 사용해 개방형 NodeKind 를 보인다. core 계약엔 온실/드론 가정이 없다.",
+  "profile": "aerial",
+  "nodes": [
+    { "kind": "FCU", "ownerOrg": "ORG-EXT", "role": "비행 제어(flight control unit) — custom 노드" },
+    { "kind": "VPU", "ownerOrg": "ORG-EXT", "role": "비전·작물 인식" },
+    { "kind": "Telemetry", "ownerOrg": "ORG-VIA", "role": "통신 게이트웨이(비아 공통)" }
+  ],
+  "modules": [{ "manifestRef": "ext.module.sprayer.v1", "attachesToNode": "FCU" }],
+  "requiredContracts": ["Signal", "Command", "Event"]
+}

@@ -11,7 +11,10 @@ export interface Event {
    * 발생 출처. 노드/모듈 ID. 예 NODE-VPU-META, MOD-EE-PINCH
    */
   source: string;
-  node?: "MCU" | "VPU" | "ACU" | "Telemetry" | "LPU";
+  /**
+   * (개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)
+   */
+  node?: string;
   /**
    * 표준 에러코드. 예 CAM-FRAME-DROP, NAV-SAFETY-INTERLOCK
    */

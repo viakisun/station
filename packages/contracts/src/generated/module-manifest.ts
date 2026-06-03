@@ -23,9 +23,15 @@ export interface ModuleManifest {
    * 기존 MOD-* 매핑(선택). 예 MOD-ARM-A2
    */
   legacyModuleId?: string;
-  attachesToNode: "MCU" | "VPU" | "ACU" | "Telemetry" | "LPU";
+  /**
+   * (개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)
+   */
+  attachesToNode: string;
   controller?: {
-    kind?: "MCU" | "VPU" | "ACU";
+    /**
+     * (개방형 노드종류 — 권장 MCU·VPU·ACU + custom 허용)
+     */
+    kind?: string;
     model?: string;
   };
   protocol?: {

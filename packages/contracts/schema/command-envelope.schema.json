@@ -5,33 +5,94 @@
   "description": "런타임 명령 1 인스턴스. HMI/관제 → Local Agent CommandRouter → 대상 노드.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["commandId", "verb", "target", "issuedBy", "issuedAt"],
+  "required": [
+    "commandId",
+    "verb",
+    "target",
+    "issuedBy",
+    "issuedAt"
+  ],
   "properties": {
-    "commandId": { "type": "string", "description": "예 CMD-WKS-20260601-00045-0007" },
-    "verb": { "type": "string" },
+    "commandId": {
+      "type": "string",
+      "description": "예 CMD-WKS-20260601-00045-0007"
+    },
+    "verb": {
+      "type": "string"
+    },
     "target": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["node"],
+      "required": [
+        "node"
+      ],
       "properties": {
-        "node": { "type": "string", "enum": ["MCU", "VPU", "ACU", "Telemetry", "LPU"] },
-        "module": { "type": "string", "description": "예 MOD-EE-PINCH (선택)" }
+        "node": {
+          "type": "string",
+          "description": "(개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)"
+        },
+        "module": {
+          "type": "string",
+          "description": "예 MOD-EE-PINCH (선택)"
+        }
       }
     },
-    "workSessionId": { "type": "string", "description": "예 WKS-20260601-00045" },
+    "workSessionId": {
+      "type": "string",
+      "description": "예 WKS-20260601-00045"
+    },
     "issuedBy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["role"],
+      "required": [
+        "role"
+      ],
       "properties": {
-        "role": { "type": "string", "enum": ["operator", "manager", "maintainer", "system"] },
-        "id": { "type": "string" }
+        "role": {
+          "type": "string",
+          "enum": [
+            "operator",
+            "manager",
+            "maintainer",
+            "system"
+          ]
+        },
+        "id": {
+          "type": "string"
+        }
       }
     },
-    "issuedAt": { "type": "string" },
-    "args": { "type": "object", "additionalProperties": { "type": ["number", "string", "boolean"] } },
-    "ack": { "type": "string", "enum": ["at_least_once", "exactly_once", "at_most_once"] },
-    "timeoutMs": { "type": "number" },
-    "safety": { "type": "string", "enum": ["none", "guarded", "safety_critical"] }
+    "issuedAt": {
+      "type": "string"
+    },
+    "args": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "number",
+          "string",
+          "boolean"
+        ]
+      }
+    },
+    "ack": {
+      "type": "string",
+      "enum": [
+        "at_least_once",
+        "exactly_once",
+        "at_most_once"
+      ]
+    },
+    "timeoutMs": {
+      "type": "number"
+    },
+    "safety": {
+      "type": "string",
+      "enum": [
+        "none",
+        "guarded",
+        "safety_critical"
+      ]
+    }
   }
 }

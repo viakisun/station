@@ -5,17 +5,59 @@
   "description": "비동기 이벤트/알람. Local Agent EventBus가 발행, 임계 초과 시 Incident로 승격(promotedIncidentId).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["ts", "severity", "source", "code", "message"],
+  "required": [
+    "ts",
+    "severity",
+    "source",
+    "code",
+    "message"
+  ],
   "properties": {
-    "ts": { "type": "string" },
-    "severity": { "type": "string", "enum": ["info", "notice", "warning", "critical", "emergency"] },
-    "source": { "type": "string", "description": "발생 출처. 노드/모듈 ID. 예 NODE-VPU-META, MOD-EE-PINCH" },
-    "node": { "type": "string", "enum": ["MCU", "VPU", "ACU", "Telemetry", "LPU"] },
-    "code": { "type": "string", "description": "표준 에러코드. 예 CAM-FRAME-DROP, NAV-SAFETY-INTERLOCK" },
-    "message": { "type": "string" },
-    "channel": { "type": "string", "description": "관련 표준 채널(선택)" },
-    "commandId": { "type": "string", "description": "관련 명령(선택)" },
-    "workSessionId": { "type": "string" },
-    "promotedIncidentId": { "type": ["string", "null"], "description": "승격된 incident id 또는 null" }
+    "ts": {
+      "type": "string"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "notice",
+        "warning",
+        "critical",
+        "emergency"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "description": "발생 출처. 노드/모듈 ID. 예 NODE-VPU-META, MOD-EE-PINCH"
+    },
+    "node": {
+      "type": "string",
+      "description": "(개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)"
+    },
+    "code": {
+      "type": "string",
+      "description": "표준 에러코드. 예 CAM-FRAME-DROP, NAV-SAFETY-INTERLOCK"
+    },
+    "message": {
+      "type": "string"
+    },
+    "channel": {
+      "type": "string",
+      "description": "관련 표준 채널(선택)"
+    },
+    "commandId": {
+      "type": "string",
+      "description": "관련 명령(선택)"
+    },
+    "workSessionId": {
+      "type": "string"
+    },
+    "promotedIncidentId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "승격된 incident id 또는 null"
+    }
   }
 }

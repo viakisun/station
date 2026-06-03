@@ -20,9 +20,9 @@ export interface SignalChannel {
    */
   group?: string;
   /**
-   * 소속 노드
+   * 소속 노드 (개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)
    */
-  node?: "MCU" | "VPU" | "ACU" | "Telemetry" | "LPU";
+  node?: string;
   ownerOrg?: string;
   calibration?: {
     zero: number;

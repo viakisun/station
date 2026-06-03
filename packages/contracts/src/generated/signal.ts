@@ -17,7 +17,10 @@ export interface Signal {
   ts: string;
   quality: "good" | "warn" | "bad";
   source?: {
-    node?: "MCU" | "VPU" | "ACU" | "Telemetry" | "LPU";
+    /**
+     * (개방형 노드종류 — 권장 MCU·VPU·ACU·Telemetry·LPU + custom 허용)
+     */
+    node?: string;
     /**
      * 원천 키. 예 cam_fps
      */

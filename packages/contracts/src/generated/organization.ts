@@ -17,7 +17,7 @@ export interface Organization {
   /**
    * 이 기관이 소유한 컴퓨트 노드. 비아(운영·통합 계층)는 비어 있을 수 있다.
    */
-  ownsNodes?: ("MCU" | "VPU" | "ACU" | "Telemetry" | "LPU")[];
+  ownsNodes?: string[];
   /**
    * 기존 목업 가공 벤더명(release.ts) → 이 기관으로 정합되는 alias
    */
