@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STATION SDV Reference Platform — Technical Baseline (STATION-SDV-SPEC-2026-001)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"/>
+<style>
+  :root{
+    /* 2-color discipline: ink scale (monochrome) + single safety accent */
+    --ink:#1a1a1a; --g1:#3a3a3a; --g2:#6b6b6b; --g3:#9a9a9a; --g4:#c9c9c9; --g5:#e9e9eb;
+    --paper:#fff; --canvas:#f4f4f5; --line:#d2d3d6; --line2:#9a9a9c; --hair:#e7e7e9;
+    --safety:#c0392b; --safety-bg:#fbecea;
+    --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:Pretendard,system-ui,sans-serif;font-size:13px;line-height:1.55}
+  .mono{font-family:var(--mono)}
+  /* ===== document control header ===== */
+  .dochead{position:sticky;top:0;z-index:30;background:var(--ink);color:#fff;display:flex;align-items:stretch;font-size:11px}
+  .dochead .blk{padding:7px 14px;border-right:1px solid #3a3a3a;display:flex;flex-direction:column;justify-content:center}
+  .dochead .blk .l{color:#9a9a9c;font-size:9px;letter-spacing:.5px;text-transform:uppercase}
+  .dochead .blk .v{font-family:var(--mono);font-weight:700;font-size:11.5px;margin-top:1px}
+  .dochead .ttl{flex:1;border-right:none}
+  .dochead .ttl .v{font-family:Pretendard,sans-serif;font-weight:700;font-size:12.5px}
+  .dochead a{color:#c9c9c9;text-decoration:none}
+  /* ===== shell ===== */
+  .shell{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:230px 1fr;gap:26px;padding:22px}
+  nav.toc{position:sticky;top:50px;align-self:start;font-size:11.5px;max-height:calc(100vh - 70px);overflow:auto;border-right:1px solid var(--line);padding-right:10px}
+  nav.toc a{display:block;padding:2.5px 8px;color:var(--g2);text-decoration:none;border-left:2px solid transparent}
+  nav.toc a:hover{color:var(--ink);background:var(--g5)}
+  nav.toc a.h{font-weight:800;color:var(--ink);margin-top:11px;border:none;font-size:11px;letter-spacing:.4px;text-transform:uppercase}
+  nav.toc a .nn{font-family:var(--mono);font-size:9.5px;color:var(--g3);margin-right:5px}
+  main{min-width:0}
+  /* ===== cover ===== */
+  .cover{background:var(--paper);border:1.5px solid var(--ink);padding:26px 28px;margin-bottom:22px}
+  .cover .docno{font-family:var(--mono);font-size:11px;color:var(--g2);letter-spacing:.5px}
+  .cover h1{font-size:23px;margin:9px 0 4px;line-height:1.25;letter-spacing:-.3px}
+  .cover .subttl{font-size:13px;color:var(--g2);margin:0 0 16px}
+  .ctl{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-bottom:none}
+  .ctl div{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:6px 10px}
+  .ctl div:nth-child(4n){border-right:none}
+  .ctl .l{font-size:9px;color:var(--g3);text-transform:uppercase;letter-spacing:.5px}
+  .ctl .v{font-family:var(--mono);font-size:12px;font-weight:700;margin-top:1px}
+  .abstract{font-size:12.5px;color:var(--g1);line-height:1.6}
+  /* ===== table of contents ===== */
+  .toc-cols{column-count:2;column-gap:34px}
+  .toc-grp{break-inside:avoid;margin-bottom:9px}
+  .toc-grp .gh{font-weight:800;font-size:11.5px;border-bottom:1.5px solid var(--ink);padding-bottom:2px;margin-bottom:3px}
+  a.toc-row{display:flex;align-items:baseline;text-decoration:none;color:var(--ink);font-size:11px;padding:1px 0}
+  a.toc-row .tid{font-family:var(--mono);font-size:9.5px;color:var(--g2);flex:0 0 38px}
+  a.toc-row .tt{flex:0 1 auto}
+  a.toc-row .lead{flex:1 1 auto;border-bottom:1px dotted var(--line2);margin:0 4px;position:relative;top:-3px;min-width:8px}
+  a.toc-row .toc-pg{font-family:var(--mono);font-size:10px;color:var(--ink);flex:0 0 auto;text-align:right}
+  /* ===== part / section headings ===== */
+  .part{margin:0 0 8px;border-top:2px solid var(--ink);padding-top:9px}
+  .part h2{font-size:17px;margin:0 0 2px;letter-spacing:-.2px}
+  .part .pid{font-family:var(--mono);font-size:11px;color:var(--ink);font-weight:700;letter-spacing:.5px}
+  .part .pdesc{font-size:11.5px;color:var(--g2);margin:0}
+  section{margin:0 0 18px;scroll-margin-top:54px}
+  h3{font-size:14px;margin:18px 0 3px;display:flex;align-items:baseline;gap:8px}
+  h3 .sid{font-family:var(--mono);font-size:11px;background:var(--ink);color:#fff;padding:1px 7px;font-weight:700}
+  h4{font-size:12.5px;margin:13px 0 4px;color:var(--g1)}
+  .sub{color:var(--g2);font-size:11.5px;margin:0 0 9px}
+  p{margin:0 0 8px}
+  b.k{color:var(--ink);font-weight:700}
+  /* ===== tables (engineering) ===== */
+  table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line2);font-size:11.5px;margin:4px 0 10px}
+  th{background:var(--g5);text-align:left;padding:6px 9px;font-size:9.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--g2);border:1px solid var(--line);font-weight:700}
+  td{padding:6px 9px;border:1px solid var(--line);vertical-align:top}
+  td.mono,th.mono{font-family:var(--mono)}
+  tr:nth-child(even) td{background:#fafafa}
+  caption{caption-side:top;text-align:left;font-size:10.5px;color:var(--g2);padding:0 0 4px;font-weight:600}
+  /* ===== node code chips — monochrome tier tints + border patterns ===== */
+  .nc{font-family:var(--mono);font-size:10px;font-weight:700;padding:1px 6px;border:1px solid var(--ink);white-space:nowrap;display:inline-block;line-height:1.5}
+  .nc.rt{background:var(--ink);color:#fff}                 /* real-time / HW (MCU) — darkest */
+  .nc.cmp{background:var(--g2);color:#fff}                 /* compute (VPU/ACU/LPU) — mid */
+  .nc.gw{background:var(--paper);color:var(--ink);border-width:1.5px} /* gateway host (AGENT) — outline */
+  .nc.ui{background:var(--g4);color:var(--ink)}            /* ui / transport (HMI/TEL) — light */
+  .nc.share{border-style:dashed}                           /* process shares a board */
+  .nc.host{border-style:dashed}                            /* host pseudo-node */
+  /* ===== figures ===== */
+  .fig{background:var(--paper);border:1px solid var(--line2);padding:12px;margin:6px 0 8px;overflow:auto}
+  .fig svg{display:block;width:100%;height:auto}
+  .figcap{font-size:10.5px;color:var(--g2);margin-top:7px;border-top:1px solid var(--hair);padding-top:5px}
+  .figcap b{color:var(--ink)}
+  /* ===== callouts ===== */
+  .req{border-left:3px solid var(--ink);background:var(--paper);padding:8px 12px;margin:6px 0;font-size:12px}
+  .req .tag{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--g2);letter-spacing:.5px}
+  .safe{border-left:3px solid var(--safety);background:var(--safety-bg);padding:8px 12px;margin:6px 0;font-size:12px}
+  .safe .tag{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--safety);letter-spacing:.5px}
+  .no{color:var(--safety);font-weight:700}
+  .note{font-size:11px;color:var(--g2);margin:6px 0}
+  /* ===== code / json ===== */
+  .code{background:#fafafa;border:1px solid var(--line);padding:10px 12px;font-family:var(--mono);font-size:10.5px;line-height:1.65;white-space:pre;overflow:auto;margin:5px 0 9px}
+  .code .c{color:var(--g3)}
+  .row{display:grid;gap:10px}.r2{grid-template-columns:1fr 1fr}.r3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:980px){.shell{grid-template-columns:1fr}nav.toc{display:none}.row.r2,.row.r3{grid-template-columns:1fr}}
+  footer{margin-top:22px;border-top:2px solid var(--ink);padding-top:10px;font-size:10.5px;color:var(--g2)}
+  /* ===== part divider (간지) ===== */
+  .divider{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);margin:24px 0 18px;padding:16px 4px;background:var(--paper)}
+  .divider .dv-id{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:700;letter-spacing:1.5px}
+  .divider .dv-title{font-size:24px;font-weight:800;margin-top:3px;letter-spacing:-.3px}
+  .divider .dv-sub{color:var(--g2);font-size:12px;margin-top:5px}
+  /* ===== A3 print ===== */
+  @media print{
+    @page{size:A3 landscape}
+    .dochead,nav.toc{display:none!important}
+    .shell{display:block;max-width:none;margin:0;padding:0}
+    body{background:#fff;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    a{color:inherit;text-decoration:none}
+    /* title page */
+    .cover{break-after:page;min-height:250mm;display:flex;flex-direction:column;justify-content:center;border:none}
+    .cover h1{font-size:30px} .cover .subttl{font-size:15px}
+    #docinfo{break-after:page} #toc{break-after:auto}
+    .toc-cols{column-count:2}
+    /* divider = full page */
+    .divider{break-before:page;break-after:page;min-height:248mm;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;border:none;margin:0;padding:0 6mm}
+    .divider .dv-id{font-size:17px} .divider .dv-title{font-size:42px} .divider .dv-sub{font-size:15px;margin-top:8px}
+    .part{break-before:auto}
+    section{break-inside:avoid;margin-bottom:9px}
+    .fig,table,.req,.safe,.code,.row{break-inside:avoid}
+    .fig svg{max-height:160mm}
+    h2,h3{break-after:avoid}
+  }
+</style></head>
+<body>
+
+<div class="dochead">
+  <div class="blk"><span class="l">Doc No</span><span class="v">STATION-SDV-SPEC-2026-001</span></div>
+  <div class="blk"><span class="l">Rev</span><span class="v">A</span></div>
+  <div class="blk"><span class="l">Date</span><span class="v">2026-06-03</span></div>
+  <div class="blk"><span class="l">Status</span><span class="v">Baseline</span></div>
+  <div class="blk ttl"><span class="l">Document</span><span class="v">STATION SDV Reference Platform — Technical Baseline</span></div>
+  <div class="blk"><span class="l">Issuer</span><span class="v">ORG-VIA / R&amp;D</span></div>
+</div>
+
+<div class="shell">
+<nav class="toc">
+  <a class="h">Front Matter</a>
+  <a href="#docinfo"><span class="nn">—</span>Document Information</a>
+  <a href="#toc"><span class="nn">—</span>Table of Contents</a>
+  <a href="#s01"><span class="nn">0.1</span>Scope</a>
+  <a href="#s02"><span class="nn">0.2</span>Normative References</a>
+  <a href="#s03"><span class="nn">0.3</span>Terms · Org Registry</a>
+  <a href="#s0c"><span class="nn">0.4</span>Document Conventions</a>
+  <a href="#s04"><span class="nn">0.5</span>Identifier Conventions</a>
+  <a class="h">Part A · Software</a>
+  <a href="#a1"><span class="nn">A1</span>System Overview</a>
+  <a href="#a2"><span class="nn">A2</span>Node Architecture</a>
+  <a href="#a3"><span class="nn">A3</span>Authority &amp; Safety</a>
+  <a href="#a4"><span class="nn">A4</span>Boot &amp; Discovery</a>
+  <a href="#a5"><span class="nn">A5</span>Failure Scenarios</a>
+  <a href="#a6"><span class="nn">A6</span>Data Ownership</a>
+  <a href="#a7"><span class="nn">A7</span>Event Severity</a>
+  <a class="h">Part B · Identifier</a>
+  <a href="#b0"><span class="nn">B0</span>Master Prefix Registry</a>
+  <a href="#b0b"><span class="nn">B0b</span>Namespace Map</a>
+  <a href="#b0c"><span class="nn">B0c</span>Naming &amp; Governance</a>
+  <a href="#b1"><span class="nn">B1</span>Layered Identifier Model</a>
+  <a href="#b2"><span class="nn">B2</span>Canonical Registry</a>
+  <a href="#b3"><span class="nn">B3</span>Deployment Matrix</a>
+  <a href="#b4"><span class="nn">B4</span>Asset-Tag Scheme</a>
+  <a href="#b5"><span class="nn">B5</span>Runtime Instance IDs</a>
+  <a class="h">Part C · Protocol</a>
+  <a href="#c1"><span class="nn">C1</span>Transport Tiers</a>
+  <a href="#c2"><span class="nn">C2</span>ProtocolProfile Registry</a>
+  <a href="#c3"><span class="nn">C3</span>Transport Matrix</a>
+  <a href="#c4"><span class="nn">C4</span>Signal/Command Catalog</a>
+  <a href="#c4q"><span class="nn">C4Q</span>Signal Quality · Policy</a>
+  <a href="#c5"><span class="nn">C5</span>Pub/Sub &amp; ACK</a>
+  <a href="#c6"><span class="nn">C6</span>Exchange Sequences</a>
+  <a href="#c7"><span class="nn">C7</span>Gate &amp; Policy</a>
+  <a class="h">Part D · Rig &amp; HW</a>
+  <a href="#d1"><span class="nn">D1</span>Common: Power · E-stop</a>
+  <a href="#d2"><span class="nn">D2</span>RIG-1 Flat Panel</a>
+  <a href="#d3"><span class="nn">D3</span>RIG-2 Profile Rover</a>
+  <a href="#d4"><span class="nn">D4</span>Labeling</a>
+  <a class="h">Part E · Operation</a>
+  <a href="#e1"><span class="nn">E1</span>Run Loop</a>
+  <a href="#e2"><span class="nn">E2</span>HMI Operation</a>
+  <a href="#e3"><span class="nn">E3</span>OTA · Telemetry</a>
+  <a class="h">Part F · Interfaces</a>
+  <a href="#f0"><span class="nn">F0</span>Interface Model</a>
+  <a href="#f1"><span class="nn">F1</span>Interface Map</a>
+  <a href="#f2"><span class="nn">F2</span>Inventory (16)</a>
+  <a href="#f3"><span class="nn">F3</span>Dependency Matrix</a>
+  <a href="#f4"><span class="nn">F4</span>Heartbeat / Health</a>
+  <a href="#f5p"><span class="nn">F5.P</span>Sheets · Physical</a>
+  <a href="#f5l"><span class="nn">F5.L</span>Sheets · Logical</a>
+  <a href="#f5x"><span class="nn">F5.X</span>Sheets · Cloud</a>
+  <a href="#f6"><span class="nn">F6</span>Cloud Detail</a>
+  <a href="#f7"><span class="nn">F7</span>Conformance</a>
+  <a class="h">Annexes</a>
+  <a href="#anx-a"><span class="nn">A</span>ProtocolProfile JSON</a>
+  <a href="#anx-b"><span class="nn">B</span>Node Contract JSON</a>
+  <a href="#anx-c"><span class="nn">C</span>ID Grammar</a>
+  <a href="#anx-d"><span class="nn">D</span>Drawing Index</a>
+  <a href="#anx-e"><span class="nn">E</span>Contract Alignment</a>
+  <a href="#anx-f"><span class="nn">F</span>Requirements (REQ)</a>
+  <a href="#anx-g"><span class="nn">G</span>Figures &amp; Tables</a>
+  <a href="#anx-h"><span class="nn">H</span>Change Log</a>
+</nav>
+
+<main>
+
+  <!-- ============ COVER ============ -->
+  <div class="cover">
+    <div class="docno">STATION-SDV-SPEC-2026-001 · Rev A · 2026-06-03</div>
+    <h1>STATION SDV Reference Platform — Technical Baseline</h1>
+    <div class="subttl">System · Identifiers · Protocol · Rigs &nbsp;|&nbsp; 생육분석 로봇 SDV 통합 기술 기준서</div>
+    <div class="docno" style="margin-top:22px">Engineering Baseline · 2026-06-03 · ORG-VIA / R&amp;D · RS-2025-02219411</div>
+  </div>
+
+  <!-- ============ DOCUMENT INFORMATION ============ -->
+  <section id="docinfo">
+    <h3><span class="sid">DOC</span> Document Information</h3>
+    <div class="ctl">
+      <div><div class="l">Classification</div><div class="v">Engineering Baseline</div></div>
+      <div><div class="l">Supersedes</div><div class="v">rig.html · build-sheet · build-guide</div></div>
+      <div><div class="l">Normative Source</div><div class="v">@station/contracts</div></div>
+      <div><div class="l">Drawing Unit</div><div class="v">mm · 3rd∠</div></div>
+      <div><div class="l">Drawn</div><div class="v">ORG-VIA / R&amp;D</div></div>
+      <div><div class="l">Checked</div><div class="v">—</div></div>
+      <div><div class="l">Approved</div><div class="v">—</div></div>
+      <div><div class="l">Program</div><div class="v">RS-2025-02219411</div></div>
+    </div>
+    <div class="abstract" style="margin-top:14px">
+      본 문서는 분산 노드 구조의 농업용 SDV(Software-Defined Robot) 레퍼런스 플랫폼에 대한 단일 기술 기준서다.
+      소프트웨어 아키텍처(Part A), 식별자·배치 체계(Part B), 프로토콜·메시지 교환(Part C),
+      두 종의 레퍼런스 리그(Part D: RIG-1 평면 패널 · RIG-2 프로파일 로버), 운용 절차(Part E), 모듈 인터페이스 ICD(Part F)를 규정한다.
+      계약(contract) 정의는 <span class="mono">@station/contracts</span>를 정본으로 참조하며, 본 문서가 코드와 상이한 부분은 Annex E에 정합 변경안으로 명시한다.
+    </div>
+    <table style="margin-top:14px">
+      <caption>개정 이력 (Revision History)</caption>
+      <thead><tr><th>Rev</th><th>Date</th><th>Description</th><th>By</th></tr></thead>
+      <tbody><tr><td class="mono">A</td><td class="mono">2026-06-03</td><td>최초 발행. rig.html · build-sheet.html · build-guide.md 통합·대체.</td><td class="mono">ORG-VIA</td></tr></tbody>
+    </table>
+  </section>
+
+  <!-- ============ TABLE OF CONTENTS ============ -->
+  <section id="toc">
+    <h3><span class="sid">TOC</span> Table of Contents · 목차</h3>
+    <div class="toc-cols">
+      <div class="toc-grp"><div class="gh">Front-of-book</div>
+        <a class="toc-row" href="#docinfo"><span class="tid">—</span><span class="tt">Document Information</span><span class="lead"></span><span class="toc-pg" data-anchor="docinfo"></span></a>
+        <a class="toc-row" href="#toc"><span class="tid">—</span><span class="tt">Table of Contents</span><span class="lead"></span><span class="toc-pg" data-anchor="toc"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Section 0 · Front Matter</div>
+        <a class="toc-row" href="#s01"><span class="tid">0.1</span><span class="tt">Scope &amp; System Definition</span><span class="lead"></span><span class="toc-pg" data-anchor="s01"></span></a>
+        <a class="toc-row" href="#s02"><span class="tid">0.2</span><span class="tt">Normative References</span><span class="lead"></span><span class="toc-pg" data-anchor="s02"></span></a>
+        <a class="toc-row" href="#s03"><span class="tid">0.3</span><span class="tt">Terms &amp; Org Registry</span><span class="lead"></span><span class="toc-pg" data-anchor="s03"></span></a>
+        <a class="toc-row" href="#s0c"><span class="tid">0.4</span><span class="tt">Document Conventions &amp; Reading Guide</span><span class="lead"></span><span class="toc-pg" data-anchor="s0c"></span></a>
+        <a class="toc-row" href="#s04"><span class="tid">0.5</span><span class="tt">Identifier Conventions</span><span class="lead"></span><span class="toc-pg" data-anchor="s04"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Part A · Software Architecture</div>
+        <a class="toc-row" href="#a1"><span class="tid">A1</span><span class="tt">System Overview</span><span class="lead"></span><span class="toc-pg" data-anchor="a1"></span></a>
+        <a class="toc-row" href="#a2"><span class="tid">A2</span><span class="tt">Node Architecture</span><span class="lead"></span><span class="toc-pg" data-anchor="a2"></span></a>
+        <a class="toc-row" href="#a3"><span class="tid">A3</span><span class="tt">Authority &amp; Safety Model</span><span class="lead"></span><span class="toc-pg" data-anchor="a3"></span></a>
+        <a class="toc-row" href="#a4"><span class="tid">A4</span><span class="tt">Boot &amp; Discovery</span><span class="lead"></span><span class="toc-pg" data-anchor="a4"></span></a>
+        <a class="toc-row" href="#a5"><span class="tid">A5</span><span class="tt">Failure Scenarios</span><span class="lead"></span><span class="toc-pg" data-anchor="a5"></span></a>
+        <a class="toc-row" href="#a6"><span class="tid">A6</span><span class="tt">Data Ownership</span><span class="lead"></span><span class="toc-pg" data-anchor="a6"></span></a>
+        <a class="toc-row" href="#a7"><span class="tid">A7</span><span class="tt">Event Severity &amp; Incident Promotion</span><span class="lead"></span><span class="toc-pg" data-anchor="a7"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Part B · Identifier System &amp; Deployment</div>
+        <a class="toc-row" href="#b0"><span class="tid">B0</span><span class="tt">Master Prefix Registry</span><span class="lead"></span><span class="toc-pg" data-anchor="b0"></span></a>
+        <a class="toc-row" href="#b0b"><span class="tid">B0b</span><span class="tt">Namespace Map</span><span class="lead"></span><span class="toc-pg" data-anchor="b0b"></span></a>
+        <a class="toc-row" href="#b0c"><span class="tid">B0c</span><span class="tt">Naming Conventions &amp; Governance</span><span class="lead"></span><span class="toc-pg" data-anchor="b0c"></span></a>
+        <a class="toc-row" href="#b1"><span class="tid">B1</span><span class="tt">Layered Identifier Model</span><span class="lead"></span><span class="toc-pg" data-anchor="b1"></span></a>
+        <a class="toc-row" href="#b2"><span class="tid">B2</span><span class="tt">Canonical Identifier Registry</span><span class="lead"></span><span class="toc-pg" data-anchor="b2"></span></a>
+        <a class="toc-row" href="#b3"><span class="tid">B3</span><span class="tt">Master Deployment Matrix</span><span class="lead"></span><span class="toc-pg" data-anchor="b3"></span></a>
+        <a class="toc-row" href="#b4"><span class="tid">B4</span><span class="tt">Asset-Tag Scheme</span><span class="lead"></span><span class="toc-pg" data-anchor="b4"></span></a>
+        <a class="toc-row" href="#b5"><span class="tid">B5</span><span class="tt">Runtime &amp; Asset Instance IDs</span><span class="lead"></span><span class="toc-pg" data-anchor="b5"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Part C · Protocol &amp; Messaging</div>
+        <a class="toc-row" href="#c1"><span class="tid">C1</span><span class="tt">Transport Tier Taxonomy</span><span class="lead"></span><span class="toc-pg" data-anchor="c1"></span></a>
+        <a class="toc-row" href="#c2"><span class="tid">C2</span><span class="tt">ProtocolProfile Registry</span><span class="lead"></span><span class="toc-pg" data-anchor="c2"></span></a>
+        <a class="toc-row" href="#c3"><span class="tid">C3</span><span class="tt">Transport Matrix</span><span class="lead"></span><span class="toc-pg" data-anchor="c3"></span></a>
+        <a class="toc-row" href="#c4"><span class="tid">C4</span><span class="tt">Signal / Command Catalog</span><span class="lead"></span><span class="toc-pg" data-anchor="c4"></span></a>
+        <a class="toc-row" href="#c4q"><span class="tid">C4Q</span><span class="tt">Signal Quality &amp; Channel Policy</span><span class="lead"></span><span class="toc-pg" data-anchor="c4q"></span></a>
+        <a class="toc-row" href="#c5"><span class="tid">C5</span><span class="tt">Pub/Sub &amp; ACK Lifecycle</span><span class="lead"></span><span class="toc-pg" data-anchor="c5"></span></a>
+        <a class="toc-row" href="#c6"><span class="tid">C6</span><span class="tt">Exchange Sequences</span><span class="lead"></span><span class="toc-pg" data-anchor="c6"></span></a>
+        <a class="toc-row" href="#c7"><span class="tid">C7</span><span class="tt">Gate Evaluation &amp; Policy</span><span class="lead"></span><span class="toc-pg" data-anchor="c7"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Part D · Rig &amp; Hardware</div>
+        <a class="toc-row" href="#d1"><span class="tid">D1</span><span class="tt">Common — Power · E-stop · Wiring</span><span class="lead"></span><span class="toc-pg" data-anchor="d1"></span></a>
+        <a class="toc-row" href="#d2"><span class="tid">D2</span><span class="tt">RIG-1 Flat Panel</span><span class="lead"></span><span class="toc-pg" data-anchor="d2"></span></a>
+        <a class="toc-row" href="#d3"><span class="tid">D3</span><span class="tt">RIG-2 Profile Rover</span><span class="lead"></span><span class="toc-pg" data-anchor="d3"></span></a>
+        <a class="toc-row" href="#d4"><span class="tid">D4</span><span class="tt">Labeling Convention</span><span class="lead"></span><span class="toc-pg" data-anchor="d4"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Part E · Operation</div>
+        <a class="toc-row" href="#e1"><span class="tid">E1</span><span class="tt">Run Loop</span><span class="lead"></span><span class="toc-pg" data-anchor="e1"></span></a>
+        <a class="toc-row" href="#e2"><span class="tid">E2</span><span class="tt">HMI Operation</span><span class="lead"></span><span class="toc-pg" data-anchor="e2"></span></a>
+        <a class="toc-row" href="#e3"><span class="tid">E3</span><span class="tt">OTA &amp; Telemetry Policy</span><span class="lead"></span><span class="toc-pg" data-anchor="e3"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Part F · Module Interfaces (ICD)</div>
+        <a class="toc-row" href="#f0"><span class="tid">F0</span><span class="tt">Interface Model (3-class)</span><span class="lead"></span><span class="toc-pg" data-anchor="f0"></span></a>
+        <a class="toc-row" href="#f1"><span class="tid">F1</span><span class="tt">Interface Map</span><span class="lead"></span><span class="toc-pg" data-anchor="f1"></span></a>
+        <a class="toc-row" href="#f2"><span class="tid">F2</span><span class="tt">Interface Inventory (16)</span><span class="lead"></span><span class="toc-pg" data-anchor="f2"></span></a>
+        <a class="toc-row" href="#f3"><span class="tid">F3</span><span class="tt">Dependency Matrix</span><span class="lead"></span><span class="toc-pg" data-anchor="f3"></span></a>
+        <a class="toc-row" href="#f4"><span class="tid">F4</span><span class="tt">Heartbeat / Health</span><span class="lead"></span><span class="toc-pg" data-anchor="f4"></span></a>
+        <a class="toc-row" href="#f5p"><span class="tid">F5.P</span><span class="tt">ICD Sheets — Physical (6)</span><span class="lead"></span><span class="toc-pg" data-anchor="f5p"></span></a>
+        <a class="toc-row" href="#f5l"><span class="tid">F5.L</span><span class="tt">ICD Sheets — Logical (6)</span><span class="lead"></span><span class="toc-pg" data-anchor="f5l"></span></a>
+        <a class="toc-row" href="#f5x"><span class="tid">F5.X</span><span class="tt">ICD Sheets — Cloud (4)</span><span class="lead"></span><span class="toc-pg" data-anchor="f5x"></span></a>
+        <a class="toc-row" href="#f6"><span class="tid">F6</span><span class="tt">Cloud Interface Detail</span><span class="lead"></span><span class="toc-pg" data-anchor="f6"></span></a>
+        <a class="toc-row" href="#f7"><span class="tid">F7</span><span class="tt">Conformance &amp; Versioning</span><span class="lead"></span><span class="toc-pg" data-anchor="f7"></span></a>
+      </div>
+      <div class="toc-grp"><div class="gh">Annexes</div>
+        <a class="toc-row" href="#anx-a"><span class="tid">A</span><span class="tt">ProtocolProfile JSON</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-a"></span></a>
+        <a class="toc-row" href="#anx-b"><span class="tid">B</span><span class="tt">Node Contract JSON</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-b"></span></a>
+        <a class="toc-row" href="#anx-c"><span class="tid">C</span><span class="tt">ID Grammar</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-c"></span></a>
+        <a class="toc-row" href="#anx-d"><span class="tid">D</span><span class="tt">Drawing Item Index</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-d"></span></a>
+        <a class="toc-row" href="#anx-e"><span class="tid">E</span><span class="tt">Contract Alignment</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-e"></span></a>
+        <a class="toc-row" href="#anx-f"><span class="tid">F</span><span class="tt">Requirements Register</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-f"></span></a>
+        <a class="toc-row" href="#anx-g"><span class="tid">G</span><span class="tt">List of Figures &amp; Tables</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-g"></span></a>
+        <a class="toc-row" href="#anx-h"><span class="tid">H</span><span class="tt">Change Log</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-h"></span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="divider"><div class="dv-id">SECTION 0</div><div class="dv-title">Front Matter</div><div class="dv-sub">Scope · Normative References · Terms &amp; Org Registry · Identifier Conventions</div></section>
+
+  <!-- ============ FRONT MATTER ============ -->
+  <section id="s01">
+    <h3><span class="sid">0.1</span> Scope &amp; System Definition</h3>
+    <p>본 기준서는 <b class="k">STATION SDV Reference Platform</b> — 분산 노드 구조의 농업용 SDV(Software-Defined Robot) —
+      의 시스템 아키텍처, 식별자 체계, 프로토콜·메시지 교환, 레퍼런스 리그(RIG-1·RIG-2), 운용 절차를 규정한다.
+      대상 로봇은 <b class="k">생육분석(crop-growth) 로봇</b>을 1차 적용 사례로 한다.</p>
+    <div class="req"><span class="tag">PRINCIPLE</span> &nbsp;단일 컴퓨트 보드 중심(Jetson 일체형) 구조가 아니라, 기능을 독립 노드
+      (<span class="nc rt">MCU</span> <span class="nc cmp">VPU</span> <span class="nc cmp">ACU</span> <span class="nc cmp">LPU</span> <span class="nc ui">TEL</span> <span class="nc gw host">AGENT</span> <span class="nc ui host">HMI</span>)로
+      <b class="k">물리·논리 분리</b>하고, 모든 노드를 표준 Signal/Command/Event 계약으로 통합한다. 물리 분리는 단계적이나 <b class="k">논리·계약·권한 분리는 처음부터 필수</b>다.</p></div>
+    <table>
+      <caption>표 0.1 — 적용 범위 경계</caption>
+      <thead><tr><th>포함</th><th>제외 (별도 트랙)</th></tr></thead>
+      <tbody>
+        <tr><td>온로봇 소프트웨어 아키텍처 · 노드 책임 · 권한 모델</td><td>클라우드 관제(apps/console) 상세 — STATION Field OS 참조</td></tr>
+        <tr><td>HW↔SW 식별자·배치 체계 · ProtocolProfile · 메시지 교환</td><td>contracts 코드 변경 — Annex E 변경안만(코드 동결)</td></tr>
+        <tr><td>RIG-1 평면 패널 · RIG-2 프로파일 로버 설계·도면</td><td>물리 부품 구매·조립·native firmware — HW 트랙</td></tr>
+        <tr><td>운용 런 루프 · OTA · Telemetry 정책</td><td>2차 베이스 프로그램(packages/local-agent·nodes/*·apps/sdv) — 별도 산출</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="s02">
+    <h3><span class="sid">0.2</span> Normative References</h3>
+    <table>
+      <thead><tr><th>참조</th><th>대상</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">@station/contracts</td><td>Signal · Command(Descriptor/Envelope/Ack) · Event · ProtocolProfile · Node · Organization · ModuleManifest · RobotBlueprint · PolicyRule · GateResult (정본)</td></tr>
+        <tr><td class="mono">ADR-004</td><td>ID 문법 (org·node·channel·manifest·command·calibration·firmware·audit)</td></tr>
+        <tr><td class="mono">ADR-011</td><td>노드/기관 소유 모델</td></tr>
+        <tr><td class="mono">ADR-012</td><td>CommandEnvelope + 3단계 ACK</td></tr>
+        <tr><td class="mono">ADR-013</td><td>신호 네임스페이스 (machine.* · env.* · crop.*)</td></tr>
+        <tr><td class="mono">ADR-014</td><td>Robot Blueprint · 개방형 NodeKind · platform/profile 분리</td></tr>
+        <tr><td class="mono">ROS REP-105</td><td>좌표 프레임 규약 (map · odom · base_link)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="s03">
+    <h3><span class="sid">0.3</span> Terms, Abbreviations &amp; Organization Registry</h3>
+    <p class="sub">본문·표·도식은 <b class="k">ORG-* 코드</b>를 사용한다. 상호명은 본 레지스트리에서 1회만 명시한다.</p>
+    <div class="row r2">
+      <table>
+        <caption>표 0.3a — 노드 약어</caption>
+        <thead><tr><th>코드</th><th>NodeKind</th><th>의미</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">MCU</td><td>표준</td><td>Motor/Machine Control Unit — 실시간 하위제어</td></tr>
+          <tr><td class="mono">VPU</td><td>표준</td><td>Vision Processing Unit — 영상·생육분석 추론</td></tr>
+          <tr><td class="mono">ACU</td><td>표준</td><td>Autonomy Control Unit — 미션·경로</td></tr>
+          <tr><td class="mono">LPU</td><td>표준</td><td>Localization Processing Unit — 측위·SLAM</td></tr>
+          <tr><td class="mono">TEL</td><td>표준(Telemetry)</td><td>Telemetry Gateway — 클라우드 transport</td></tr>
+          <tr><td class="mono">AGENT</td><td>host(비표준)</td><td>Local Agent — 통합 게이트웨이 호스트</td></tr>
+          <tr><td class="mono">HMI</td><td>host(비표준)</td><td>Human-Machine Interface — 현장 클라이언트</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <caption>표 0.3b — 기관 레지스트리 (ORG-*)</caption>
+        <thead><tr><th>코드</th><th>상호</th><th>역할 · 소유 노드</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">ORG-VIA</td><td>비아</td><td>플랫폼(AGENT·계약)·TEL·HMI·관제 <b class="k">[platform]</b></td></tr>
+          <tr><td class="mono">ORG-AGE</td><td>에이지로보틱스</td><td>모바일 베이스 — <span class="nc rt">MCU</span></td></tr>
+          <tr><td class="mono">ORG-META</td><td>메타파머스</td><td>지능·조작 — <span class="nc cmp">VPU</span> <span class="nc cmp">ACU</span> · 작업모듈</td></tr>
+          <tr><td class="mono">ORG-DAEDONG</td><td>대동로보틱스</td><td>측위 — <span class="nc cmp">LPU</span></td></tr>
+          <tr><td class="mono">ORG-KIRO</td><td>KIRO</td><td>적심 EE 변형 (협력)</td></tr>
+          <tr><td class="mono">ORG-NAS</td><td>국립농업과학원</td><td>적과 EE 변형 (협력)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">기타 약어: SDV(Software-Defined Robot) · SLAM(Simultaneous Localization and Mapping) · BMS(Battery Management System) ·
+      ACK(Acknowledgement) · OTA(Over-the-Air update) · NS(Namespace) · S/C/E(Signal/Command/Event) ·
+      SCN(ScanSession) · OBS(GrowthObservation). 단위 규약: Hz · ms · V · mm · m/s · pose=(x, y, θ) · 프레임=map/odom/base_link(REP-105).</p>
+  </section>
+
+  <section id="s0c">
+    <h3><span class="sid">0.4</span> Document Conventions &amp; Reading Guide</h3>
+    <div class="req"><span class="tag">CONVENTIONS</span> &nbsp;규범 표현(RFC 2119): <b class="k">shall</b>=필수 · <b class="k">should</b>=권고 · <b class="k">may</b>=허용.
+      정규 요구사항은 <span class="mono">REQ-&lt;Part&gt;&lt;nn&gt;</span> 식별자로 부여하고 <a href="#anx-f">Annex F</a>에 집약한다. 도식·표는 <b class="k">그림 N · 표 N</b>으로 번호하며 목록은 <a href="#anx-g">Annex G</a>.
+      색 규약: 본문 <b class="k">ink + 안전 적색</b>(적색은 E-stop·비상·안전 전용); 단, 제작 도면(Part D)의 배선은 <b style="color:#c0392b">적색 전원</b>·<b style="color:#1f6feb">청색 데이터</b> 기능 배선 관례를 따른다. 단위: Hz · ms · V · mm · m/s · pose=(x, y, θ).</div>
+    <table>
+      <caption>표 0.4 — 독자별 읽기 경로 (Reading Guide)</caption>
+      <thead><tr><th>역할</th><th>우선 파트</th></tr></thead>
+      <tbody>
+        <tr><td>소프트웨어</td><td class="mono">A · B · C · E · F</td></tr>
+        <tr><td>하드웨어 / 리그</td><td class="mono">D1 · D2 · D3 · D4 · Anx D</td></tr>
+        <tr><td>시스템 통합 / 인터페이스</td><td class="mono">B3 · C1–C3 · F (ICD) · Anx E</td></tr>
+        <tr><td>운영 / 현장</td><td class="mono">A3 · E1 · E2 · D1</td></tr>
+        <tr><td>품질 / 인증</td><td class="mono">Anx F(REQ) · A5 · C5 · C7 · F7</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="s04">
+    <h3><span class="sid">0.5</span> Identifier Conventions (Summary)</h3>
+    <p class="sub">식별자는 10개 레이어로 구성되며 상세는 <a href="#b1">Part B</a>에 규정한다. 핵심 불변식:</p>
+    <div class="req"><span class="tag">INVARIANT</span> &nbsp;<b class="k">논리 Node ID(L2)는 리그·보드와 무관하게 불변</b>이다.
+      동일 노드의 리그별 물리 인스턴스는 <b class="k">Asset-tag(L6, AST-R1/R2-*)</b>로만 구분한다.
+      보드 1대에 노드 N개가 올라가는 관계는 <b class="k">Compute Host(L5)</b>가 명시한다.</p>
+    <table>
+      <thead><tr><th>약식 분류</th><th>예</th><th>역할</th></tr></thead>
+      <tbody>
+        <tr><td>논리 (rig-independent)</td><td class="mono">ORG-* · NODE-* · HOST-* · PRT-*</td><td>계약·배치의 안정 식별자</td></tr>
+        <tr><td>물리 (per-rig)</td><td class="mono">RIG-1/2 · AST-R*-*-NN · EP-*</td><td>실제 부품·배선·네트워크 인스턴스</td></tr>
+        <tr><td>런타임 (ephemeral)</td><td class="mono">CMD-* · SCN-* · OBS-* · RT-* · CAL-* · FW-*</td><td>실행 중 생성·소멸</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- INSERT:FRONTMATTER -->
+
+  <section class="divider"><div class="dv-id">PART A</div><div class="dv-title">Software Architecture</div><div class="dv-sub">노드 구성 · 책임 · 권한 · 기동 · 장애 · 데이터 소유 · 이벤트</div></section>
+
+  <!-- ============ PART A — SOFTWARE ARCHITECTURE ============ -->
+  <section id="a1">
+    <h3><span class="sid">A1</span> System Overview</h3>
+    <p>로봇 지능은 <b class="k">온로봇(edge)</b>에서 동작한다. 클라우드는 모니터링·지원·OTA 승인만 담당하며 내부 제어망에 직접 접근하지 않는다.
+      모든 노드는 통합 게이트웨이 <b class="k">Local Agent</b>에 흡수되어 표준 계약으로 외부에 단일 API를 제공한다.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 470" role="img" aria-label="System topology">
+        <defs>
+          <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#3a3a3a"/></marker>
+          <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#c0392b"/></marker>
+          <pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="6" stroke="#ffffff" stroke-width="1.1" opacity="0.5"/></pattern>
+        </defs>
+        <!-- net zone bands -->
+        <rect x="20" y="250" width="1140" height="200" fill="#fafafa" stroke="#e7e7e9"/>
+        <text x="30" y="268" font-size="10" fill="#9a9a9c" class="mono">CONTROL NET</text>
+        <rect x="20" y="20" width="560" height="120" fill="#fafafa" stroke="#e7e7e9"/>
+        <text x="30" y="38" font-size="10" fill="#9a9a9c" class="mono">HMI NET (Agent API only)</text>
+        <rect x="600" y="20" width="560" height="120" fill="#fafafa" stroke="#e7e7e9"/>
+        <text x="610" y="38" font-size="10" fill="#9a9a9c" class="mono">CLOUD NET</text>
+        <!-- HMI -->
+        <rect x="60" y="56" width="180" height="62" fill="#c9c9c9" stroke="#1a1a1a" stroke-dasharray="4 3"/><text x="150" y="84" text-anchor="middle" font-size="13" font-weight="700">HMI</text><text x="150" y="102" text-anchor="middle" font-size="9.5" class="mono">RPi5 + 10.1" touch</text>
+        <!-- Cloud -->
+        <rect x="940" y="56" width="180" height="62" fill="#ffffff" stroke="#1a1a1a"/><text x="1030" y="84" text-anchor="middle" font-size="13" font-weight="700">Cloud</text><text x="1030" y="102" text-anchor="middle" font-size="9.5" class="mono">관제 · OTA 승인</text>
+        <!-- Telemetry -->
+        <rect x="660" y="56" width="170" height="62" fill="#c9c9c9" stroke="#1a1a1a"/><text x="745" y="80" text-anchor="middle" font-size="12" font-weight="700">TEL</text><text x="745" y="100" text-anchor="middle" font-size="9" class="mono">LTE gateway</text>
+        <!-- Agent (gateway, center) -->
+        <rect x="380" y="170" width="420" height="60" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"/><text x="590" y="195" text-anchor="middle" font-size="14" font-weight="800">Local Agent (gateway)</text><text x="590" y="216" text-anchor="middle" font-size="9.5" class="mono">NodeRegistry · SignalStore · CommandRouter · PolicyEngine · EventBus · HealthMonitor</text>
+        <!-- bottom control nodes -->
+        <rect x="60" y="300" width="190" height="110" fill="#1a1a1a"/><text x="155" y="332" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">MCU</text><text x="155" y="352" text-anchor="middle" font-size="9" class="mono" fill="#fff">Portenta · 실시간</text><text x="155" y="368" text-anchor="middle" font-size="9" class="mono" fill="#fff">motor·encoder·E-stop in</text>
+        <!-- E-stop (safety red) -->
+        <circle cx="155" cy="392" r="13" fill="#c0392b"/><text x="155" y="396" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">E-STOP</text>
+        <rect x="300" y="300" width="190" height="110" fill="#6b6b6b"/><text x="395" y="332" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">LPU</text><text x="395" y="352" text-anchor="middle" font-size="9" class="mono" fill="#fff">SLAM · pose</text>
+        <!-- Jetson shared board: VPU + ACU, hatched -->
+        <rect x="540" y="300" width="260" height="110" fill="#6b6b6b"/>
+        <rect x="540" y="300" width="260" height="110" fill="url(#hatch)"/>
+        <line x1="670" y1="300" x2="670" y2="410" stroke="#fff" stroke-dasharray="4 3"/>
+        <text x="605" y="340" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">VPU</text>
+        <text x="735" y="340" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">ACU</text>
+        <text x="670" y="396" text-anchor="middle" font-size="9" class="mono" fill="#fff">HOST-JETSON (1 board · 2 nodes)</text>
+        <!-- links -->
+        <line x1="150" y1="118" x2="430" y2="170" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#ar)"/><text x="250" y="140" font-size="9.5" class="mono" fill="#3a3a3a">WS/REST</text>
+        <line x1="745" y1="118" x2="700" y2="170" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="830" y1="86" x2="940" y2="86" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#ar)"/><text x="858" y="78" font-size="9.5" class="mono" fill="#3a3a3a">LTE·MQTT</text>
+        <line x1="745" y1="118" x2="745" y2="56" stroke="#3a3a3a" stroke-width="0"/>
+        <line x1="155" y1="300" x2="430" y2="230" stroke="#3a3a3a" stroke-width="1.8" marker-end="url(#ar)"/><text x="250" y="280" font-size="9.5" class="mono" fill="#3a3a3a">CAN/RS485</text>
+        <line x1="395" y1="300" x2="500" y2="230" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#ar)"/><text x="430" y="278" font-size="9.5" class="mono" fill="#3a3a3a">DDS</text>
+        <line x1="670" y1="300" x2="690" y2="230" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#ar)"/><text x="700" y="278" font-size="9.5" class="mono" fill="#3a3a3a">ROS2/DDS</text>
+      </svg>
+      <div class="figcap"><b>그림 A1</b> — 시스템 토폴로지. 망 구역 분리(Control / HMI / Cloud), Local Agent 단일 경유.
+        톤: 실시간/HW=최암(MCU) · compute=중간(VPU/ACU/LPU) · gateway=아웃라인(Agent) · UI/transport=명(HMI/TEL). 대각 해칭=보드 공유(HOST-JETSON). 적색=안전(E-stop).</div>
+    </div>
+  </section>
+
+  <section id="a2">
+    <h3><span class="sid">A2</span> Node Architecture — 책임 · I/O · 금지</h3>
+    <table>
+      <caption>표 A2 — 노드별 책임·입출력·금지·소유 기관</caption>
+      <thead><tr><th>노드</th><th>책임</th><th>대표 I/O (S·C·E)</th><th>금지</th><th>Org</th></tr></thead>
+      <tbody>
+        <tr><td><span class="nc rt">MCU</span></td><td>실시간 하위제어: motor enable·speed exec·encoder·bumper·E-stop 입력·BMS 상태·safe stop·watchdog (10–1000 Hz)</td><td class="mono">S machine.motion.speed · machine.power.battery_voltage<br>C motion.stop · E machine.safety.estop</td><td class="no">미션/AI 판단</td><td class="mono">ORG-AGE</td></tr>
+        <tr><td><span class="nc cmp">VPU</span></td><td>RGB/NIR 수집·생육분석 추론(초장·LAI·NDVI·병해)·image quality·scan result</td><td class="mono">S crop.growth.* · machine.vision.fps<br>C vision.capture.start · E disease.suspected</td><td class="no">모터/안전 직접제어</td><td class="mono">ORG-META</td></tr>
+        <tr><td><span class="nc cmp">LPU</span></td><td>LiDAR/UWB/IMU/Visual SLAM 융합 → robot pose·confidence·map/frame id</td><td class="mono">S machine.localization.pose · confidence<br>C localization.relocalize</td><td class="no">미션 결정</td><td class="mono">ORG-DAEDONG</td></tr>
+        <tr><td><span class="nc cmp">ACU</span></td><td>미션 상태머신·스캔 시퀀스·경로추종·safe_stop_request (LPU pose·VPU result 소비)</td><td class="mono">S machine.autonomy.state · mission.progress<br>C(수신) autonomy.mission.start</td><td class="no">하위 노드 직접제어 (Agent 경유)</td><td class="mono">ORG-META</td></tr>
+        <tr><td><span class="nc gw host">AGENT</span></td><td>NodeRegistry·SignalStore·CommandRouter(ACK)·EventBus·PolicyEngine/SafetyGate·HealthMonitor·OTA·HMI API·Telemetry 정책</td><td class="mono">모든 노드 흡수 → 표준 S/C/E · 단일 외부 API</td><td class="no">자율 미션 판단 (= ACU)</td><td class="mono">ORG-VIA</td></tr>
+        <tr><td><span class="nc ui">TEL</span></td><td>LTE/5G transport·MQTT/HTTPS·heartbeat·업로드 큐·OTA 다운로드</td><td class="mono">S machine.telemetry.cloud_connected<br>C telemetry.uplink.flush</td><td class="no">내부 제어 권한·노드 직접명령</td><td class="mono">ORG-VIA</td></tr>
+        <tr><td><span class="nc ui host">HMI</span></td><td>부팅/디스커버리·node health·scan start/stop·live signal·Command ACK Timeline·safety status</td><td class="mono">C(발신) operator command<br>구독: signals·ack·events (Agent API only)</td><td class="no">HW 직접제어·최종 안전권한</td><td class="mono">ORG-VIA</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="a3">
+    <h3><span class="sid">A3</span> Authority &amp; Safety Model</h3>
+    <p class="sub">최종 결정권 우선순위(fail-safe). 클라우드는 현장 HMI보다 낮다. 물리 안전이 최상위.</p>
+    <table>
+      <caption>표 A3 — 권한 5단계 (① 최상위)</caption>
+      <thead><tr><th>순위</th><th>주체</th><th>범위</th></tr></thead>
+      <tbody>
+        <tr><td class="no">① 물리 안전</td><td class="no">E-stop · bumper · hard interlock · power cutoff</td><td>하드웨어 회로 — SW 비의존, 최상위</td></tr>
+        <tr><td>② Local Agent 안전정책</td><td>PolicyEngine / SafetyGate</td><td>safe state · command gate · node health · comm timeout · speed 제한</td></tr>
+        <tr><td>③ 현장 사람 (HMI)</td><td>operator</td><td>operator command · manual override · service mode</td></tr>
+        <tr><td>④ 원격 / 클라우드</td><td>Cloud</td><td>모니터·지원·非critical config·OTA 승인 (HMI보다 낮음)</td></tr>
+        <tr><td>⑤ ACU 자율</td><td>autonomy</td><td>mission 실행 · path following · scan sequence</td></tr>
+      </tbody>
+    </table>
+    <div class="safe"><span class="tag">SAFETY</span> &nbsp;<b class="k">E-stop은 명령(SW)이 아니라 물리 회로</b>다. 버튼 → safety relay/hardwired cutoff →
+      motor enable/power 도메인 차단 → MCU emergency 입력 → Local Agent event → HMI 표시. MCU·Agent는 <b class="k">보고·로그만</b>; E-stop 1차 안전기능은 SW에 의존하지 않는다.
+      HMI soft e-stop은 SW emergency만 발생시키며 물리 E-stop을 대체하지 못한다.</div>
+  </section>
+
+  <section id="a4">
+    <h3><span class="sid">A4</span> Boot &amp; Discovery</h3>
+    <div class="fig">
+      <svg viewBox="0 0 1180 78" role="img" aria-label="boot flow">
+        <defs><marker id="arb" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#3a3a3a"/></marker></defs>
+        <g font-size="11" text-anchor="middle">
+          <rect x="8" y="22" width="118" height="36" fill="#ffffff" stroke="#1a1a1a"/><text x="67" y="44">power on</text>
+          <rect x="158" y="22" width="118" height="36" fill="#ffffff" stroke="#1a1a1a"/><text x="217" y="44">node boot</text>
+          <rect x="308" y="22" width="140" height="36" fill="#1a1a1a"/><text x="378" y="44" fill="#fff">Agent discovery</text>
+          <rect x="480" y="22" width="120" height="36" fill="#1a1a1a"/><text x="540" y="44" fill="#fff">health check</text>
+          <rect x="632" y="22" width="160" height="36" fill="#6b6b6b"/><text x="712" y="44" fill="#fff">blueprint match</text>
+          <rect x="824" y="22" width="130" height="36" fill="#c9c9c9" stroke="#1a1a1a"/><text x="889" y="44">HMI activation</text>
+          <rect x="986" y="22" width="120" height="36" fill="#c9c9c9" stroke="#1a1a1a"/><text x="1046" y="44">telemetry up</text>
+        </g>
+        <g stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#arb)">
+          <line x1="126" y1="40" x2="158" y2="40"/><line x1="276" y1="40" x2="308" y2="40"/><line x1="448" y1="40" x2="480" y2="40"/>
+          <line x1="600" y1="40" x2="632" y2="40"/><line x1="792" y1="40" x2="824" y2="40"/><line x1="954" y1="40" x2="986" y2="40"/>
+        </g>
+      </svg>
+      <div class="figcap"><b>그림 A4</b> — 기동·디스커버리. Local Agent가 노드를 발견하고 <span class="mono">blueprint.crop-growth</span> 구성과 매칭되면 운영 활성. 노드 누락/health 실패는 게이트로 차단.</div>
+    </div>
+  </section>
+
+  <section id="a5">
+    <h3><span class="sid">A5</span> Failure Scenarios</h3>
+    <p class="sub">정상 흐름보다 장애 흐름이 산업용 구조의 핵심이다 — "노드가 죽었을 때 어떻게 되는가".</p>
+    <table>
+      <caption>표 A5 — 장애 시나리오 · 대응</caption>
+      <thead><tr><th>장애</th><th>Local Agent 대응 / 결과</th></tr></thead>
+      <tbody>
+        <tr><td class="no">MCU heartbeat lost</td><td>모든 motion command 차단 → HMI emergency/degraded → critical event 업로드</td></tr>
+        <tr><td class="no">VPU offline</td><td>scan disabled → LPU/MCU 정상 시 수동 저속 이동만 허용</td></tr>
+        <tr><td class="no">LPU confidence low</td><td>autonomy paused → ACU mission stop → HMI operator intervention → 수동 모드</td></tr>
+        <tr><td class="no">ACU timeout</td><td>자율 명령 차단 → safe state 유지 → HMI 경고</td></tr>
+        <tr><td>HMI disconnected</td><td>로봇은 현재 안전 정책 그대로 유지 · HW 영향 0 · Agent active</td></tr>
+        <tr><td>Telemetry offline</td><td>로컬 운영 지속 · 업로드 큐 적재 · 복구 시 동기화</td></tr>
+        <tr><td class="no">E-stop pressed</td><td>물리 회로가 모터 전원 차단 → MCU·Agent event → HMI emergency</td></tr>
+        <tr><td>Cloud command rejected</td><td>Policy Engine 미통과 시 차단 · 사유 event 로그(AUD-*)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="a6">
+    <h3><span class="sid">A6</span> Data Ownership</h3>
+    <table>
+      <caption>표 A6 — 데이터 소유·저장·업링크</caption>
+      <thead><tr><th>데이터</th><th>소유 노드</th><th>저장</th><th>업링크</th></tr></thead>
+      <tbody>
+        <tr><td>motor status · encoder</td><td><span class="nc rt">MCU</span></td><td>Agent SignalStore</td><td>선택(요약)</td></tr>
+        <tr><td>robot pose · map_id</td><td><span class="nc cmp">LPU</span></td><td>SignalStore</td><td>scan 첨부</td></tr>
+        <tr><td>growth inference (초장·LAI·NDVI)</td><td><span class="nc cmp">VPU</span></td><td>ObservationStore</td><td>업로드</td></tr>
+        <tr><td>mission state</td><td><span class="nc cmp">ACU</span></td><td>SignalStore / EventBus</td><td>요약</td></tr>
+        <tr><td>command ack</td><td><span class="nc gw host">AGENT</span></td><td>EventLog (AUD-*)</td><td>audit</td></tr>
+        <tr><td class="no">raw image / video</td><td><span class="nc cmp">VPU</span> local</td><td>VPU 내부</td><td class="no">정책 승인 시에만</td></tr>
+      </tbody>
+    </table>
+    <div class="req"><span class="tag">RULE</span> &nbsp;Raw image/video·raw LiDAR는 <b class="k">기본 통합 경로에서 제외</b>한다. 통합 경로에는 VPU 추론 결과(파생 Signal)와 image quality signal만 포함되며, 원본은 VPU 내부 보관·정책 승인 시 제한 제공한다.</div>
+  </section>
+
+  <section id="a7">
+    <h3><span class="sid">A7</span> Event Severity &amp; Incident Promotion</h3>
+    <p class="sub">Event는 <span class="mono">EventBus</span>로 발행되고 구독자는 <span class="mono">{source · code · severity}</span>로 필터한다. 임계 위반은 Incident로 승격(<span class="mono">promotedIncidentId</span>)된다.</p>
+    <table>
+      <caption>표 A7 — 이벤트 등급 · 대응</caption>
+      <thead><tr><th>severity</th><th>의미</th><th>HMI 표시</th><th>기본 대응</th><th>예 code</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">info</td><td>정상 상태 통지</td><td>로그</td><td>없음</td><td class="mono">NAV-RELOCALIZE</td></tr>
+        <tr><td class="mono">notice</td><td>주의 상태 변화</td><td>배지</td><td>모니터</td><td class="mono">CAM-FRAME-DROP</td></tr>
+        <tr><td class="mono">warning</td><td>품질 저하·임계 근접</td><td>경고</td><td>degrade·promote 후보</td><td class="mono">EE-FORCE-DRIFT</td></tr>
+        <tr><td class="no">critical</td><td>기능 손상</td><td>알람</td><td>safe state·자율 정지</td><td class="mono">ARM-TEMP-HIGH</td></tr>
+        <tr><td class="no">emergency</td><td>안전 위협</td><td>비상</td><td>물리/정책 차단·Incident 승격</td><td class="mono">NAV-SAFETY-INTERLOCK</td></tr>
+      </tbody>
+    </table>
+    <p class="note">임계 위반 자동 승격은 채널 정책 <span class="mono">policy.promote</span>(기본 false)로 제어한다. 승격 시 <span class="mono">Event → Incident(INC-*)</span> 생성, audit 로그(AUD-*) 연결.</p>
+  </section>
+
+  <section class="divider"><div class="dv-id">PART B</div><div class="dv-title">STATION SDV Identifier System &amp; Deployment</div><div class="dv-sub">Master Prefix Registry · Namespace Map · Naming &amp; Governance · Deployment Matrix · Asset-tag</div></section>
+
+  <!-- ============ PART B — IDENTIFIER SYSTEM & DEPLOYMENT ============ -->
+  <section id="b0">
+    <h3><span class="sid">B0</span> Master Prefix Registry</h3>
+    <p class="sub">플랫폼 전 식별자 family의 단일 색인. 모든 식별자는 본 레지스트리에 등록된 prefix·문법을 따른다. 상세 레이어는 <a href="#b1">B1</a>.</p>
+    <table>
+      <caption>표 B0 — STATION SDV 식별자 레지스트리 (전 family)</caption>
+      <thead><tr><th>Family</th><th>Class</th><th>Grammar (형식)</th><th>L</th><th>할당 (allocator)</th><th>Lifetime</th><th>예시</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">ORG-</td><td>논리</td><td class="mono">^ORG-[A-Z]+$</td><td class="mono">L1</td><td>컨소시엄(고정)</td><td>영구</td><td class="mono">ORG-VIA</td></tr>
+        <tr><td class="mono">NODE-</td><td>논리</td><td class="mono">^NODE-[A-Z]+-[A-Z]+$</td><td class="mono">L2</td><td>ORG-VIA</td><td>영구(리그 불변)</td><td class="mono">NODE-MCU-AGE</td></tr>
+        <tr><td>NodeKind</td><td>논리</td><td>open enum (3–4자)</td><td class="mono">L3</td><td>ORG-VIA</td><td>영구</td><td class="mono">MCU·VPU·TEL</td></tr>
+        <tr><td>SW Unit</td><td>논리</td><td class="mono">(nodes|packages|apps)/[a-z0-9-]+</td><td class="mono">L4</td><td>ORG-VIA</td><td>per release</td><td class="mono">nodes/mcu</td></tr>
+        <tr><td class="mono">HOST-</td><td>물리</td><td class="mono">^HOST-[A-Z0-9]+$</td><td class="mono">L5</td><td>ORG-VIA</td><td>per board model</td><td class="mono">HOST-JETSON</td></tr>
+        <tr><td class="mono">AST-</td><td>물리</td><td class="mono">^AST-R[12]-[A-Z]+-\d{2}$</td><td class="mono">L6</td><td>제작(빌드)</td><td>per built unit</td><td class="mono">AST-R1-MCU-01</td></tr>
+        <tr><td class="mono">RIG-</td><td>물리</td><td class="mono">^RIG-[12]$</td><td class="mono">L7</td><td>ORG-VIA</td><td>per drawing rev</td><td class="mono">RIG-2</td></tr>
+        <tr><td class="mono">RIG-n-IT-</td><td>물리</td><td class="mono">^RIG-[12]-IT-\d{2}$</td><td class="mono">L7</td><td>도면</td><td>per drawing rev</td><td class="mono">RIG-1-IT-04</td></tr>
+        <tr><td class="mono">EP-</td><td>물리</td><td class="mono">^EP-&lt;HOST&gt;-&lt;IF&gt;$</td><td class="mono">L8</td><td>ORG-VIA</td><td>per net config</td><td class="mono">EP-AGENT-CAN0</td></tr>
+        <tr><td class="mono">PRT-</td><td>계약</td><td class="mono">^PRT-[A-Z0-9]+-v[0-9]+$</td><td class="mono">L9</td><td>ORG-VIA</td><td>per profile ver</td><td class="mono">PRT-CAN-v1</td></tr>
+        <tr><td class="mono">IF-</td><td>계약</td><td class="mono">^IF-[PLX]-[A-Z][A-Z-]+$</td><td class="mono">L8–9</td><td>ORG-VIA</td><td>per ICD rev</td><td class="mono">IF-P-MCU</td></tr>
+        <tr><td>manifest</td><td>계약</td><td class="mono">^[a-z]+\.(node|module)\.[a-z0-9_]+\.v[0-9]+$</td><td>—</td><td>소유 ORG</td><td>per version</td><td class="mono">meta.module.manipulator.v1</td></tr>
+        <tr><td class="mono">MOD-</td><td>계약(legacy)</td><td class="mono">^MOD-[A-Z0-9-]+$</td><td>—</td><td>벤더(legacy)</td><td>—</td><td class="mono">MOD-EE-PINCH</td></tr>
+        <tr><td>blueprint</td><td>계약</td><td class="mono">^blueprint\.[a-z-]+$</td><td>—</td><td>ORG-VIA</td><td>per version</td><td class="mono">blueprint.crop-growth</td></tr>
+        <tr><td>channel NS</td><td>계약</td><td class="mono">^[a-z]+(\.[a-z0-9_]+)+$</td><td>—</td><td>ORG-VIA (NS)</td><td>영구</td><td class="mono">machine.motion.speed</td></tr>
+        <tr><td class="mono">CMD-</td><td>런타임</td><td class="mono">^CMD-[A-Z0-9-]+$</td><td class="mono">L10</td><td>발신측</td><td>명령 1회</td><td class="mono">CMD-WKS-…-0007</td></tr>
+        <tr><td class="mono">WKS-</td><td>런타임</td><td class="mono">^WKS-\d{8}-\d{5}$</td><td class="mono">L10</td><td>Agent</td><td>작업 세션</td><td class="mono">WKS-20260603-00045</td></tr>
+        <tr><td class="mono">SCN-</td><td>런타임</td><td class="mono">SCN-YYYYMMDD-NNNN</td><td class="mono">L10</td><td>Agent</td><td>스캔 1회</td><td class="mono">SCN-20260603-0001</td></tr>
+        <tr><td class="mono">OBS-</td><td>런타임</td><td class="mono">OBS-YYYYMMDD-NNNN</td><td class="mono">L10</td><td>Agent</td><td>영구</td><td class="mono">OBS-20260603-0001</td></tr>
+        <tr><td class="mono">RT-</td><td>런타임</td><td class="mono">RT-&lt;ZONE&gt;-&lt;TASK&gt;-NN</td><td class="mono">L10</td><td>ACU</td><td>미션</td><td class="mono">RT-A-THIN-03</td></tr>
+        <tr><td class="mono">MAP-</td><td>런타임</td><td class="mono">MAP-&lt;ZONE&gt;-vN</td><td class="mono">L10</td><td>LPU</td><td>측위 세션</td><td class="mono">MAP-GH-A-v3</td></tr>
+        <tr><td class="mono">CAL-</td><td>런타임</td><td class="mono">^CAL-[A-Z0-9-]+$</td><td class="mono">L10</td><td>VPU/Agent</td><td>캘리브 유효기간</td><td class="mono">CAL-VPU-NIR-0007</td></tr>
+        <tr><td class="mono">FW-</td><td>런타임</td><td class="mono">^FW-[A-Z0-9.-]+$</td><td class="mono">L10</td><td>OTA Coordinator</td><td>버전</td><td class="mono">FW-MCU-2.4.2</td></tr>
+        <tr><td class="mono">AUD-</td><td>런타임</td><td class="mono">^AUD-[A-Z0-9-]+$</td><td class="mono">L10</td><td>Agent</td><td>영구</td><td class="mono">AUD-20260603-0231</td></tr>
+        <tr><td class="mono">INC-</td><td>런타임</td><td class="mono">INC-YYYYMMDD-NNNN</td><td class="mono">L10</td><td>Event 승격</td><td>영구</td><td class="mono">INC-20260603-0231</td></tr>
+        <tr><td class="mono">PAIR-</td><td>외부</td><td class="mono">^PAIR-[A-Z0-9-]+$</td><td>ext</td><td>Cloud Registry</td><td>TTL</td><td class="mono">PAIR-7F3A-2196</td></tr>
+        <tr><td class="mono">RBT-</td><td>외부</td><td class="mono">^RBT-(THIN|PINCH)-\d{4}$</td><td>—</td><td>Cloud Registry</td><td>영구</td><td class="mono">RBT-THIN-0011</td></tr>
+        <tr><td>cloud topic</td><td>외부</td><td class="mono">robot/{id}/… · site/{site}/…</td><td>ext</td><td>ORG-VIA</td><td>per config</td><td class="mono">robot/{robotId}/telemetry</td></tr>
+      </tbody>
+    </table>
+    <p class="note">5 class: <b class="k">논리</b>(rig-independent) · <b class="k">물리</b>(per-rig) · <b class="k">계약</b>(contract) · <b class="k">런타임</b>(ephemeral) · <b class="k">외부</b>(cloud). 표기 규율·할당 권한은 <a href="#b0c">B0c</a>, 관계는 <a href="#b0b">B0b</a>.</p>
+  </section>
+
+  <section id="b0b">
+    <h3><span class="sid">B0b</span> Namespace Map — 식별자 family 관계</h3>
+    <p class="sub">식별자가 어떻게 join key로 엮이는지. 핵심 체인: ORG → NODE → HOST → EP → PRT, 그리고 IF가 이를 바인딩한다.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 330" role="img" aria-label="identifier namespace map">
+        <defs><marker id="arN" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#1a1a1a"/></marker></defs>
+        <!-- bands -->
+        <g font-size="10" font-weight="700" fill="#6b6b6b">
+          <rect x="14" y="32" width="1152" height="48" fill="#f6f6f7" stroke="#e7e7e9"/><text x="24" y="60">논리</text>
+          <rect x="14" y="92" width="1152" height="48" fill="#fafafa" stroke="#e7e7e9"/><text x="24" y="120">물리</text>
+          <rect x="14" y="152" width="1152" height="48" fill="#f6f6f7" stroke="#e7e7e9"/><text x="24" y="180">계약</text>
+          <rect x="14" y="212" width="1152" height="40" fill="#fafafa" stroke="#e7e7e9"/><text x="24" y="236">런타임</text>
+          <rect x="14" y="262" width="1152" height="38" fill="#f6f6f7" stroke="#e7e7e9"/><text x="24" y="285">외부</text>
+        </g>
+        <!-- chips -->
+        <g font-size="10.5" font-weight="700" text-anchor="middle">
+          <!-- 논리 -->
+          <rect x="165" y="42" width="66" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="198" y="60">ORG-</text>
+          <rect x="255" y="42" width="92" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="301" y="60">NODE-</text>
+          <rect x="430" y="42" width="74" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="467" y="60">NodeKind</text>
+          <rect x="520" y="42" width="96" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="568" y="60">SW Unit</text>
+          <!-- 물리 -->
+          <rect x="255" y="102" width="70" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="290" y="120">HOST-</text>
+          <rect x="360" y="102" width="64" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="392" y="120">EP-</text>
+          <rect x="470" y="102" width="92" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="516" y="120">AST-</text>
+          <rect x="580" y="102" width="56" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="608" y="120">RIG-</text>
+          <!-- 계약 -->
+          <rect x="165" y="162" width="60" height="28" rx="4" fill="#fff" stroke="#1a1a1a" stroke-width="1.6"/><text x="195" y="180">IF-</text>
+          <rect x="360" y="162" width="64" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="392" y="180">PRT-</text>
+          <rect x="470" y="162" width="150" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="545" y="180">manifest</text>
+          <rect x="636" y="162" width="120" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="696" y="180">blueprint.</text>
+          <rect x="772" y="162" width="150" height="28" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="847" y="180">channel NS</text>
+          <!-- 런타임 -->
+          <rect x="165" y="220" width="757" height="26" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="543" y="237" font-size="10">CMD- · WKS- · SCN- · OBS- · RT- · MAP- · CAL- · FW- · AUD- · INC-</text>
+          <!-- 외부 -->
+          <rect x="165" y="269" width="70" height="24" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="200" y="285">PAIR-</text>
+          <rect x="250" y="269" width="92" height="24" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="296" y="285">RBT-</text>
+          <rect x="356" y="269" width="200" height="24" rx="4" fill="#eee" stroke="#1a1a1a"/><text x="456" y="285" font-size="9.5">cloud topic robot/{id}/…</text>
+        </g>
+        <!-- core chain arrows -->
+        <g stroke="#1a1a1a" stroke-width="1.5" marker-end="url(#arN)" fill="none">
+          <line x1="231" y1="56" x2="255" y2="56"/>
+          <line x1="301" y1="70" x2="290" y2="102"/>
+          <line x1="325" y1="116" x2="360" y2="116"/>
+          <line x1="392" y1="130" x2="392" y2="162"/>
+        </g>
+        <g font-size="8.5" fill="#6b6b6b">
+          <text x="243" y="40">owns</text>
+          <text x="298" y="92" text-anchor="end">deployed on</text>
+          <text x="342" y="112">exposes</text>
+          <text x="398" y="150" text-anchor="start">bound to</text>
+        </g>
+        <!-- IF binds (dashed) -->
+        <g stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 3" fill="none">
+          <line x1="195" y1="162" x2="280" y2="70"/>
+          <line x1="222" y1="176" x2="360" y2="120"/>
+          <line x1="225" y1="180" x2="360" y2="180"/>
+        </g>
+        <text x="150" y="200" font-size="8.5" fill="#6b6b6b" text-anchor="start">IF = NODE × EP × PRT (binds)</text>
+      </svg>
+      <div class="figcap"><b>그림 B0b</b> — 식별자 family 관계. 핵심 체인 <b>ORG→NODE→HOST→EP→PRT</b>, <b>IF</b>가 NODE×EP×PRT를 바인딩(점선).
+        그 외: NODE는 manifest·blueprint·channel을 <b>선언(declares)</b> · RIG별 <b>AST로 실체화(realized)</b> · 런타임(CMD/SCN/OBS…)은 NODE·WKS를 <b>참조</b> · 외부(cloud topic·PAIR·RBT)는 <b>TEL 경유 업링크</b>.</div>
+    </div>
+  </section>
+
+  <section id="b0c">
+    <h3><span class="sid">B0c</span> Naming Conventions &amp; Governance</h3>
+    <div class="row r2">
+      <table>
+        <caption>표 B0c-1 — 표기 규율</caption>
+        <thead><tr><th>형식</th><th>용도</th><th>family</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">UPPER-HYPHEN<br>(+숫자·vN)</td><td>엔티티·인스턴스</td><td class="mono">ORG·NODE·HOST·AST·RIG·EP·PRT·IF·CMD·WKS·SCN·OBS·RT·MAP·CAL·FW·AUD·INC·PAIR·RBT·MOD</td></tr>
+          <tr><td class="mono">lower.dot</td><td>네임스페이스·계약</td><td class="mono">channel(machine.*·env.*·crop.*) · manifest · blueprint</td></tr>
+          <tr><td class="mono">slash /</td><td>클라우드 토픽</td><td class="mono">robot/{id}/… · site/{site}/…</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <caption>표 B0c-2 — 할당 권한 (allocator)</caption>
+        <thead><tr><th>주체</th><th>할당 대상</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">ORG-VIA (platform)</td><td>NODE·HOST·EP·PRT·IF·channel NS·blueprint·RIG·cloud topic</td></tr>
+          <tr><td>각 ORG</td><td>자사 node/module manifest (<span class="mono">{org}.node|module.*</span>)</td></tr>
+          <tr><td>런타임 발급 주체</td><td>CMD(발신측)·WKS/SCN/OBS/AUD(Agent)·RT(ACU)·MAP(LPU)·CAL(VPU/Agent)·FW(OTA)·INC(승격)</td></tr>
+          <tr><td>Cloud Registry</td><td>RBT·PAIR (디바이스 등록·페어링)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="req"><span class="tag">GOVERNANCE</span> &nbsp;<b class="k">유일성</b>: family 내 식별자는 전역 유일. <b class="k">버전</b>: 계약 식별자는 <span class="mono">vN</span> 접미(파괴 변경 시 major 증가).
+      <b class="k">Deprecation</b>: 폐기 식별자는 정본 레지스트리(B2)에 "폐기:" 행으로 남기고 신규 발급 금지 — 예 <span class="mono no">NODE-TLM-VIA→NODE-TEL-VIA</span>, <span class="mono no">NODE-AGT-VIA→NODE-AGENT-VIA</span>. 표기·할당 위반은 <a href="#anx-f">REQ-B04</a> 위배.</div>
+  </section>
+
+  <section id="b1">
+    <h3><span class="sid">B1</span> Layered Identifier Model</h3>
+    <p class="sub">식별자는 10개 레이어로 구성된다. 위(추상·안정)에서 아래(물리·휘발)로 갈수록 변경 빈도가 높다.</p>
+    <table>
+      <caption>표 B1 — 10-레이어 식별자 모델</caption>
+      <thead><tr><th>L</th><th>레이어</th><th>문법</th><th>예</th><th>수명</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">L1</td><td>Organization</td><td class="mono">^ORG-[A-Z]+$</td><td class="mono">ORG-AGE · ORG-META · ORG-VIA</td><td>영구</td></tr>
+        <tr><td class="mono">L2</td><td><b class="k">Logical Node</b></td><td class="mono">^NODE-[A-Z]+-[A-Z]+$</td><td class="mono">NODE-MCU-AGE · NODE-TEL-VIA</td><td><b class="k">영구 (리그 불변)</b></td></tr>
+        <tr><td class="mono">L3</td><td>NodeKind</td><td>open 3–4자</td><td class="mono">MCU·VPU·ACU·LPU·TEL (+FCU·HMI·AGENT)</td><td>영구</td></tr>
+        <tr><td class="mono">L4</td><td>Software Unit</td><td class="mono">(nodes|packages|apps)/[a-z0-9-]+</td><td class="mono">nodes/mcu · packages/local-agent · apps/sdv</td><td>per release</td></tr>
+        <tr><td class="mono">L5</td><td><b class="k">Compute Host</b></td><td class="mono">^HOST-[A-Z0-9]+$</td><td class="mono">HOST-JETSON(=VPU+ACU) · HOST-AGENT(=Agent+TEL)</td><td>per board model</td></tr>
+        <tr><td class="mono">L6</td><td><b class="k">Physical Asset</b></td><td class="mono">^AST-R[12]-[A-Z]+-\d{2}$</td><td class="mono">AST-R1-MCU-01 / AST-R2-MCU-01</td><td>per built unit</td></tr>
+        <tr><td class="mono">L7</td><td>Rig + Drawing item</td><td class="mono">^RIG-[12]$ / ^RIG-[12]-IT-\d{2}$</td><td class="mono">RIG-1 · RIG-2-IT-04</td><td>per drawing rev</td></tr>
+        <tr><td class="mono">L8</td><td>Network endpoint</td><td class="mono">^EP-&lt;HOST&gt;-&lt;IF&gt;$</td><td class="mono">EP-AGENT-CAN0 · EP-JETSON-ETH0</td><td>per net config</td></tr>
+        <tr><td class="mono">L9</td><td>ProtocolProfile</td><td class="mono">^PRT-[A-Z0-9]+-v[0-9]+$</td><td class="mono">PRT-CAN-v1 · PRT-DDS-v1 · PRT-WS-v1</td><td>per profile ver</td></tr>
+        <tr><td class="mono">L10</td><td>Runtime instance</td><td>type별 (B5)</td><td class="mono">CMD-* · SCN-* · OBS-* · RT-*</td><td>ephemeral</td></tr>
+      </tbody>
+    </table>
+    <div class="req"><span class="tag">INVARIANT</span> &nbsp;<b class="k">L2(논리 Node ID)는 digit·3세그먼트를 금지하는 regex로 구조적으로 리그·보드와 무관</b>하다.
+      따라서 리그별 인스턴스 구분은 L6(Asset-tag)이, 보드 1대당 노드 N개 관계는 L5(Host)가 전담한다 — 식별자가 물리 패키징이 아니라 논리·계약을 따른다.</div>
+  </section>
+
+  <section id="b2">
+    <h3><span class="sid">B2</span> Canonical Identifier Registry</h3>
+    <p class="sub">표기 정합. 과거 문서의 <span class="mono">TLM·AGT</span> 변형을 폐기하고 계약 정본 표기로 통일한다.</p>
+    <table>
+      <caption>표 B2 — 정본 논리 Node ID</caption>
+      <thead><tr><th>Logical Node ID</th><th>Kind</th><th>Org</th><th>비고 (폐기 변형)</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">NODE-MCU-AGE</td><td><span class="nc rt">MCU</span></td><td class="mono">ORG-AGE</td><td>—</td></tr>
+        <tr><td class="mono">NODE-LPU-DAEDONG</td><td><span class="nc cmp">LPU</span></td><td class="mono">ORG-DAEDONG</td><td>—</td></tr>
+        <tr><td class="mono">NODE-VPU-META</td><td><span class="nc cmp">VPU</span></td><td class="mono">ORG-META</td><td>—</td></tr>
+        <tr><td class="mono">NODE-ACU-META</td><td><span class="nc cmp">ACU</span></td><td class="mono">ORG-META</td><td>—</td></tr>
+        <tr><td class="mono">NODE-TEL-VIA</td><td><span class="nc ui">TEL</span></td><td class="mono">ORG-VIA</td><td class="no">폐기: NODE-TLM-VIA</td></tr>
+        <tr><td class="mono">NODE-AGENT-VIA</td><td><span class="nc gw host">AGENT</span></td><td class="mono">ORG-VIA</td><td class="no">폐기: NODE-AGT-VIA</td></tr>
+        <tr><td class="mono">NODE-HMI-VIA</td><td><span class="nc ui host">HMI</span></td><td class="mono">ORG-VIA</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p class="note"><b class="k">명명 규칙</b>: 표준 NodeKind는 3자 코드(<span class="mono">MCU·VPU·ACU·LPU·TEL</span>). 표준 외 host pseudo-node
+      (<span class="mono">AGENT·HMI</span>)는 자연어 코드를 허용한다. <span class="mono">AGENT</span>는 NodeKind가 아닌 게이트웨이 호스트지만,
+      레지스트리·라벨 일관성을 위해 논리 Node ID를 부여하고 host(점선 테두리)로 표기한다. <span class="mono">TEL</span>·<span class="mono">AGENT</span>는 계약 예시·build-guide 표기를 정본으로 채택한다.</p>
+  </section>
+
+  <section id="b3">
+    <h3><span class="sid">B3</span> Master Deployment Matrix</h3>
+    <p class="sub">전 7노드를 논리·소프트웨어·호스트·리그 자산·도면 항목으로 잇는 단일 배치표. 가독성을 위해 두 표로 분할한다(키 = Logical Node ID).</p>
+    <table>
+      <caption>표 B3a — 논리 ↔ 소프트웨어 ↔ 호스트 ↔ 리그 자산</caption>
+      <thead><tr><th>Logical Node ID</th><th>Kind</th><th>SW Unit</th><th>Host</th><th>Asset R1</th><th>Asset R2</th><th>Dwg item</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">NODE-MCU-AGE</td><td><span class="nc rt">MCU</span></td><td class="mono">nodes/mcu</td><td class="mono">HOST-MCU</td><td class="mono">AST-R1-MCU-01</td><td class="mono">AST-R2-MCU-01</td><td class="mono">RIG-*-IT-02</td></tr>
+        <tr><td class="mono">NODE-LPU-DAEDONG</td><td><span class="nc cmp">LPU</span></td><td class="mono">nodes/lpu</td><td class="mono">HOST-LPU</td><td class="mono">AST-R1-LPU-01<br>(opt)</td><td class="mono">AST-R2-LPU-01</td><td class="mono">RIG-*-IT-07</td></tr>
+        <tr><td class="mono">NODE-VPU-META</td><td><span class="nc cmp share">VPU</span></td><td class="mono">nodes/vpu</td><td class="mono">HOST-JETSON</td><td class="mono">AST-R1-JETSON-01</td><td class="mono">AST-R2-JETSON-01</td><td class="mono">RIG-*-IT-03</td></tr>
+        <tr><td class="mono">NODE-ACU-META</td><td><span class="nc cmp share">ACU</span></td><td class="mono">nodes/acu</td><td class="mono">HOST-JETSON</td><td class="mono">AST-R1-JETSON-01</td><td class="mono">AST-R2-JETSON-01</td><td class="mono">RIG-*-IT-03</td></tr>
+        <tr><td class="mono">NODE-TEL-VIA</td><td><span class="nc ui share">TEL</span></td><td class="mono">nodes/telemetry</td><td class="mono">HOST-AGENT</td><td class="mono">AST-R1-LTE-01</td><td class="mono">AST-R2-LTE-01</td><td class="mono">RIG-*-IT-06</td></tr>
+        <tr><td class="mono">NODE-AGENT-VIA</td><td><span class="nc gw host">AGENT</span></td><td class="mono">packages/local-agent</td><td class="mono">HOST-AGENT</td><td class="mono">AST-R1-AGENT-01</td><td class="mono">AST-R2-AGENT-01</td><td class="mono">RIG-*-IT-04</td></tr>
+        <tr><td class="mono">NODE-HMI-VIA</td><td><span class="nc ui host">HMI</span></td><td class="mono">apps/sdv</td><td class="mono">HOST-HMI</td><td class="mono">AST-R1-HMI-01</td><td class="mono">AST-R2-HMI-01</td><td class="mono">RIG-*-IT-01,05</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <caption>표 B3b — 네트워크 ↔ 프로토콜 ↔ 대표 계약</caption>
+      <thead><tr><th>Logical Node ID</th><th>Endpoint</th><th>Profile</th><th>Rep. Signal</th><th>Rep. Command</th><th>Manifest</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">NODE-MCU-AGE</td><td class="mono">EP-AGENT-CAN0</td><td class="mono">PRT-CAN-v1</td><td class="mono">machine.motion.speed</td><td class="mono">motion.stop</td><td class="mono">age.node.mcu.v1</td></tr>
+        <tr><td class="mono">NODE-LPU-DAEDONG</td><td class="mono">EP-LPU-ETH0 (DDS dom0)</td><td class="mono">PRT-DDS-v1</td><td class="mono">machine.localization.pose</td><td class="mono">localization.relocalize</td><td class="mono">daedong.node.lpu.v1</td></tr>
+        <tr><td class="mono">NODE-VPU-META</td><td class="mono">EP-JETSON-ETH0</td><td class="mono">PRT-ROS-v1</td><td class="mono">crop.growth.ndvi</td><td class="mono">vision.capture.start</td><td class="mono">meta.node.vpu.v1</td></tr>
+        <tr><td class="mono">NODE-ACU-META</td><td class="mono">EP-JETSON-ETH0 (DDS dom0)</td><td class="mono">PRT-DDS-v1</td><td class="mono">machine.autonomy.state</td><td class="mono">autonomy.mission.start</td><td class="mono">meta.node.acu.v1</td></tr>
+        <tr><td class="mono">NODE-TEL-VIA</td><td class="mono">EP-AGENT-LTE0</td><td class="mono">PRT-MQTT-v2</td><td class="mono">machine.telemetry.cloud_connected</td><td class="mono">telemetry.uplink.flush</td><td class="mono">via.node.telemetry.v1</td></tr>
+        <tr><td class="mono">NODE-AGENT-VIA</td><td class="mono">EP-AGENT-ETH0 / WLAN0</td><td>— (hub; 전 profile 종단)</td><td>(전 노드 집계)</td><td>(router)</td><td>(node manifest 아님)</td></tr>
+        <tr><td class="mono">NODE-HMI-VIA</td><td class="mono">EP-HMI-WLAN0</td><td class="mono">PRT-WS-v1</td><td>(구독자)</td><td class="mono">operator commands</td><td class="mono">via.node.hmi.v1</td></tr>
+      </tbody>
+    </table>
+    <div class="req"><span class="tag">READS</span> &nbsp;VPU·ACU가 <b class="k">동일 Host·동일 Asset</b>(HOST-JETSON / AST-R*-JETSON-01)인 점이 "2노드 1보드"를 증명한다(대각 해칭 코드칩).
+      TEL·AGENT가 동일 Host(HOST-AGENT)인 점은 "Telemetry 프로세스가 Agent RPi에 얹히되 권한은 별개"를 보인다.
+      Asset 컬럼이 R1/R2로만 갈라지고 Logical Node ID는 동일한 점이 <b class="k">식별자 안정성</b>의 핵심이다.</div>
+  </section>
+
+  <section id="b4">
+    <h3><span class="sid">B4</span> Asset-Tag Scheme — 안정 논리 ID ↔ 리그별 자산</h3>
+    <p>물리 라벨 스티커에는 <b class="k">Asset-tag(AST-*)</b>를, 계약·레지스트리에는 <b class="k">논리 Node ID(NODE-*)</b>를 기재한다.
+      <span class="mono">AST-R{1|2}-&lt;NODECODE&gt;-&lt;NN&gt;</span>에서 <span class="mono">NN</span>은 인스턴스 번호(01=primary, 증가=예비/추가)다.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 220" role="img" aria-label="asset tag mapping">
+        <text x="20" y="28" font-size="11" font-weight="700">동일 논리 노드, 리그별 자산 분기</text>
+        <!-- logical (center) -->
+        <rect x="470" y="90" width="240" height="44" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"/><text x="590" y="110" text-anchor="middle" font-size="12" font-weight="800">NODE-MCU-AGE</text><text x="590" y="126" text-anchor="middle" font-size="9" class="mono">논리 (불변)</text>
+        <!-- R1 -->
+        <rect x="80" y="50" width="220" height="40" fill="#e9e9eb" stroke="#1a1a1a"/><text x="190" y="68" text-anchor="middle" font-size="11" class="mono" font-weight="700">AST-R1-MCU-01</text><text x="190" y="82" text-anchor="middle" font-size="9">RIG-1 평면 패널 사본</text>
+        <rect x="80" y="135" width="220" height="40" fill="#e9e9eb" stroke="#1a1a1a"/><text x="190" y="153" text-anchor="middle" font-size="11" class="mono" font-weight="700">AST-R2-MCU-01</text><text x="190" y="167" text-anchor="middle" font-size="9">RIG-2 로버 사본</text>
+        <!-- R2 second instance -->
+        <rect x="880" y="92" width="220" height="40" fill="#fafafa" stroke="#9a9a9c" stroke-dasharray="4 3"/><text x="990" y="110" text-anchor="middle" font-size="11" class="mono" font-weight="700">AST-R2-MCU-02</text><text x="990" y="124" text-anchor="middle" font-size="9">RIG-2 조향 MCU(예: 추가 인스턴스)</text>
+        <g stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#ar)" fill="none">
+          <path d="M300,70 L470,104"/><path d="M300,155 L470,120"/><path d="M710,112 L880,112"/>
+        </g>
+        <text x="600" y="200" text-anchor="middle" font-size="10" fill="#6b6b6b">세 물리 자산 모두 동일 Kind(MCU)·동일 계약 — 보드 교체·예비·증설이 논리 ID를 건드리지 않는다.</text>
+      </svg>
+      <div class="figcap"><b>그림 B4</b> — Asset-tag 분기. 논리 Node ID는 하나, 물리 자산은 리그·인스턴스별로 여럿.</div>
+    </div>
+  </section>
+
+  <section id="b5">
+    <h3><span class="sid">B5</span> Runtime &amp; Asset Instance Identifiers</h3>
+    <table>
+      <caption>표 B5 — 런타임/자산 인스턴스 식별자</caption>
+      <thead><tr><th>식별자</th><th>문법</th><th>예</th><th>발급 주체</th><th>수명</th></tr></thead>
+      <tbody>
+        <tr><td>Command</td><td class="mono">^CMD-[A-Z0-9-]+$</td><td class="mono">CMD-WKS-20260603-00045-0007</td><td>발신측 (HMI·Cloud·ACU)</td><td>명령 1회 + ACK</td></tr>
+        <tr><td>WorkSession</td><td class="mono">^WKS-\d{8}-\d{5}$</td><td class="mono">WKS-20260603-00045</td><td>Local Agent</td><td>작업 세션</td></tr>
+        <tr><td>ScanSession</td><td class="mono">SCN-YYYYMMDD-NNNN</td><td class="mono">SCN-20260603-0001</td><td>Local Agent (스캔 시작)</td><td>스캔 1회</td></tr>
+        <tr><td>GrowthObservation</td><td class="mono">OBS-YYYYMMDD-NNNN</td><td class="mono">OBS-20260603-0001</td><td>Local Agent (결합 시)</td><td>영구(업링크)</td></tr>
+        <tr><td>Route / Path</td><td class="mono">RT-&lt;ZONE&gt;-&lt;TASK&gt;-NN</td><td class="mono">RT-A-THIN-03</td><td>ACU / blueprint</td><td>미션</td></tr>
+        <tr><td>Map / Frame</td><td class="mono">MAP-&lt;ZONE&gt;-vN / frame</td><td class="mono">MAP-GH-A-v3 · base_link</td><td>LPU (REP-105)</td><td>측위 세션</td></tr>
+        <tr><td>Calibration</td><td class="mono">^CAL-[A-Z0-9-]+$</td><td class="mono">CAL-VPU-NIR-0007</td><td>VPU / Agent</td><td>캘리브 유효기간</td></tr>
+        <tr><td>Firmware</td><td class="mono">^FW-[A-Z0-9.-]+$</td><td class="mono">FW-MCU-2.4.2</td><td>OTA Coordinator</td><td>버전</td></tr>
+        <tr><td>Audit</td><td class="mono">^AUD-[A-Z0-9-]+$</td><td class="mono">AUD-20260603-0231</td><td>Local Agent EventLog</td><td>영구</td></tr>
+        <tr><td>Incident</td><td class="mono">INC-YYYYMMDD-NNNN</td><td class="mono">INC-20260603-0231</td><td>Event 승격</td><td>영구</td></tr>
+      </tbody>
+    </table>
+    <p class="note">SCN·OBS·RT·MAP·INC는 현재 <span class="mono">ids.ts</span> 정규식에 미등록 — 문서 레벨 규약이다. 정식 등록 변경안은 <a href="#anx-e">Annex E</a>.</p>
+  </section>
+
+  <section class="divider"><div class="dv-id">PART C</div><div class="dv-title">Protocol &amp; Messaging</div><div class="dv-sub">Transport Tiers · ProtocolProfile Registry · Pub/Sub · 3-stage ACK · Gate · Exchange Sequences</div></section>
+
+  <!-- ============ PART C — PROTOCOL & MESSAGING ============ -->
+  <section id="c1">
+    <h3><span class="sid">C1</span> Transport Tier Taxonomy</h3>
+    <p>전송은 2계층으로 분리한다. <b class="k">Tier-1 물리 링크</b>(버스/매체)와 <b class="k">Tier-2 메시지 프로파일</b>(<span class="mono">PRT-*</span> 계약)이다.
+      물리 링크는 <b class="k">프로파일 ID 접미사로 인코딩</b>한다(예: <span class="mono">PRT-CAN-v1</span> = CAN 링크 선언). 스키마에 필드를 추가하지 않는다.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 250" role="img" aria-label="2-tier transport">
+        <text x="20" y="26" font-size="11" font-weight="700">Tier-2 · Messaging Profile (PRT-*) — 계약: ack · timeout · security 선언</text>
+        <g font-size="10.5" text-anchor="middle">
+          <rect x="30" y="40" width="170" height="40" fill="#ffffff" stroke="#1a1a1a"/><text x="115" y="58" font-weight="700" class="mono">PRT-CAN-v1</text><text x="115" y="73" font-size="9">결정성·app-ACK</text>
+          <rect x="230" y="40" width="170" height="40" fill="#ffffff" stroke="#1a1a1a"/><text x="315" y="58" font-weight="700" class="mono">PRT-DDS-v1</text><text x="315" y="73" font-size="9">pub/sub·QoS</text>
+          <rect x="430" y="40" width="170" height="40" fill="#ffffff" stroke="#1a1a1a"/><text x="515" y="58" font-weight="700" class="mono">PRT-ROS-v1</text><text x="515" y="73" font-size="9">topic·best-effort</text>
+          <rect x="630" y="40" width="170" height="40" fill="#ffffff" stroke="#1a1a1a"/><text x="715" y="58" font-weight="700" class="mono">PRT-WS-v1</text><text x="715" y="73" font-size="9">WS push·REST</text>
+          <rect x="830" y="40" width="170" height="40" fill="#ffffff" stroke="#1a1a1a"/><text x="915" y="58" font-weight="700" class="mono">PRT-MQTT-v2</text><text x="915" y="73" font-size="9">batch·TLS</text>
+        </g>
+        <text x="20" y="138" font-size="11" font-weight="700">Tier-1 · Physical Link — 매체</text>
+        <g font-size="10.5" text-anchor="middle">
+          <rect x="30" y="152" width="170" height="40" fill="#1a1a1a"/><text x="115" y="170" fill="#fff" font-weight="700">CAN / RS485</text><text x="115" y="185" fill="#fff" font-size="9">twisted · 120Ω×2</text>
+          <rect x="230" y="152" width="170" height="40" fill="#6b6b6b"/><text x="315" y="170" fill="#fff" font-weight="700">Ethernet</text><text x="315" y="185" fill="#fff" font-size="9">Cat6 · switch</text>
+          <rect x="430" y="152" width="170" height="40" fill="#6b6b6b"/><text x="515" y="170" fill="#fff" font-weight="700">Ethernet</text><text x="515" y="185" fill="#fff" font-size="9">Cat6 · switch</text>
+          <rect x="630" y="152" width="170" height="40" fill="#c9c9c9" stroke="#1a1a1a"/><text x="715" y="170" font-weight="700">WiFi</text><text x="715" y="185" font-size="9">WLAN</text>
+          <rect x="830" y="152" width="170" height="40" fill="#c9c9c9" stroke="#1a1a1a"/><text x="915" y="170" font-weight="700">USB-LTE</text><text x="915" y="185" font-size="9">Quectel EC25</text>
+        </g>
+        <g stroke="#3a3a3a" stroke-width="1.3" marker-end="url(#ar)">
+          <line x1="115" y1="80" x2="115" y2="152"/><line x1="315" y1="80" x2="315" y2="152"/><line x1="515" y1="80" x2="515" y2="152"/><line x1="715" y1="80" x2="715" y2="152"/><line x1="915" y1="80" x2="915" y2="152"/>
+        </g>
+        <text x="600" y="228" text-anchor="middle" font-size="10" fill="#6b6b6b">프로파일이 ack/timeout/security를 선언하고, 물리 링크는 결정성·대역을 결정한다.</text>
+      </svg>
+      <div class="figcap"><b>그림 C1</b> — 2-tier 전송. NodeAdapter가 프로파일 뒤에서 물리 링크를 흡수한다.</div>
+    </div>
+    <div class="req"><span class="tag">FOLLOW-UP</span> &nbsp;계약 <span class="mono">ProtocolProfile.transport</span> enum은 현재 <span class="mono">MQTT·ROS2·DDS</span>만 포함한다.
+      <span class="mono">CAN·SERIAL·WS</span>는 미정의 — 본 문서는 <span class="mono">PRT-CAN-v1·PRT-WS-v1</span>을 규약으로 도입하고, 정식 enum 확장은 <a href="#anx-e">Annex E</a>에 명시한다(코드 동결).</div>
+  </section>
+
+  <section id="c2">
+    <h3><span class="sid">C2</span> ProtocolProfile Registry</h3>
+    <table>
+      <caption>표 C2 — ProtocolProfile (PRT-*)</caption>
+      <thead><tr><th>Profile ID</th><th>transport</th><th>물리 링크</th><th>ack 기본</th><th>security</th><th>적용 노드</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">PRT-CAN-v1</td><td class="mono no">CAN*</td><td>CAN/RS485</td><td class="mono">at_least_once</td><td>bus-physical (no transport crypto)</td><td><span class="nc rt">MCU</span></td></tr>
+        <tr><td class="mono">PRT-DDS-v1</td><td class="mono">DDS</td><td>Ethernet</td><td class="mono">at_least_once</td><td>DDS-Security (opt)</td><td><span class="nc cmp">LPU</span> <span class="nc cmp">ACU</span></td></tr>
+        <tr><td class="mono">PRT-ROS-v1</td><td class="mono">ROS2</td><td>Ethernet</td><td class="mono">at_most_once</td><td>node-local</td><td><span class="nc cmp">VPU</span></td></tr>
+        <tr><td class="mono">PRT-WS-v1</td><td class="mono no">WS*</td><td>WiFi/Ethernet</td><td class="mono">at_least_once</td><td>TLS (opt) · token</td><td><span class="nc ui host">HMI</span></td></tr>
+        <tr><td class="mono">PRT-MQTT-v2</td><td class="mono">MQTT</td><td>USB-LTE</td><td class="mono">at_least_once</td><td>TLS · X.509</td><td><span class="nc ui">TEL</span></td></tr>
+      </tbody>
+    </table>
+    <p class="note"><span class="mono no">CAN*·WS*</span> = enum 미등록(Annex E 변경안). 배달 의미: <span class="mono">at_least_once · exactly_once · at_most_once</span>. 안전등급: <span class="mono">none · guarded · safety_critical</span>.</p>
+  </section>
+
+  <section id="c3">
+    <h3><span class="sid">C3</span> Transport Matrix — 망별 분리</h3>
+    <table>
+      <caption>표 C3 — 링크별 매체·프로파일·메시지·결정성</caption>
+      <thead><tr><th>링크</th><th>매체</th><th>Profile</th><th>노드</th><th>S·C·E</th><th>방향</th><th>주기/지연</th><th>결정성</th><th>비전송</th></tr></thead>
+      <tbody>
+        <tr><td>MCU ↔ Agent</td><td class="mono">CAN/RS485 120Ω×2</td><td class="mono">PRT-CAN-v1</td><td><span class="nc rt">MCU</span></td><td>S·C·E</td><td>양방향</td><td>10–1000 Hz · &lt;5/10 ms</td><td class="no">경성</td><td>미션·AI·image</td></tr>
+        <tr><td>LPU → Agent</td><td class="mono">Ethernet</td><td class="mono">PRT-DDS-v1</td><td><span class="nc cmp">LPU</span></td><td>S</td><td>up</td><td>20–50 Hz</td><td>연성</td><td>raw LiDAR</td></tr>
+        <tr><td>VPU → Agent</td><td class="mono">Ethernet</td><td class="mono">PRT-ROS-v1</td><td><span class="nc cmp">VPU</span></td><td>S·E</td><td>up</td><td>1–5 Hz</td><td>best-effort</td><td class="no">raw RGB/NIR</td></tr>
+        <tr><td>ACU ↔ Agent</td><td class="mono">Ethernet</td><td class="mono">PRT-DDS-v1</td><td><span class="nc cmp">ACU</span></td><td>S·C(수신)</td><td>양방향</td><td>10 Hz</td><td>연성</td><td>하위 직접제어</td></tr>
+        <tr><td>Agent ↔ HMI</td><td class="mono">WiFi</td><td class="mono">PRT-WS-v1</td><td><span class="nc ui host">HMI</span></td><td>S·C·E·ACK</td><td>양방향</td><td>WS push</td><td>best-effort</td><td>raw frame·HW 직접</td></tr>
+        <tr><td>Agent ↔ TEL → Cloud</td><td class="mono">USB-LTE</td><td class="mono">PRT-MQTT-v2</td><td><span class="nc ui">TEL</span></td><td>S(요약)·uplink·OTA</td><td>up + cloud cmd 후보</td><td>주기/배치</td><td>best-effort</td><td>실시간 제어권·raw image</td></tr>
+      </tbody>
+    </table>
+    <div class="safe"><span class="tag">RULE</span> &nbsp;Raw image/video·raw LiDAR는 기본 통합 경로 비전송(파생 Signal만). <b class="k">E-stop은 메시지가 아니라 물리 회로</b> — CAN의 <span class="mono">machine.safety.estop</span> Event는 actuation이 아니라 보고다.</div>
+    <p class="note">각 링크의 상세 인터페이스(메시지 인벤토리·"NOT carried" 권위 목록)는 <a href="#f5p">Part F</a>:
+      MCU↔Agent=<span class="mono">IF-P-MCU</span> · LPU=<span class="mono">IF-P-LPU</span> · VPU=<span class="mono">IF-P-VPU</span> · ACU=<span class="mono">IF-P-ACU</span> · HMI=<span class="mono">IF-P-HMI</span> · TEL=<span class="mono">IF-P-TEL</span>. 본 표는 요약이다.</p>
+  </section>
+
+  <section id="c4">
+    <h3><span class="sid">C4</span> Standard Signal / Command Catalog (NS)</h3>
+    <p class="sub">HMI·관제는 raw CAN ID·register가 아니라 표준 네임스페이스만 본다.</p>
+    <div class="row r2">
+      <table>
+        <caption>표 C4a — Signal (NS)</caption>
+        <thead><tr><th>channel</th><th>단위</th><th>노드</th><th>rate</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">machine.motion.speed</td><td>m/s</td><td>MCU</td><td>20 Hz</td></tr>
+          <tr><td class="mono">machine.power.battery_voltage</td><td>V</td><td>MCU</td><td>1 Hz</td></tr>
+          <tr><td class="mono">machine.safety.estop</td><td>bool</td><td>MCU</td><td>event</td></tr>
+          <tr><td class="mono">machine.localization.pose</td><td>x,y,θ</td><td>LPU</td><td>30 Hz</td></tr>
+          <tr><td class="mono">machine.localization.confidence</td><td>0–1</td><td>LPU</td><td>10 Hz</td></tr>
+          <tr><td class="mono">machine.vision.fps</td><td>fps</td><td>VPU</td><td>1 Hz</td></tr>
+          <tr><td class="mono">crop.growth.plant_height</td><td>mm</td><td>VPU</td><td>scan</td></tr>
+          <tr><td class="mono">crop.growth.ndvi</td><td>—</td><td>VPU</td><td>scan</td></tr>
+          <tr><td class="mono">machine.autonomy.state</td><td>enum</td><td>ACU</td><td>10 Hz</td></tr>
+          <tr><td class="mono">machine.telemetry.cloud_connected</td><td>bool</td><td>TEL</td><td>0.2 Hz</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <caption>표 C4b — Command (verb)</caption>
+        <thead><tr><th>verb</th><th>대상</th><th>ack</th><th>safety</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">motion.set_speed_limit</td><td>MCU</td><td>at_least_once</td><td>guarded</td></tr>
+          <tr><td class="mono">motion.stop</td><td>MCU</td><td>at_least_once</td><td class="no">safety_critical</td></tr>
+          <tr><td class="mono">autonomy.mission.start</td><td>ACU</td><td>exactly_once</td><td>guarded</td></tr>
+          <tr><td class="mono">autonomy.pause</td><td>ACU</td><td>at_least_once</td><td>guarded</td></tr>
+          <tr><td class="mono">autonomy.slow_down</td><td>ACU</td><td>at_least_once</td><td>guarded</td></tr>
+          <tr><td class="mono">vision.capture.start</td><td>VPU</td><td>at_least_once</td><td>none</td></tr>
+          <tr><td class="mono">vision.calibrate</td><td>VPU</td><td>exactly_once</td><td class="no">safety_critical</td></tr>
+          <tr><td class="mono">localization.relocalize</td><td>LPU</td><td>at_least_once</td><td>none</td></tr>
+          <tr><td class="mono">telemetry.uplink.flush</td><td>TEL</td><td>at_most_once</td><td>none</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="c4q">
+    <h3><span class="sid">C4Q</span> Signal Quality &amp; Channel Policy</h3>
+    <p class="sub">모든 Signal은 <span class="mono">quality ∈ {good · warn · bad}</span>를 동반한다. 채널 정책은 rate·임계·승격을 규정한다.</p>
+    <div class="row r2">
+      <table>
+        <caption>표 C4c — Signal quality 판정 기준</caption>
+        <thead><tr><th>quality</th><th>지연</th><th>이상치/드리프트</th><th>완전성</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">good</td><td>≤ 250 ms</td><td>&lt; 1% / &lt; 0.5%·day</td><td>—</td></tr>
+          <tr><td class="mono">warn</td><td>250–500 ms</td><td>일부 이상치/드리프트</td><td>&gt; 95%</td></tr>
+          <tr><td class="no">bad</td><td>&gt; 500 ms</td><td>높음</td><td>&lt; 90%</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <caption>표 C4d — 채널 정책 예 (rate · warn · crit · promote)</caption>
+        <thead><tr><th>channel</th><th>rate</th><th>warn</th><th>crit</th><th>promote</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">env.greenhouse.temperature</td><td>5 s</td><td>≥ 28</td><td>≥ 32</td><td>true</td></tr>
+          <tr><td class="mono">machine.ee.grip_force</td><td>500 ms</td><td>≤ 10</td><td>≤ 8</td><td>true</td></tr>
+          <tr><td class="mono">machine.localization.confidence</td><td>10 Hz</td><td>&lt; 0.6</td><td>&lt; 0.4</td><td>true</td></tr>
+          <tr><td class="mono">machine.vision.fps</td><td>1 s</td><td>&lt; 10</td><td>&lt; 5</td><td>false</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="c5">
+    <h3><span class="sid">C5</span> Pub/Sub Model &amp; Command ACK Lifecycle</h3>
+    <table>
+      <caption>표 C5 — 메시지 프리미티브</caption>
+      <thead><tr><th>프리미티브</th><th>흐름</th><th>분류</th><th>전송 tier</th></tr></thead>
+      <tbody>
+        <tr><td><b class="k">Signal</b></td><td>node → SignalStore(write/latest/subscribe) → HMI(WS)</td><td>quality: good·warn·bad</td><td>노드 프로파일 → WS fan-out</td></tr>
+        <tr><td><b class="k">Event</b></td><td>node → EventBus(publish) → filter{source·code·severity}</td><td>severity: info·notice·warning·critical·emergency · emergency→Incident 승격</td><td>노드 프로파일 → WS</td></tr>
+        <tr><td><b class="k">Command</b></td><td>issuer → CommandRouter(dispatch) → evaluateGate → target node</td><td>delivery: at_least/exactly/at_most_once · safety: none/guarded/safety_critical</td><td>WS(하향) → 노드 프로파일</td></tr>
+      </tbody>
+    </table>
+    <div class="fig">
+      <svg viewBox="0 0 1180 170" role="img" aria-label="ack lifecycle">
+        <defs><marker id="arA" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#3a3a3a"/></marker>
+        <marker id="arAr" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#c0392b"/></marker></defs>
+        <g font-size="12" font-weight="700" text-anchor="middle">
+          <rect x="40" y="64" width="150" height="44" fill="#c9c9c9" stroke="#1a1a1a"/><text x="115" y="84">received</text><text x="115" y="99" font-size="9" font-weight="400">게이트웨이 수신</text>
+          <rect x="280" y="64" width="150" height="44" fill="#6b6b6b"/><text x="355" y="84" fill="#fff">accepted</text><text x="355" y="99" font-size="9" font-weight="400" fill="#fff">Policy 통과·큐잉</text>
+          <rect x="520" y="64" width="150" height="44" fill="#1a1a1a"/><text x="595" y="84" fill="#fff">executed</text><text x="595" y="99" font-size="9" font-weight="400" fill="#fff">노드 실행 완료</text>
+          <rect x="800" y="20" width="150" height="38" fill="#c0392b"/><text x="875" y="44" fill="#fff">rejected</text>
+          <rect x="800" y="114" width="150" height="38" fill="#c0392b"/><text x="875" y="138" fill="#fff">timeout</text>
+        </g>
+        <g stroke="#3a3a3a" stroke-width="1.8" marker-end="url(#arA)" fill="none">
+          <line x1="190" y1="86" x2="280" y2="86"/><line x1="430" y1="86" x2="520" y2="86"/>
+        </g>
+        <path d="M355,64 L355,39 L800,39" stroke="#c0392b" stroke-width="1.5" fill="none" marker-end="url(#arAr)"/>
+        <text x="560" y="33" font-size="10" fill="#c0392b">권한·상태·안전 미통과</text>
+        <path d="M595,108 L595,133 L800,133" stroke="#c0392b" stroke-width="1.5" fill="none" marker-end="url(#arAr)"/>
+        <text x="660" y="150" font-size="10" fill="#c0392b">timeoutMs 초과</text>
+      </svg>
+      <div class="figcap"><b>그림 C5</b> — Command ACK 라이프사이클. 기본 3단계(received·accepted·executed) + 예외 종단(rejected·timeout). 버튼 누름 ≠ 실행 완료.</div>
+    </div>
+  </section>
+
+  <section id="c6">
+    <h3><span class="sid">C6</span> End-to-End Exchange Sequences</h3>
+    <h4>(a) 운영자 정지 명령 — HMI → MCU (CAN), 전체 ACK</h4>
+    <div class="code">1. HMI(apps/sdv) --[PRT-WS-v1]--> Agent : CMD-WKS-20260603-00045-0007
+     { verb: motion.stop, target:{node:MCU}, ack: at_least_once, safety: safety_critical, issuedBy:{role:operator} }
+2. CommandRouter.dispatch → ACK{received}  --[WS]--> HMI "received"   <span class="c"># 즉시</span>
+3. CommandRouter.evaluateGate(cmd):
+     authority: operator ≥ cloud ✓ (권한 ③)
+     state: MCU health OK ✓ · isSafetyVerb('motion.stop') → guarded
+   → GateResult pass → ACK{accepted} --[WS]--> HMI "accepted"
+4. Agent --[PRT-CAN-v1 · EP-AGENT-CAN0]--> MCU : stop frame (&lt;10 ms, 결정성)
+5. MCU safe-stop 실행 · S machine.motion.speed→0 · ACK{executed} --up CAN--> Agent --[WS]--> HMI "executed"
+   <span class="c"># gate 실패 → ACK{rejected, reason} (종단, AUD-* 로그) · timeoutMs 초과 → ACK{timeout} (종단)</span></div>
+    <div class="safe"><span class="tag">DETERMINISM</span> &nbsp;4–5단계는 결정성 CAN tier(&lt;10 ms). <b class="k">물리 E-stop은 이 경로가 아니다</b> — 버튼은 SW와 무관하게 safety relay로 모터 enable을 끊고, CAN <span class="mono">machine.safety.estop</span> Event(emergency)는 그 사실의 보고일 뿐이다.</div>
+    <h4>(b) 생육분석 스캔 — Signal/Event → GrowthObservation → 업링크</h4>
+    <div class="code">1. HMI --[WS]--> Agent : scan request → gate(permission) → SCN-20260603-0001 open (status:running)
+2. Agent --[PRT-DDS-v1]--> ACU : C autonomy.mission.start (exactly_once, guarded) → ACK received/accepted/executed
+3. ACU subscribes LPU pose --[PRT-DDS-v1]--> : S machine.localization.pose @20–50 Hz
+4. ACU --[PRT-ROS-v1]--> VPU : capture+analyze ; VPU publishes per-frame
+     S crop.growth.plant_height / lai / ndvi (1–5 Hz) · E disease.suspected (warning)
+   <span class="c"># raw RGB/NIR image stays on VPU local — NOT on path</span>
+5. Agent aggregates VPU result ⊕ LPU pose ⊕ ACU mission →
+     OBS-20260603-0001 { scanSessionId:SCN-…, pose{…}, crop{…}, quality{…} } → ObservationStore
+     SCN status → done · resultRef: OBS-batch-0001
+6. Agent --[WS]--> HMI : live observation update
+7. Agent --[PRT-MQTT-v2 · EP-AGENT-LTE0]--> TEL → Cloud : uplink OBS (추론 결과 업로드, raw image 제외)</div>
+    <p class="note">결정성 노트: (b) 스캔 경로는 전부 best-effort/연성 network pub/sub — 생육분석은 제어 루프가 아니라 배치 관측이므로 허용된다. (a)의 CAN 결정성과 대비된다.</p>
+  </section>
+
+  <section id="c7">
+    <h3><span class="sid">C7</span> Gate Evaluation &amp; Policy</h3>
+    <p class="sub">Command은 <span class="mono">CommandRouter.evaluateGate</span>를 통과해야 <span class="mono">accepted</span>된다. GateResult는 4등급이며, Policy 룰이 조건부로 명령을 트리거·차단한다.</p>
+    <div class="row r2">
+      <table>
+        <caption>표 C7a — GateResult 등급</caption>
+        <thead><tr><th>severity</th><th>의미</th><th>동작</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">pass</td><td>통과</td><td>accepted → 큐잉</td></tr>
+          <tr><td class="mono">warn</td><td>경고 동반 통과</td><td>accepted + 경고 로그</td></tr>
+          <tr><td class="no">confirm_required</td><td>확인 필요</td><td>HMI 재확인까지 보류</td></tr>
+          <tr><td class="no">blocked</td><td>차단</td><td>rejected(reason·blocks)</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <caption>표 C7b — 대표 게이트</caption>
+        <thead><tr><th>게이트</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">G1 Route</td><td>경로 검증·맵 정합</td></tr>
+          <tr><td class="mono">G3 Version</td><td>맵/파라미터 버전 일치</td></tr>
+          <tr><td class="mono">G4 Calibration</td><td>CAL-* 만료 여부</td></tr>
+          <tr><td class="mono">G6/7 Preflight</td><td>online · battery ≥ 25% · no critical incident</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="code"><span class="c">// PolicyRule 예 — worker 감지 시 감속 (조건부 트리거)</span>
+{ "ruleId":"PR-WORKER-SLOW", "when":"machine.vision.worker_detected == true",
+  "then":{ "command":"autonomy.slow_down", "target":{"node":"ACU"} }, "severity":"guarded" }</div>
+    <div class="safe"><span class="tag">PRECEDENCE</span> &nbsp;Policy/Gate(②)는 권한 모델(<a href="#a3">A3</a>)에 종속된다 — 물리 안전(①)은 어떤 Gate 결과보다 우선하며 SW로 우회 불가.</div>
+  </section>
+
+  <section class="divider"><div class="dv-id">PART D</div><div class="dv-title">Rig &amp; Hardware</div><div class="dv-sub">공통 전원 / E-stop · RIG-1 평면 패널 · RIG-2 프로파일 로버 · 라벨링</div></section>
+
+  <!-- ============ PART D — RIG & HARDWARE ============ -->
+  <section id="d1">
+    <h3><span class="sid">D1</span> Common — Power · E-stop · Wiring</h3>
+    <p class="sub">두 리그 공통 원칙. 단위 mm · 일반공차 ISO 2768-m.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 300" role="img" aria-label="power and e-stop">
+        <defs>
+          <marker id="arP" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#3a3a3a"/></marker>
+          <marker id="arPr" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#c0392b"/></marker>
+        </defs>
+        <text x="20" y="22" font-size="11" font-weight="700">전원 트리 (star ground 1점 접지)</text>
+        <rect x="30" y="38" width="140" height="38" fill="#1a1a1a"/><text x="100" y="61" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">24V Battery</text>
+        <rect x="200" y="38" width="76" height="38" fill="#ffffff" stroke="#1a1a1a"/><text x="238" y="61" text-anchor="middle" font-size="10.5">Fuse</text>
+        <line x1="170" y1="57" x2="200" y2="57" stroke="#3a3a3a" stroke-width="1.5"/>
+        <rect x="330" y="22" width="220" height="32" fill="#fbecea" stroke="#c0392b"/><text x="440" y="43" text-anchor="middle" font-size="10.5" fill="#c0392b" font-weight="700">Motor Power (E-stop 도메인)</text>
+        <rect x="330" y="60" width="220" height="30" fill="#ffffff" stroke="#1a1a1a"/><text x="440" y="80" text-anchor="middle" font-size="10.5">DC/DC 24→12V — drivers·fan</text>
+        <rect x="330" y="96" width="220" height="30" fill="#ffffff" stroke="#1a1a1a"/><text x="440" y="116" text-anchor="middle" font-size="10.5">DC/DC 24→5V — compute</text>
+        <line x1="276" y1="57" x2="330" y2="38" stroke="#c0392b" stroke-width="2" marker-end="url(#arPr)"/>
+        <line x1="276" y1="57" x2="330" y2="75" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#arP)"/>
+        <line x1="276" y1="57" x2="330" y2="111" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#arP)"/>
+        <text x="20" y="170" font-size="11" font-weight="700">E-stop 안전 회로 (Ø22 2NC · 2채널)</text>
+        <circle cx="90" cy="222" r="26" fill="#c0392b"/><text x="90" y="226" text-anchor="middle" font-size="10" fill="#fff" font-weight="800">E-STOP</text>
+        <rect x="170" y="200" width="160" height="44" fill="#ffffff" stroke="#c0392b" stroke-width="1.6"/><text x="250" y="218" text-anchor="middle" font-size="10.5" fill="#c0392b" font-weight="700">Ch.A Safety Relay</text><text x="250" y="234" text-anchor="middle" font-size="9.5" fill="#c0392b">전력 인터록</text>
+        <rect x="380" y="200" width="180" height="44" fill="#fbecea" stroke="#c0392b"/><text x="470" y="218" text-anchor="middle" font-size="10.5" fill="#c0392b" font-weight="700">Motor Enable / Power 차단</text><text x="470" y="234" text-anchor="middle" font-size="9.5" fill="#c0392b">(물리 우선)</text>
+        <line x1="116" y1="222" x2="170" y2="222" stroke="#c0392b" stroke-width="2.4" marker-end="url(#arPr)"/>
+        <line x1="330" y1="222" x2="380" y2="222" stroke="#c0392b" stroke-width="2.4" marker-end="url(#arPr)"/>
+        <line x1="90" y1="248" x2="90" y2="276" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="4 3"/>
+        <line x1="90" y1="276" x2="170" y2="276" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arP)"/>
+        <rect x="170" y="260" width="180" height="32" fill="#ffffff" stroke="#9a9a9c"/><text x="260" y="280" text-anchor="middle" font-size="10" fill="#3a3a3a">Ch.B MCU EMERGENCY_IN (보고)</text>
+        <line x1="350" y1="276" x2="430" y2="276" stroke="#3a3a3a" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arP)"/>
+        <rect x="430" y="260" width="150" height="32" fill="#ffffff" stroke="#9a9a9c"/><text x="505" y="280" text-anchor="middle" font-size="10" fill="#3a3a3a">Agent event → HMI</text>
+        <text x="720" y="214" font-size="10.5" fill="#c0392b" font-weight="700">— 적색 실선 = 물리 차단 경로</text>
+        <text x="720" y="234" font-size="10.5" fill="#3a3a3a">- - - 적색 점선 = SW 보고 경로</text>
+        <text x="720" y="262" font-size="10" fill="#6b6b6b">CAN 버스 양끝 120Ω 종단 · 선형 토폴로지 · 버스 저항 ≈ 60Ω</text>
+        <text x="720" y="280" font-size="10" fill="#6b6b6b">모터 전원/컴퓨트 전원 도메인 분리 · 퓨즈 메인 10A · 분기 5A</text>
+      </svg>
+      <div class="figcap"><b>그림 D1</b> — 공통 전원·E-stop. E-stop은 모터 enable/power 도메인만 물리 차단하고, 컴퓨트(Agent·Jetson)는 살아 보고를 지속한다.</div>
+    </div>
+  </section>
+
+  <section id="d2">
+    <h3><span class="sid">D2</span> RIG-1 — Flat Panel (Bench)</h3>
+    <p class="sub">600 × 400 × 4 mm 알루미늄/복합 단일 패널에 터치 디스플레이·카메라 포함 전 부품 직부착. 이동 없음. 좌상단 (0,0) · M5 25 mm 격자.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 720" id="rig1" role="img" aria-label="RIG-1 fabrication spec"></svg>
+      <div class="figcap"><b>그림 D2</b> — RIG-1 제작 명세 도면. 좌: 판넬 배치도(600×400×4, top view) · 우: 전원 트리 · 데이터 버스 · 로컬 네트워크 · 안전 로직.
+        배선 색 = <b style="color:#c0392b">적색 전원(12V/5V)</b> · <b style="color:#1f6feb">청색 데이터(CAN/Ethernet)</b>(기능 배선 관례). 번호 = 도면 항목 RIG-1-IT-nn.</div>
+    </div>
+    <table>
+      <caption>표 D2 — RIG-1 부품표 / BOM (16)</caption>
+      <thead><tr><th>IT</th><th>부품</th><th>수량</th><th>(x,y) mm</th><th>W×H</th><th>고정 · 비고</th><th>노드</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">01</td><td>터치 디스플레이 10.1" 정전</td><td>1</td><td class="mono">20,115</td><td class="mono">250×165</td><td>면 브래킷 / HDMI·USB</td><td><span class="nc ui host">HMI</span></td></tr>
+        <tr><td class="mono">02</td><td>MCU — Arduino Portenta MC</td><td>1</td><td class="mono">300,115</td><td class="mono">114×97</td><td>M3 스탠드오프 ×4 · 대안 STM32 Nucleo+CAN</td><td><span class="nc rt">MCU</span></td></tr>
+        <tr><td class="mono">03</td><td>VPU+ACU — Jetson Orin Nano DevKit</td><td>1</td><td class="mono">300,228</td><td class="mono">105×90</td><td>M3 ×4 · vpu·acu 프로세스 분리</td><td><span class="nc cmp share">VPU</span><span class="nc cmp share">ACU</span></td></tr>
+        <tr><td class="mono">04</td><td>Local Agent — RPi5 8GB</td><td>1</td><td class="mono">435,115</td><td class="mono">85×56</td><td>M2.5 ×4 · CAN HAT 포함</td><td><span class="nc gw host">AGENT</span></td></tr>
+        <tr><td class="mono">05</td><td>HMI 컴퓨트 — RPi5</td><td>1</td><td class="mono">435,185</td><td class="mono">85×56</td><td>M2.5 ×4 · web-kiosk</td><td><span class="nc ui host">HMI</span></td></tr>
+        <tr><td class="mono">06</td><td>LTE Telemetry 모뎀 (Quectel EC25)</td><td>1</td><td class="mono">435,255</td><td class="mono">70×40</td><td>홀더 · USB-A → Agent</td><td><span class="nc ui">TEL</span></td></tr>
+        <tr><td class="mono">07</td><td>LPU SBC + LiDAR/UWB/IMU (옵션)</td><td>1</td><td class="mono">435,312</td><td class="mono">85×56</td><td>M2.5 ×4 · RIG-1 선택</td><td><span class="nc cmp">LPU</span></td></tr>
+        <tr><td class="mono">08</td><td>카메라 RGB/NIR</td><td>1</td><td class="mono">540,16</td><td class="mono">52×62</td><td>전방 브래킷 · USB3/CSI → Jetson</td><td><span class="nc cmp">VPU</span></td></tr>
+        <tr><td class="mono">09</td><td>단자대 + 퓨즈블록 (10A·5A)</td><td>1</td><td class="mono">20,18</td><td class="mono">90×46</td><td>DIN 레일</td><td>전원</td></tr>
+        <tr><td class="mono">10</td><td>DC-DC 24→12V / 24→5V (≥5A)</td><td>2</td><td class="mono">125,18 · 200,18</td><td class="mono">65×42</td><td>M3 ×4</td><td>전원</td></tr>
+        <tr><td class="mono">11</td><td>E-STOP Ø22 2NC + Safety relay</td><td>1</td><td class="mono">290,18</td><td class="mono">Ø22</td><td>패널 너트 · 2채널</td><td class="no">안전</td></tr>
+        <tr><td class="mono">12</td><td>Ethernet 5-port switch + WiFi AP</td><td>1+1</td><td class="mono">360,16 · 475,16</td><td class="mono">100×62</td><td>M3 / 브래킷</td><td>통신</td></tr>
+        <tr><td class="mono">13</td><td>판넬 600×400×4 + DIN레일 + 스탠드오프</td><td>set</td><td class="mono">—</td><td class="mono">—</td><td>M2.5/M3</td><td>기구</td></tr>
+        <tr><td class="mono">14</td><td>배선 set (16/18/20AWG·CAN twisted·Cat6·120Ω·라벨)</td><td>set</td><td class="mono">—</td><td class="mono">—</td><td>—</td><td>배선</td></tr>
+      </tbody>
+    </table>
+    <div class="row r2">
+      <div>
+        <h4>조립 순서</h4>
+        <div class="code">1. 베이스 준비: DIN 레일 + 케이블 채널, M5 격자 확인
+2. 상단 부착: 단자대·퓨즈·DC-DC·E-stop (좌표 표 D2)
+   GND 버스바 1점 접지
+3. 전원 검증: DC-DC 출력 12.0V/5.0V (무부하) 먼저 측정
+4. 안전 테스트: E-stop 누름 → 모터버스 차단 테스터 확인
+5. 컴퓨트 부착: MCU·Jetson·RPi5×2 스탠드오프 고정 → 부팅
+6. 데이터 버스: CAN/Ethernet/USB + CAN 120Ω 종단
+7. 주변기기: 카메라·(옵션)LPU·LTE·디스플레이
+8. 라벨링(D4) → 체크리스트 → 첫 통전(모터 분리 상태)</div>
+      </div>
+      <div>
+        <h4>통전 전 안전 체크리스트</h4>
+        <div class="code">[ ] GND 1점 접지(star), 쇼트 없음(도통)
+[ ] DC-DC 출력 12.0V / 5.0V (무부하)
+[ ] E-stop 누름 → 모터버스 차단 물리 확인
+[ ] 퓨즈 정격(메인 10A, 분기 5A)
+[ ] CAN 양끝 120Ω (버스 저항 ≈ 60Ω)
+[ ] 보드별 전원 극성·전압 재확인
+[ ] 모터 출력 분리 상태로 첫 부팅(공회전)</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="d3">
+    <h3><span class="sid">D3</span> RIG-2 — Profile Rover (Basic Mobility)</h3>
+    <p class="sub">8020 알루미늄 프로파일 프레임 소형 로버. 구동휠+모터로 <b class="k">기본 이동(teleop / 단순 waypoint)</b>이 가능 — 런 루프 ⑤주행·⑥측위·⑦스캔의 물리 시연용. 동일 논리 노드, 자산태그 AST-R2-*.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 540" role="img" aria-label="RIG-2 rover elevation">
+        <defs><marker id="arE" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#3a3a3a"/></marker>
+        <marker id="arEr" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#c0392b"/></marker></defs>
+        <text x="20" y="24" font-size="11" font-weight="700">측면 입면도 (side elevation) — 3-deck 프로파일 프레임</text>
+        <!-- frame uprights -->
+        <rect x="200" y="60" width="14" height="380" fill="#c9c9c9" stroke="#1a1a1a"/>
+        <rect x="640" y="60" width="14" height="380" fill="#c9c9c9" stroke="#1a1a1a"/>
+        <!-- sensor mast -->
+        <rect x="413" y="40" width="14" height="40" fill="#c9c9c9" stroke="#1a1a1a"/>
+        <!-- decks -->
+        <!-- top: sensor mast deck -->
+        <rect x="200" y="70" width="454" height="14" fill="#9a9a9c"/>
+        <text x="104" y="80" font-size="10" class="mono" fill="#6b6b6b">sensor 데크</text>
+        <rect x="230" y="36" width="120" height="40" fill="#6b6b6b"/><text x="290" y="60" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">카메라 (VPU)</text>
+        <rect x="370" y="30" width="160" height="46" fill="#6b6b6b"/><text x="450" y="50" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">LPU</text><text x="450" y="66" text-anchor="middle" font-size="9" fill="#fff">LiDAR·UWB·IMU</text>
+        <!-- HMI on post -->
+        <rect x="700" y="60" width="120" height="80" fill="#c9c9c9" stroke="#1a1a1a" stroke-dasharray="4 3"/><text x="760" y="96" text-anchor="middle" font-size="11" font-weight="700">HMI</text><text x="760" y="112" text-anchor="middle" font-size="9" class="mono">10.1" 탈착</text>
+        <line x1="700" y1="120" x2="654" y2="150" stroke="#3a3a3a" stroke-width="1.2" stroke-dasharray="3 3"/>
+        <!-- mid: compute deck -->
+        <rect x="200" y="210" width="454" height="14" fill="#9a9a9c"/>
+        <text x="100" y="220" font-size="10" class="mono" fill="#6b6b6b">compute 데크</text>
+        <rect x="230" y="150" width="170" height="58" fill="#6b6b6b"/><rect x="230" y="150" width="170" height="58" fill="url(#hatch)"/><line x1="315" y1="150" x2="315" y2="208" stroke="#fff" stroke-dasharray="3 3"/><text x="272" y="176" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">VPU</text><text x="358" y="176" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">ACU</text><text x="315" y="199" text-anchor="middle" font-size="8.5" fill="#fff" class="mono">HOST-JETSON</text>
+        <rect x="415" y="150" width="110" height="58" fill="#ffffff" stroke="#1a1a1a"/><text x="470" y="174" text-anchor="middle" font-size="10" font-weight="700">AGENT</text><text x="470" y="190" text-anchor="middle" font-size="8.5" class="mono">RPi5+CAN HAT+LTE</text>
+        <rect x="540" y="150" width="100" height="58" fill="#ffffff" stroke="#9a9a9c"/><text x="590" y="174" text-anchor="middle" font-size="10">Eth SW</text><text x="590" y="190" text-anchor="middle" font-size="9">DC-DC</text>
+        <!-- bottom: drive deck -->
+        <rect x="200" y="370" width="454" height="14" fill="#9a9a9c"/>
+        <text x="116" y="380" font-size="10" class="mono" fill="#6b6b6b">drive 데크</text>
+        <rect x="230" y="300" width="120" height="68" fill="#1a1a1a"/><text x="290" y="330" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">MCU</text><text x="290" y="348" text-anchor="middle" font-size="8.5" fill="#fff" class="mono">Portenta+CAN</text>
+        <rect x="365" y="300" width="100" height="68" fill="#6b6b6b"/><text x="415" y="330" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Motor</text><text x="415" y="346" text-anchor="middle" font-size="9" fill="#fff">Driver ×2</text>
+        <rect x="480" y="300" width="90" height="34" fill="#1a1a1a"/><text x="525" y="322" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">24V Batt</text>
+        <rect x="480" y="338" width="90" height="30" fill="#ffffff" stroke="#1a1a1a"/><text x="525" y="358" text-anchor="middle" font-size="9.5">Fuse·BMS</text>
+        <!-- E-stop on frame -->
+        <circle cx="612" cy="334" r="20" fill="#c0392b"/><text x="612" y="338" text-anchor="middle" font-size="8.5" fill="#fff" font-weight="800">E-STOP</text>
+        <!-- wheels + caster -->
+        <circle cx="280" cy="455" r="40" fill="#6b6b6b" stroke="#1a1a1a" stroke-width="2"/><text x="280" y="459" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">구동휠</text>
+        <circle cx="570" cy="455" r="40" fill="#6b6b6b" stroke="#1a1a1a" stroke-width="2"/><text x="570" y="459" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">구동휠</text>
+        <circle cx="425" cy="468" r="22" fill="#c9c9c9" stroke="#1a1a1a"/><text x="425" y="472" text-anchor="middle" font-size="8">캐스터</text>
+        <line x1="280" y1="384" x2="280" y2="415" stroke="#1a1a1a" stroke-width="2"/><line x1="570" y1="384" x2="570" y2="415" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- motor enable cut (red) -->
+        <line x1="612" y1="354" x2="612" y2="368" stroke="#c0392b" stroke-width="2"/><line x1="465" y1="334" x2="592" y2="334" stroke="#c0392b" stroke-width="2" marker-end="url(#arEr)"/>
+        <text x="470" y="392" font-size="9.5" fill="#c0392b" font-weight="700">E-stop → 구동 모터 enable 차단</text>
+        <!-- CAN link MCU→Agent -->
+        <line x1="350" y1="320" x2="415" y2="200" stroke="#3a3a3a" stroke-width="1.4" stroke-dasharray="2 2" marker-end="url(#arE)"/>
+        <text x="338" y="262" font-size="9" class="mono" fill="#3a3a3a">CAN</text>
+        <!-- footprint dim -->
+        <line x1="200" y1="500" x2="654" y2="500" stroke="#1a1a1a" stroke-width="0.8"/><text x="427" y="514" text-anchor="middle" font-size="9.5" class="mono">≈ 450 (footprint)</text>
+        <!-- right: Drive Train schematic -->
+        <rect x="858" y="40" width="302" height="384" rx="4" fill="#fff" stroke="#bdbdbd"/>
+        <text x="872" y="62" font-size="11" font-weight="800">구동 계통 (Drive Train)</text>
+        <g font-size="9.5" font-weight="700" text-anchor="middle">
+          <rect x="872" y="78" width="120" height="30" rx="3" fill="#1a1a1a"/><text x="932" y="97" fill="#fff">24V Batt · BMS</text>
+          <rect x="872" y="128" width="160" height="30" rx="3" fill="#fff" stroke="#c0392b" stroke-width="1.6"/><text x="952" y="147" fill="#c0392b">E-stop Relay (NC)</text>
+          <rect x="872" y="178" width="160" height="30" rx="3" fill="#eeeeee" stroke="#1a1a1a"/><text x="952" y="197">Motor Driver ×2</text>
+          <rect x="872" y="228" width="160" height="30" rx="3" fill="#6b6b6b"/><text x="952" y="247" fill="#fff">구동모터 ×2 (+enc)</text>
+          <circle cx="952" cy="312" r="26" fill="#6b6b6b" stroke="#1a1a1a" stroke-width="2"/><text x="952" y="316" fill="#fff" font-size="9">구동휠 ×2</text>
+          <rect x="1064" y="128" width="84" height="30" rx="3" fill="#1a1a1a"/><text x="1106" y="147" fill="#fff">MCU</text>
+        </g>
+        <g stroke="#c0392b" stroke-width="2" fill="none" marker-end="url(#arEr)">
+          <line x1="932" y1="108" x2="932" y2="128"/><line x1="952" y1="158" x2="952" y2="178"/><line x1="952" y1="208" x2="952" y2="228"/><line x1="952" y1="258" x2="952" y2="286"/>
+        </g>
+        <text x="1000" y="172" font-size="8.5" fill="#c0392b" font-weight="700" text-anchor="start">enable</text>
+        <!-- encoder feedback (blue, data) -->
+        <path d="M1032,243 L1106,243 L1106,158" stroke="#1f6feb" stroke-width="1.6" fill="none" stroke-dasharray="5 3" marker-end="url(#arE)"/>
+        <text x="1110" y="200" font-size="8.5" fill="#1f6feb" font-weight="700" text-anchor="start">encoder</text>
+        <!-- MCU command down to driver (blue) -->
+        <path d="M1106,158 L1106,193 L1032,193" stroke="#1f6feb" stroke-width="1.6" fill="none" marker-end="url(#arE)"/>
+        <text x="1040" y="186" font-size="8" fill="#1f6feb" text-anchor="start">PWM</text>
+        <text x="872" y="368" font-size="8.5" fill="#c0392b" font-weight="700">E-stop NC 열림 → Driver enable 물리 차단</text>
+        <text x="872" y="384" font-size="8.5" fill="#8a8a8a">MCU: speed exec · encoder · bumper · watchdog</text>
+        <text x="872" y="400" font-size="8.5" fill="#8a8a8a">적색=전원/안전 · 청색=데이터(PWM/encoder)</text>
+      </svg>
+      <div class="figcap"><b>그림 D3</b> — RIG-2 프로파일 로버 측면 입면. drive 데크(모터·MCU·배터리·E-stop) / compute 데크(Jetson·Agent·SW) / sensor 마스트(카메라·LPU) + 구동휠 2 + 캐스터. E-stop은 구동 모터 enable을 물리 차단.</div>
+    </div>
+    <table>
+      <caption>표 D3 — RIG-2 BOM 델타 (RIG-1 대비 추가/변경)</caption>
+      <thead><tr><th>IT</th><th>추가 부품</th><th>수량</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">21</td><td>알루미늄 프로파일 프레임 (20×20/30×30) + 브래킷·코너</td><td>set</td><td>3-deck · footprint ≈ 450×450 · 높이 ≈ 500</td></tr>
+        <tr><td class="mono">22</td><td>DC 기어모터 + 엔코더 (구동)</td><td>2</td><td>차동 구동 · MCU 엔코더 입력</td></tr>
+        <tr><td class="mono">23</td><td>모터 드라이버 (H-bridge, enable 입력)</td><td>2</td><td>E-stop relay가 enable 차단 · 12V</td></tr>
+        <tr><td class="mono">24</td><td>구동휠</td><td>2</td><td>—</td></tr>
+        <tr><td class="mono">25</td><td>캐스터 (보조)</td><td>1–2</td><td>3점 지지</td></tr>
+        <tr><td class="mono">26</td><td>24V 배터리(이동용) + BMS</td><td>1</td><td>RIG-1 어댑터 대체</td></tr>
+        <tr><td class="mono">27</td><td>LPU SBC + LiDAR/UWB/IMU</td><td>1</td><td>RIG-1 옵션 → <b class="k">RIG-2 필수</b>(이동 측위)</td></tr>
+        <tr><td class="mono">28</td><td>범퍼 스위치 (전방)</td><td>1–2</td><td>MCU 입력 · 충돌 안전</td></tr>
+        <tr><td class="mono">29</td><td>모터 전원 배선 (14/16AWG) + enable 결선</td><td>set</td><td>모터 전원 도메인(E-stop 차단)</td></tr>
+      </tbody>
+    </table>
+    <div class="req"><span class="tag">DELTA</span> &nbsp;소프트웨어·식별자·계약은 RIG-1과 동일하다. 변경은 <b class="k">물리(구동 데크·모터·휠·이동 배터리)와 자산태그(AST-R2-*)뿐</b>이다.
+      MCU는 구동 모터 enable·엔코더·범퍼를 추가로 다루고, E-stop은 구동 모터 enable을 물리 차단한다. LPU는 RIG-2에서 필수다(이동 측위).</div>
+  </section>
+
+  <section id="d4">
+    <h3><span class="sid">D4</span> Labeling Convention</h3>
+    <table>
+      <caption>표 D4 — 라벨 규칙</caption>
+      <thead><tr><th>대상</th><th>라벨</th><th>예</th></tr></thead>
+      <tbody>
+        <tr><td>보드 (계약/레지스트리)</td><td class="mono">NODE-&lt;KIND&gt;-&lt;ORG&gt;</td><td class="mono">NODE-MCU-AGE · NODE-AGENT-VIA</td></tr>
+        <tr><td>물리 자산 스티커</td><td class="mono">AST-R&lt;1|2&gt;-&lt;CODE&gt;-NN</td><td class="mono">AST-R2-MCU-01</td></tr>
+        <tr><td>전원선 (색상+텍스트)</td><td class="mono">24V·12V·5V·GND</td><td>적/주/황/흑</td></tr>
+        <tr><td>데이터선</td><td class="mono">CAN·ETH-n·USB-LTE·USB-CAM</td><td class="mono">ETH-1 · CAN</td></tr>
+        <tr><td class="no">E-stop 회로</td><td class="no">적색 라벨</td><td class="no">전 E-stop 결선</td></tr>
+      </tbody>
+    </table>
+    <p class="note">한 보드의 라벨은 두 가지를 병기한다: <b class="k">논리 ID</b>(<span class="mono">NODE-*</span>, 계약·소프트웨어가 참조) + <b class="k">자산태그</b>(<span class="mono">AST-*</span>, 물리 추적·예비 교체). 이 병기가 Part B 식별자 체계를 현장에서 닫는다.</p>
+  </section>
+
+  <section class="divider"><div class="dv-id">PART E</div><div class="dv-title">Operation</div><div class="dv-sub">Run Loop · HMI Operation · OTA · Telemetry Uplink</div></section>
+
+  <!-- ============ PART E — OPERATION ============ -->
+  <section id="e1">
+    <h3><span class="sid">E1</span> Run Loop</h3>
+    <p class="sub">①–④ 준비 → ⑤–⑧ waypoint 반복 루프 → ⑨ 업링크. 모든 명령은 Local Agent 권한 게이트를 통과하고, 물리 안전이 최상위.</p>
+    <div class="fig">
+      <svg viewBox="0 0 1180 96" role="img" aria-label="run loop rail">
+        <defs><marker id="arL" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#3a3a3a"/></marker>
+        <marker id="arLb" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#1a1a1a"/></marker></defs>
+        <g font-size="10" text-anchor="middle">
+          <rect x="10" y="40" width="118" height="34" fill="#ffffff" stroke="#1a1a1a"/><text x="69" y="61">① 구성 로딩</text>
+          <rect x="146" y="40" width="118" height="34" fill="#ffffff" stroke="#1a1a1a"/><text x="205" y="61">② 측위(SLAM)</text>
+          <rect x="282" y="40" width="118" height="34" fill="#ffffff" stroke="#1a1a1a"/><text x="341" y="61">③ 미션·계획</text>
+          <rect x="418" y="40" width="118" height="34" fill="#6b6b6b"/><text x="477" y="61" fill="#fff">④ 안전 게이트</text>
+          <rect x="560" y="40" width="118" height="34" fill="#1a1a1a"/><text x="619" y="61" fill="#fff">⑤ 주행</text>
+          <rect x="696" y="40" width="118" height="34" fill="#6b6b6b"/><text x="755" y="61" fill="#fff">⑥ 측위 추종</text>
+          <rect x="832" y="40" width="118" height="34" fill="#6b6b6b"/><text x="891" y="61" fill="#fff">⑦ 스캔</text>
+          <rect x="968" y="40" width="118" height="34" fill="#ffffff" stroke="#1a1a1a"/><text x="1027" y="61">⑧ 관측 결합</text>
+        </g>
+        <g stroke="#3a3a3a" stroke-width="1.4" marker-end="url(#arL)">
+          <line x1="128" y1="57" x2="146" y2="57"/><line x1="264" y1="57" x2="282" y2="57"/><line x1="400" y1="57" x2="418" y2="57"/>
+          <line x1="536" y1="57" x2="560" y2="57"/><line x1="678" y1="57" x2="696" y2="57"/><line x1="814" y1="57" x2="832" y2="57"/><line x1="950" y1="57" x2="968" y2="57"/>
+        </g>
+        <path d="M1027,40 L1027,22 L619,22 L619,40" stroke="#1a1a1a" stroke-width="1.3" stroke-dasharray="5 4" fill="none" marker-end="url(#arLb)"/>
+        <text x="823" y="17" text-anchor="middle" font-size="9.5" font-weight="700">다음 waypoint 반복 (⑤→⑧ · 제어 10–50 Hz)</text>
+      </svg>
+      <div class="figcap"><b>그림 E1</b> — Run loop rail. ①–④ 준비 → ⑤–⑧ waypoint 반복 루프 → ⑨ 업링크. 모든 명령은 Local Agent 권한 게이트(C7)를 경유한다.</div>
+    </div>
+    <table>
+      <caption>표 E1 — 동작 단계별 책임·계약</caption>
+      <thead><tr><th>단계</th><th>주체</th><th>처리</th><th>출력 (계약)</th><th>진행 게이트</th></tr></thead>
+      <tbody>
+        <tr><td>① 구성 로딩</td><td><span class="nc gw host">AGENT</span></td><td>blueprint·PolicyRule·CAL-* 배포</td><td class="mono">NodeRegistry ready</td><td>전 노드 manifest 매칭</td></tr>
+        <tr><td>② 측위 확립</td><td><span class="nc cmp">LPU</span></td><td>SLAM 융합 → pose</td><td class="mono">S machine.localization.pose · confidence</td><td>confidence ≥ 임계</td></tr>
+        <tr><td>③ 미션·계획</td><td><span class="nc cmp">ACU</span> ← HMI</td><td>미션 상태머신·경로</td><td class="mono">C autonomy.mission.start · RT-*</td><td>Policy 통과(④)</td></tr>
+        <tr><td>④ 안전 게이트</td><td><span class="nc gw host">AGENT</span></td><td>권한·health·E-stop·speed 검사</td><td class="mono">ACK received→accepted</td><td>health OK · E-stop clear</td></tr>
+        <tr><td>⑤ 주행</td><td><span class="nc rt">MCU</span> ← ACU</td><td>path following → 속도 실행</td><td class="mono">C motion.set_speed · encoder</td><td>deviation 내 · bumper clear</td></tr>
+        <tr><td>⑥ 측위 추종</td><td><span class="nc cmp">LPU</span></td><td>pose 20–50 Hz 보정</td><td class="mono">S pose · deviation</td><td>confidence 유지 (↔⑤)</td></tr>
+        <tr><td>⑦ 생육분석 스캔</td><td><span class="nc cmp">VPU</span> ← ACU</td><td>capture + AI 추론</td><td class="mono">S crop.growth.* · E scan.frame_result</td><td>image.quality good</td></tr>
+        <tr><td>⑧ 관측 결합</td><td><span class="nc gw host">AGENT</span></td><td>pose ⊕ result ⊕ mission</td><td class="mono">OBS-* → SCN-*</td><td>다음 waypoint → ⑤</td></tr>
+        <tr><td>⑨ 업링크·표시</td><td><span class="nc ui host">HMI</span> · <span class="nc ui">TEL</span></td><td>live 표시 + cloud upload</td><td class="mono">HMI WS · TEL MQTT</td><td>미션 완료 → safe stop·idle</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="e2">
+    <h3><span class="sid">E2</span> HMI Operation</h3>
+    <p class="sub">HMI는 Agent API(WS/REST)만 사용한다. 노드 직접접근 불가. 아키텍처 증명 화면 우선순위:</p>
+    <div class="code">① Boot/Discovery   ② Node Health   ③ Signal Live   ④ Command ACK Timeline (received/accepted/executed 타임스탬프)
+⑤ Safety Policy State   ⑥ ScanSession Progress   ⑦ GrowthObservation List   ⑧ Uplink Status</div>
+  </section>
+
+  <section id="e3">
+    <h3><span class="sid">E3</span> OTA &amp; Telemetry Uplink Policy</h3>
+    <table>
+      <thead><tr><th>항목</th><th>정책</th></tr></thead>
+      <tbody>
+        <tr><td>Telemetry 권한</td><td>Cloud transport(LTE/MQTT)만. 내부 제어권 없음 — Cloud-origin command도 Agent Policy Engine 통과 필수.</td></tr>
+        <tr><td>업로드 대상</td><td>uplink status·logs·scan result(OBS-*)·요약 신호. <span class="no">raw image 제외</span>(정책 승인 시 제한 제공).</td></tr>
+        <tr><td>오프라인</td><td>로컬 운영 지속 · 업로드 큐 적재 · 복구 시 동기화.</td></tr>
+        <tr><td>OTA</td><td>Telemetry 다운로드 → Agent OTA Coordinator 검증·적용. 펌웨어 FW-* · Cloud 승인은 권한 ④(HMI보다 낮음).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="divider"><div class="dv-id">PART F</div><div class="dv-title">Module Interfaces (ICD)</div><div class="dv-sub">3-class (IF-P / IF-L / IF-X) · Interface Map · 16 ICD Sheets · Dependency Matrix · Cloud Boundary</div></section>
+
+  <!-- ============ PART F — MODULE INTERFACES (ICD) ============ -->
+  <section id="f0">
+    <h3><span class="sid">F0</span> Scope &amp; Interface Model (3-class)</h3>
+    <p>허브-스포크: 두 노드는 <b class="k">직접 통신하지 않는다</b> — 모든 교환은 Local Agent(SignalStore·EventBus·CommandRouter)가 매개한다. 정직한 표현을 위해 인터페이스를 3 class로 나눈다.</p>
+    <table>
+      <caption>표 F0 — 인터페이스 class</caption>
+      <thead><tr><th>Class</th><th>의미</th><th>endpoints</th><th>맵 표기</th><th>realized by</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">IF-P-*</td><td>물리 스포크 — node ↔ Agent (실제 링크)</td><td class="mono">NODE-* ↔ NODE-AGENT-VIA</td><td>실선 방사형</td><td>자신 (PRT-*·EP-*)</td></tr>
+        <tr><td class="mono">IF-L-*</td><td>논리 데이터 — provider→consumer 데이터 계약</td><td class="mono">NODE-*(provider) → NODE-*(consumer)</td><td>허브 경유 점선</td><td class="mono">realizedOver:[IF-P-…]</td></tr>
+        <tr><td class="mono">IF-X-*</td><td>외부 — TEL ↔ Cloud</td><td class="mono">NODE-TEL-VIA ↔ Cloud</td><td>이중선</td><td>자신 + IF-P-TEL</td></tr>
+      </tbody>
+    </table>
+    <div class="req"><span class="tag">MEDIATION</span> &nbsp;<b class="k">IF-L-*는 전송이 아니다</b> — provider→consumer 데이터 의존을 명명하고, 물리적으로는 <span class="mono">realizedOver</span>의 두 IF-P 스포크를 통해 Agent가 운반한다.
+      명령은 추가로 <span class="mono">CommandRouter.evaluateGate</span>(권한·상태·안전, <a href="#c7">C7</a>)를 통과한다. ID 문법 <span class="mono">IF-&lt;P|L|X&gt;-&lt;SHORT&gt;</span>(L2 논리 노드 기반).</div>
+  </section>
+
+  <section id="f1">
+    <h3><span class="sid">F1</span> Interface Map</h3>
+    <div class="fig">
+      <svg viewBox="0 0 1180 540" role="img" aria-label="interface map">
+        <defs><marker id="arF" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#1a1a1a"/></marker></defs>
+        <!-- cloud zone -->
+        <rect x="950" y="34" width="200" height="56" rx="4" fill="#fff" stroke="#1a1a1a"/><text x="1050" y="58" text-anchor="middle" font-size="12" font-weight="700">Cloud</text><text x="1050" y="76" text-anchor="middle" font-size="9" class="mono">관제 · OTA · Registry</text>
+        <!-- nodes -->
+        <g font-size="11.5" font-weight="700" text-anchor="middle">
+          <rect x="120" y="92" width="160" height="48" rx="4" fill="#c9c9c9" stroke="#1a1a1a" stroke-dasharray="4 3"/><text x="200" y="113">HMI</text><text x="200" y="130" font-size="8.5" class="mono">NODE-HMI-VIA</text>
+          <rect x="120" y="236" width="160" height="48" rx="4" fill="#1a1a1a"/><text x="200" y="257" fill="#fff">MCU</text><text x="200" y="274" font-size="8.5" class="mono" fill="#fff">NODE-MCU-AGE</text>
+          <rect x="120" y="392" width="160" height="48" rx="4" fill="#6b6b6b"/><text x="200" y="413" fill="#fff">LPU</text><text x="200" y="430" font-size="8.5" class="mono" fill="#fff">NODE-LPU-DAEDONG</text>
+          <rect x="500" y="430" width="160" height="48" rx="4" fill="#6b6b6b"/><text x="580" y="451" fill="#fff">VPU</text><text x="580" y="468" font-size="8.5" class="mono" fill="#fff">NODE-VPU-META</text>
+          <rect x="830" y="392" width="160" height="48" rx="4" fill="#6b6b6b"/><text x="910" y="413" fill="#fff">ACU</text><text x="910" y="430" font-size="8.5" class="mono" fill="#fff">NODE-ACU-META</text>
+          <rect x="980" y="150" width="160" height="48" rx="4" fill="#c9c9c9" stroke="#1a1a1a"/><text x="1060" y="171">TEL</text><text x="1060" y="188" font-size="8.5" class="mono">NODE-TEL-VIA</text>
+        </g>
+        <!-- hub -->
+        <rect x="490" y="226" width="210" height="64" rx="4" fill="#fff" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="5 3"/><text x="595" y="252" text-anchor="middle" font-size="13" font-weight="800">Local Agent (hub)</text><text x="595" y="272" text-anchor="middle" font-size="8.5" class="mono">NODE-AGENT-VIA · CommandRouter·Policy</text>
+        <!-- physical spokes (solid) -->
+        <g stroke="#1a1a1a" stroke-width="1.6" fill="none">
+          <line x1="280" y1="120" x2="490" y2="238"/><line x1="280" y1="260" x2="490" y2="252"/><line x1="280" y1="416" x2="500" y2="276"/>
+          <line x1="580" y1="430" x2="595" y2="290"/><line x1="830" y1="416" x2="700" y2="278"/><line x1="980" y1="180" x2="700" y2="244"/>
+        </g>
+        <g font-size="8.5" class="mono" fill="#1a1a1a">
+          <text x="360" y="168">IF-P-HMI · PRT-WS-v1</text>
+          <text x="330" y="250">IF-P-MCU · PRT-CAN-v1</text>
+          <text x="300" y="350">IF-P-LPU · PRT-DDS-v1</text>
+          <text x="500" y="370" text-anchor="middle">IF-P-VPU · PRT-ROS-v1</text>
+          <text x="770" y="350" text-anchor="end">IF-P-ACU · PRT-DDS-v1</text>
+          <text x="845" y="214">IF-P-TEL · PRT-MQTT-v2</text>
+        </g>
+        <!-- logical (dashed, through hub) -->
+        <g stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="4 3" fill="none" marker-end="url(#arF)">
+          <path d="M280,430 Q595,330 830,424"/>
+          <path d="M620,452 Q740,360 845,430"/>
+        </g>
+        <g font-size="8" fill="#6b6b6b">
+          <text x="470" y="350">IF-L-ACU-LPU (허브 경유)</text>
+          <text x="700" y="402">IF-L-ACU-VPU</text>
+        </g>
+        <!-- cloud double line -->
+        <line x1="1046" y1="150" x2="1046" y2="90" stroke="#1a1a1a" stroke-width="1.4"/><line x1="1054" y1="150" x2="1054" y2="90" stroke="#1a1a1a" stroke-width="1.4"/>
+        <text x="1066" y="124" font-size="8.5" class="mono" fill="#1a1a1a" text-anchor="start">IF-X</text>
+        <!-- legend -->
+        <g font-size="9" fill="#1a1a1a">
+          <line x1="130" y1="510" x2="160" y2="510" stroke="#1a1a1a" stroke-width="1.6"/><text x="166" y="513" text-anchor="start">실선 = 물리 스포크 IF-P</text>
+          <line x1="340" y1="510" x2="370" y2="510" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="4 3"/><text x="376" y="513" text-anchor="start">점선 = 논리 IF-L (허브 경유)</text>
+          <line x1="600" y1="507" x2="630" y2="507" stroke="#1a1a1a" stroke-width="1.2"/><line x1="600" y1="513" x2="630" y2="513" stroke="#1a1a1a" stroke-width="1.2"/><text x="636" y="513" text-anchor="start">이중선 = 외부 IF-X (클라우드)</text>
+        </g>
+      </svg>
+      <div class="figcap"><b>그림 F1</b> — 인터페이스 맵. 6 물리 스포크(IF-P, 실선)는 Agent 허브로 모이고, 논리 인터페이스(IF-L, 점선)는 노드를 직결하지 않고 <b>허브를 경유</b>한다. 클라우드는 TEL을 통해서만(IF-X, 이중선) 연결된다.</div>
+    </div>
+  </section>
+
+  <section id="f2">
+    <h3><span class="sid">F2</span> Interface Inventory (16)</h3>
+    <table>
+      <caption>표 F2 — 전 인터페이스 인벤토리 (6 물리 + 6 논리 + 4 클라우드)</caption>
+      <thead><tr><th>IF ID</th><th>A</th><th>B</th><th>class</th><th>transport / profile</th><th>purpose</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">IF-P-MCU</td><td class="mono">NODE-MCU-AGE</td><td class="mono">AGENT</td><td>물리</td><td class="mono">CAN · PRT-CAN-v1</td><td>저수준 motion/power/safety + motion 명령 (결정성)</td></tr>
+        <tr><td class="mono">IF-P-LPU</td><td class="mono">NODE-LPU-DAEDONG</td><td class="mono">AGENT</td><td>물리</td><td class="mono">DDS · PRT-DDS-v1</td><td>pose·map_match·confidence; relocalize</td></tr>
+        <tr><td class="mono">IF-P-VPU</td><td class="mono">NODE-VPU-META</td><td class="mono">AGENT</td><td>물리</td><td class="mono">ROS2 · PRT-ROS-v1</td><td>vision·crop.growth 신호·scan event; vision 명령</td></tr>
+        <tr><td class="mono">IF-P-ACU</td><td class="mono">NODE-ACU-META</td><td class="mono">AGENT</td><td>물리</td><td class="mono">DDS · PRT-DDS-v1</td><td>autonomy state/mode/deviation; mission 명령</td></tr>
+        <tr><td class="mono">IF-P-TEL</td><td class="mono">NODE-TEL-VIA</td><td class="mono">AGENT</td><td>물리</td><td class="mono">LTE/MQTT · PRT-MQTT-v2</td><td>cloud 연결 신호 + 업링크 브리지</td></tr>
+        <tr><td class="mono">IF-P-HMI</td><td class="mono">NODE-HMI-VIA</td><td class="mono">AGENT</td><td>물리</td><td class="mono">WS · PRT-WS-v1</td><td>운영자 구독(S/E/ACK) + operator 명령</td></tr>
+        <tr><td class="mono">IF-L-ACU-LPU</td><td class="mono">LPU</td><td class="mono">ACU</td><td>논리</td><td class="mono">[IF-P-LPU, IF-P-ACU]</td><td>ACU가 pose 소비(경로추종)</td></tr>
+        <tr><td class="mono">IF-L-ACU-VPU</td><td class="mono">VPU</td><td class="mono">ACU</td><td>논리</td><td class="mono">[IF-P-VPU, IF-P-ACU]</td><td>ACU가 vision result 소비(worker-slow 등)</td></tr>
+        <tr><td class="mono">IF-L-AGENT-OBS</td><td class="mono">VPU⊕LPU⊕ACU</td><td class="mono">AGENT</td><td>논리</td><td class="mono">[IF-P-VPU/LPU/ACU]</td><td>GrowthObservation OBS-* 합성</td></tr>
+        <tr><td class="mono">IF-L-HMI-AGG</td><td class="mono">AGENT aggregate</td><td class="mono">HMI</td><td>논리</td><td class="mono">[전 IF-P, IF-P-HMI]</td><td>단일 운영자 표면(raw 미노출)</td></tr>
+        <tr><td class="mono">IF-L-ACU-MODULE</td><td class="mono">work-module</td><td class="mono">ACU</td><td>논리</td><td class="mono">[IF-P-ACU]</td><td>작업모듈 명령/텔레메트리(arm.*·ee.*)</td></tr>
+        <tr><td class="mono">IF-L-POLICY-MCU</td><td class="mono">PolicyRule</td><td class="mono">ACU/MCU</td><td>논리</td><td class="mono">[IF-P-VPU→IF-P-ACU]</td><td>worker_detected→autonomy.slow_down(C7)</td></tr>
+        <tr><td class="mono">IF-X-TEL-CLOUD-UP</td><td class="mono">TEL</td><td class="mono">Cloud</td><td>외부</td><td class="mono">MQTT QoS1 · PRT-MQTT-v2</td><td>업링크 telemetry/OBS/Event</td></tr>
+        <tr><td class="mono">IF-X-CLOUD-CMD</td><td class="mono">Cloud</td><td class="mono">TEL→AGENT</td><td>외부</td><td class="mono">MQTT QoS1</td><td>다운링크 명령 <b class="k">candidate</b>(Gate 필수)</td></tr>
+        <tr><td class="mono">IF-X-OTA</td><td class="mono">Cloud OTA</td><td class="mono">AGENT(via TEL)</td><td>외부</td><td class="mono">MQTT QoS1</td><td>FW-* 배포·OTA-PROGRESS·canary</td></tr>
+        <tr><td class="mono">IF-X-REGISTRY</td><td class="mono">Cloud Registry</td><td class="mono">TEL/HMI</td><td>외부</td><td class="mono">MQTT/REST</td><td>PAIR-*·디바이스 등록·firmware_set</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="f3">
+    <h3><span class="sid">F3</span> Provider / Consumer Dependency Matrix</h3>
+    <p class="sub">행=provider, 열=consumer, 셀=메시지셋 + 실현 IF. <b class="k">모든 셀이 IF-L/IF-X로 Agent 매개</b> — 노드 직결 0.</p>
+    <table>
+      <caption>표 F3 — 의존 매트릭스</caption>
+      <thead><tr><th>provider ↓ \ consumer →</th><th>ACU</th><th>Agent (fusion)</th><th>HMI</th><th>Cloud</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">MCU</td><td>—</td><td>—</td><td>speed·batt·estop <span class="mono">(HMI-AGG)</span></td><td>요약 <span class="mono">(X-UP)</span></td></tr>
+        <tr><td class="mono">LPU</td><td>pose·conf <span class="mono">(ACU-LPU)</span></td><td>pose⊕ <span class="mono">(AGENT-OBS)</span></td><td>pose <span class="mono">(HMI-AGG)</span></td><td>—</td></tr>
+        <tr><td class="mono">VPU</td><td>worker·disease <span class="mono">(ACU-VPU)</span></td><td>growth⊕ <span class="mono">(AGENT-OBS)</span></td><td>vision·crop <span class="mono">(HMI-AGG)</span></td><td>OBS <span class="mono">(X-UP)</span></td></tr>
+        <tr><td class="mono">ACU</td><td>—</td><td>state⊕ <span class="mono">(AGENT-OBS)</span></td><td>autonomy state <span class="mono">(HMI-AGG)</span></td><td>—</td></tr>
+        <tr><td class="mono">work-module</td><td>grip·temp <span class="mono">(ACU-MODULE)</span></td><td>—</td><td>(via AGG)</td><td>—</td></tr>
+        <tr><td class="mono">Agent</td><td>명령↓(전 노드)</td><td>—</td><td>aggregate <span class="mono">(HMI-AGG)</span></td><td>업링크 결정</td></tr>
+      </tbody>
+    </table>
+    <p class="note">대각선 공백(자기참조 없음). 모든 비공백 셀이 허브 경유 IF를 명명 — 직결 인터페이스 0 (REQ-F01).</p>
+  </section>
+
+  <section id="f4">
+    <h3><span class="sid">F4</span> Heartbeat / Health Interface</h3>
+    <p class="sub">노드별 liveness 계약. timeout은 <b class="k">design value</b>(권장 초기값, 튜닝 대상).</p>
+    <table>
+      <caption>표 F4 — Heartbeat / Health</caption>
+      <thead><tr><th>노드</th><th>liveness 신호</th><th>rate</th><th>miss timeout (design)</th><th>실패 동작</th></tr></thead>
+      <tbody>
+        <tr><td><span class="nc rt">MCU</span></td><td class="mono">CAN frame / machine.motion.speed</td><td>≥10–20 Hz</td><td>~300 ms (3 frame)</td><td>degraded→offline · Agent fail-safe hold (물리 relay 독립)</td></tr>
+        <tr><td><span class="nc cmp">LPU</span></td><td class="mono">machine.localization.confidence</td><td>10 Hz</td><td>500 ms</td><td>pose quality→bad · ACU stale pose 추종 금지</td></tr>
+        <tr><td><span class="nc cmp">VPU</span></td><td class="mono">machine.vision.fps</td><td>1 Hz</td><td>warn&lt;10·crit&lt;5 fps</td><td>CAM-FRAME-DROP · scan degrade</td></tr>
+        <tr><td><span class="nc cmp">ACU</span></td><td class="mono">machine.autonomy.state</td><td>10 Hz</td><td>1 s</td><td>mission hold · critical 시 promote</td></tr>
+        <tr><td><span class="nc ui">TEL</span></td><td class="mono">machine.telemetry.cloud_connected</td><td>0.2 Hz</td><td>MQTT keepalive</td><td>버퍼·재시도 · <b class="k">로봇 안전 영향 0</b></td></tr>
+        <tr><td><span class="nc ui host">HMI</span></td><td class="mono">WS heartbeat</td><td>WS push</td><td>session timeout</td><td>operator-absent · 로봇 현 정책 유지</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="f5p">
+    <h3><span class="sid">F5.P</span> ICD Sheets — Physical Spokes (6)</h3>
+    <p class="sub">각 시트: 헤더(endpoints·transport·EP) · 메시지 인벤토리 · 비고(deps·health·error·NOT carried·authority·conformance).</p>
+
+    <table>
+      <caption><b class="k">IF-P-MCU</b> · 물리 스포크 · NODE-MCU-AGE ↔ AGENT · CAN / PRT-CAN-v1 · EP-AGENT-CAN0 · 양방향</caption>
+      <thead><tr><th>kind</th><th>channel / verb / code</th><th>dir</th><th>rate</th><th>ack/qos</th><th>safety/quality</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">machine.motion.speed</td><td>up</td><td>20 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.power.battery_voltage</td><td>up</td><td>1 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S/E</td><td class="mono">machine.safety.estop</td><td>up</td><td>event</td><td>—</td><td class="no">보고 전용</td><td>Signal/Event</td></tr>
+        <tr><td>C</td><td class="mono">motion.set_speed_limit</td><td>down</td><td>on-cmd</td><td>at_least_once</td><td>guarded</td><td>CommandEnvelope</td></tr>
+        <tr><td>C</td><td class="mono">motion.stop</td><td>down</td><td>on-cmd</td><td>at_least_once</td><td class="no">safety_critical</td><td>CommandEnvelope</td></tr>
+        <tr><td>ACK</td><td class="mono">received/accepted/executed</td><td>up</td><td>per-cmd</td><td>—</td><td>—</td><td>CommandAck</td></tr>
+      </tbody>
+    </table>
+    <p class="note">realizes <span class="mono">IF-L-HMI-AGG·IF-L-POLICY-MCU</span> · health: CAN ≥10 Hz, miss&gt;300 ms→degraded · error: gate fail→rejected, timeout→timeout · <b class="k">NOT carried</b>: 미션·AI·image · authority: ① 물리안전 최우선(E-stop은 물리 relay, 본 경로 아님 — REQ-A04) · conformance: PRT-CAN-v1(Annex E), schema signal/command-envelope/ack · seq <a href="#c6">C6(a)</a>.</p>
+
+    <table>
+      <caption><b class="k">IF-P-LPU</b> · 물리 스포크 · NODE-LPU-DAEDONG ↔ AGENT · DDS / PRT-DDS-v1 · EP-LPU-ETH0 · 양방향</caption>
+      <thead><tr><th>kind</th><th>channel / verb</th><th>dir</th><th>rate</th><th>ack/qos</th><th>safety/quality</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">machine.localization.pose</td><td>up</td><td>20–50 Hz</td><td>best-effort</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.localization.map_match</td><td>up</td><td>10 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.localization.confidence</td><td>up</td><td>10 Hz</td><td>—</td><td>warn&lt;0.6 crit&lt;0.4</td><td>Signal</td></tr>
+        <tr><td>C</td><td class="mono">localization.relocalize</td><td>down</td><td>on-cmd</td><td>at_least_once</td><td>none</td><td>CommandEnvelope</td></tr>
+      </tbody>
+    </table>
+    <p class="note">feeds <span class="mono">IF-L-ACU-LPU·IF-L-AGENT-OBS</span> · health: confidence 10 Hz, pose stale&gt;500 ms→quality bad · <b class="k">NOT carried</b>: raw LiDAR · conformance PRT-DDS-v1.</p>
+
+    <table>
+      <caption><b class="k">IF-P-VPU</b> · 물리 스포크 · NODE-VPU-META ↔ AGENT · ROS2 / PRT-ROS-v1 · EP-JETSON-ETH0 · 양방향</caption>
+      <thead><tr><th>kind</th><th>channel / verb / code</th><th>dir</th><th>rate</th><th>ack/qos</th><th>safety/sev</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">machine.vision.fps</td><td>up</td><td>1 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">crop.growth.plant_height/lai/ndvi</td><td>up</td><td>scan 1–5 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.vision.worker_detected</td><td>up</td><td>1–5 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>E</td><td class="mono">disease.suspected / scan.frame_result</td><td>up</td><td>event</td><td>—</td><td>warning/info</td><td>Event</td></tr>
+        <tr><td>C</td><td class="mono">vision.capture.start/stop</td><td>down</td><td>on-cmd</td><td>at_least_once</td><td>none</td><td>CommandEnvelope</td></tr>
+        <tr><td>C</td><td class="mono">vision.calibrate</td><td>down</td><td>on-cmd</td><td>exactly_once</td><td class="no">safety_critical</td><td>CommandEnvelope</td></tr>
+      </tbody>
+    </table>
+    <p class="note">feeds <span class="mono">IF-L-ACU-VPU·IF-L-AGENT-OBS</span> · health: fps 1 Hz warn&lt;10·crit&lt;5 · <b class="k">NOT carried</b>: raw RGB/NIR image(노드 로컬, 정책 승인 시만) · conformance PRT-ROS-v1(예시 PRT-MQTT-v2 stale, Annex E).</p>
+
+    <table>
+      <caption><b class="k">IF-P-ACU</b> · 물리 스포크 · NODE-ACU-META ↔ AGENT · DDS / PRT-DDS-v1 · EP-JETSON-ETH0(dom0) · 양방향</caption>
+      <thead><tr><th>kind</th><th>channel / verb</th><th>dir</th><th>rate</th><th>ack/qos</th><th>safety/quality</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">machine.autonomy.state / mode</td><td>up</td><td>10 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.navigation.deviation</td><td>up</td><td>10 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>C</td><td class="mono">autonomy.mission.start</td><td>down(recv)</td><td>on-cmd</td><td>exactly_once</td><td>guarded</td><td>CommandEnvelope</td></tr>
+        <tr><td>C</td><td class="mono">autonomy.pause / slow_down</td><td>down</td><td>on-cmd</td><td>at_least_once</td><td>guarded</td><td>CommandEnvelope</td></tr>
+      </tbody>
+    </table>
+    <p class="note">consumes <span class="mono">IF-L-ACU-LPU·IF-L-ACU-VPU</span> · ACU는 하위 노드 직접제어 금지(REQ-A02) · <b class="k">NOT carried</b>: 하위 직접제어 · authority: ⑤ autonomy(최하) · conformance PRT-DDS-v1(예시 PRT-ROS-v1 stale, Annex E).</p>
+
+    <table>
+      <caption><b class="k">IF-P-TEL</b> · 물리 스포크 · NODE-TEL-VIA ↔ AGENT · LTE/MQTT / PRT-MQTT-v2 · EP-AGENT-LTE0 · 양방향</caption>
+      <thead><tr><th>kind</th><th>channel / verb</th><th>dir</th><th>rate</th><th>ack/qos</th><th>safety</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">machine.telemetry.cloud_connected</td><td>up</td><td>0.2 Hz</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>C</td><td class="mono">telemetry.uplink.flush</td><td>down</td><td>on-cmd</td><td>at_most_once</td><td>none</td><td>CommandEnvelope</td></tr>
+      </tbody>
+    </table>
+    <p class="note">realizes <span class="mono">IF-X-*</span>(cloud) · TEL=transport only, 내부 제어권 0(REQ-C03) · health: cloud_connected 0.2 Hz · <b class="k">NOT carried</b>: 실시간 제어권·raw image · conformance PRT-MQTT-v2(예시 cam 토픽은 mock).</p>
+
+    <table>
+      <caption><b class="k">IF-P-HMI</b> · 물리 스포크 · NODE-HMI-VIA ↔ AGENT · WS / PRT-WS-v1 · EP-HMI-WLAN0 · 양방향</caption>
+      <thead><tr><th>kind</th><th>channel / verb</th><th>dir</th><th>rate</th><th>ack/qos</th><th>safety/quality</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">(구독) 전 표준 신호</td><td>down(push)</td><td>WS</td><td>—</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>ACK</td><td class="mono">(구독) command ACK timeline</td><td>down</td><td>WS</td><td>—</td><td>—</td><td>CommandAck</td></tr>
+        <tr><td>E</td><td class="mono">(구독) events / alarms</td><td>down</td><td>WS</td><td>—</td><td>severity</td><td>Event</td></tr>
+        <tr><td>C</td><td class="mono">operator command</td><td>up</td><td>on-cmd</td><td>per-verb</td><td>per-safety</td><td>CommandEnvelope</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Agent API only, 노드 직접접근 금지 · health: WS heartbeat · authority: ③ operator(&gt; cloud ④) · <b class="k">NOT carried</b>: raw frame·HW 직접제어(soft e-stop은 SW only) · conformance PRT-WS-v1 · seq <a href="#c6">C6(a)</a>.</p>
+  </section>
+
+  <section id="f5l">
+    <h3><span class="sid">F5.L</span> ICD Sheets — Logical Data Interfaces (6)</h3>
+    <p class="sub">논리 인터페이스는 전송이 아니다 — <span class="mono">realizedOver</span> 물리 스포크를 통해 Agent가 매개한다. consume-only는 ACK 없음.</p>
+
+    <table>
+      <caption><b class="k">IF-L-ACU-LPU</b> · 논리 · LPU → ACU · realizedOver [IF-P-LPU, IF-P-ACU] · consume-only</caption>
+      <thead><tr><th>kind</th><th>channel</th><th>dir</th><th>rate</th><th>quality</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">machine.localization.pose (x,y,θ)</td><td>→ACU</td><td>20–50 Hz</td><td>good·warn·bad</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.localization.map_match</td><td>→ACU</td><td>10 Hz</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.localization.confidence</td><td>→ACU</td><td>10 Hz</td><td>warn&lt;0.6 crit&lt;0.4</td><td>Signal</td></tr>
+      </tbody>
+    </table>
+    <p class="note">realized via Agent SignalStore 구독 · ACK 없음 · health: confidence&lt;0.4→ACU hold, stale&gt;500 ms→추종 금지 · <b class="k">NOT carried</b>: raw LiDAR · ACU→LPU 명령 0(역방향은 IF-P 경유) · feeds IF-L-AGENT-OBS · seq <a href="#c6">C6(b)</a>.</p>
+
+    <table>
+      <caption><b class="k">IF-L-ACU-VPU</b> · 논리 · VPU → ACU · realizedOver [IF-P-VPU, IF-P-ACU] · consume-only</caption>
+      <thead><tr><th>kind</th><th>channel / code</th><th>dir</th><th>rate</th><th>sev/quality</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">machine.vision.worker_detected</td><td>→ACU</td><td>1–5 Hz</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>E</td><td class="mono">disease.suspected</td><td>→ACU/Agent</td><td>event</td><td>warning</td><td>Event</td></tr>
+        <tr><td>E</td><td class="mono">scan.frame_result</td><td>→Agent</td><td>1–5 Hz</td><td>info/notice</td><td>Event</td></tr>
+      </tbody>
+    </table>
+    <p class="note">worker_detected는 PolicyRule(IF-L-POLICY-MCU) 트리거 · <b class="k">NOT carried</b>: raw RGB/NIR image · consume-only(ACK 없음).</p>
+
+    <table>
+      <caption><b class="k">IF-L-AGENT-OBS</b> · 논리(fusion) · VPU ⊕ LPU ⊕ ACU → AGENT · realizedOver [IF-P-VPU/LPU/ACU]</caption>
+      <thead><tr><th>kind</th><th>합성 입력</th><th>dir</th><th>출력</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S⊕</td><td class="mono">crop.growth.* (VPU) ⊕ pose (LPU) ⊕ machine.autonomy.state (ACU)</td><td>→Agent</td><td class="mono">OBS-* → SCN-*</td><td>GrowthObservation</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Agent가 GrowthObservation(OBS-*) 합성(REQ-E01) → ScanSession(SCN-*) 누적 → IF-X-TEL-CLOUD-UP 업링크 · <b class="k">NOT carried</b>: raw image(파생 신호만) · seq <a href="#c6">C6(b)</a>.</p>
+
+    <table>
+      <caption><b class="k">IF-L-HMI-AGG</b> · 논리 · Agent aggregate → HMI · realizedOver [전 IF-P, IF-P-HMI]</caption>
+      <thead><tr><th>kind</th><th>내용</th><th>dir</th><th>rate</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">전 표준 신호 (C4a, normalized)</td><td>→HMI</td><td>WS push</td><td>Signal</td></tr>
+        <tr><td>ACK</td><td class="mono">command ACK timeline</td><td>→HMI</td><td>per-cmd</td><td>CommandAck</td></tr>
+        <tr><td>E</td><td class="mono">events / alarms</td><td>→HMI</td><td>event</td><td>Event</td></tr>
+      </tbody>
+    </table>
+    <p class="note">HMI는 raw CAN ID·register 미노출 — 표준 NS만(C4) · Agent API only · seq <a href="#c6">C6(a)</a>.</p>
+
+    <table>
+      <caption><b class="k">IF-L-ACU-MODULE</b> · 논리 · work-module ↔ ACU · realizedOver [IF-P-ACU] · attachesToNode ACU</caption>
+      <thead><tr><th>kind</th><th>verb / channel</th><th>dir</th><th>ack</th><th>safety/quality</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>C</td><td class="mono">arm.move / arm.calibrate</td><td>→module</td><td>per-desc</td><td>guarded/safety_critical</td><td>CommandEnvelope</td></tr>
+        <tr><td>C</td><td class="mono">ee.pinch / ee.release / ee.calibrate</td><td>→module</td><td>exactly_once</td><td class="no">safety_critical</td><td>CommandEnvelope</td></tr>
+        <tr><td>S</td><td class="mono">machine.arm.joint_temp</td><td>up</td><td>1 Hz</td><td>quality</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">machine.ee.grip_force</td><td>up</td><td>500 ms</td><td>warn≤10 crit≤8</td><td>Signal</td></tr>
+      </tbody>
+    </table>
+    <p class="note">manifest <span class="mono">meta.module.manipulator.v1 · thinning_ee.v1</span> · 명령은 ACU node 경유 → Agent CommandRouter(REQ-A02) · conformance: module manifest signals/commands.</p>
+
+    <table>
+      <caption><b class="k">IF-L-POLICY-MCU</b> · 논리(policy-triggered) · PolicyRule → ACU · realizedOver [IF-P-VPU → Agent → IF-P-ACU]</caption>
+      <thead><tr><th>trigger</th><th>then (생성 명령)</th><th>safety</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">machine.vision.worker_detected == true</td><td class="mono">autonomy.slow_down → ACU</td><td>guarded</td><td>CommandEnvelope</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Agent PolicyEngine가 조건부 명령 생성(C7, PR-WORKER-SLOW) → evaluateGate → ACU · authority ② Agent 정책 · 노드가 직접 만든 명령 아님.</p>
+  </section>
+
+  <section id="f5x">
+    <h3><span class="sid">F5.X</span> ICD Sheets — Cloud Interfaces (4)</h3>
+    <p class="sub">토픽 리터럴(<span class="mono">edge-gw.local:8883</span>·<span class="mono">robot/{robotId}/*</span>)은 <b class="k">reference</b>(mock 출처). 상세는 <a href="#f6">F6</a>.</p>
+
+    <table>
+      <caption><b class="k">IF-X-TEL-CLOUD-UP</b> · 외부 · TEL ↔ Cloud · MQTT QoS1 / PRT-MQTT-v2 · TLS·X.509 · uplink</caption>
+      <thead><tr><th>kind</th><th>topic ← channel</th><th>dir</th><th>rate</th><th>qos</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td class="mono">robot/{robotId}/telemetry ← machine.telemetry.cloud_connected</td><td>up</td><td>0.2 Hz</td><td>QoS1</td><td>Signal</td></tr>
+        <tr><td>S</td><td class="mono">robot/{robotId}/telemetry ← env.greenhouse.*</td><td>up</td><td>batch</td><td>QoS1</td><td>Signal</td></tr>
+        <tr><td>OBS</td><td class="mono">robot/{robotId}/telemetry ← OBS-*</td><td>up</td><td>per scan</td><td>QoS1</td><td>GrowthObservation</td></tr>
+        <tr><td>E</td><td class="mono">event 요약 (NAV-SAFETY-INTERLOCK 등)</td><td>up</td><td>event</td><td>QoS1</td><td>Event</td></tr>
+      </tbody>
+    </table>
+    <p class="note">realizedOver IF-P-TEL · Agent가 업링크 대상 결정, TEL=transport · at_least_once → OBS-*/AUD-* ID로 dedup · <b class="k">NOT carried</b>: 제어권·raw image.</p>
+
+    <table>
+      <caption><b class="k">IF-X-CLOUD-CMD</b> · 외부 · Cloud → TEL → AGENT · MQTT QoS1 · downlink <b>candidate</b></caption>
+      <thead><tr><th>kind</th><th>topic ← cloud verb → 내부 verb</th><th>dir</th><th>qos</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>C</td><td class="mono">robot/{robotId}/cmd ← START_WORK → autonomy.mission.start</td><td>down</td><td>QoS1</td><td>CommandEnvelope(candidate)</td></tr>
+        <tr><td>C</td><td class="mono">← PAUSE_REQUEST/RESUME_REQUEST → autonomy.pause/resume</td><td>down</td><td>QoS1</td><td>CommandEnvelope</td></tr>
+        <tr><td>C</td><td class="mono">← PARAM_SYNC / CALIBRATE_EE → ee.calibrate</td><td>down</td><td>QoS1</td><td>CommandEnvelope</td></tr>
+      </tbody>
+    </table>
+    <p class="note"><span class="mono">issuedBy.role=cloud</span>, candidate only · <b class="k">반드시 Agent evaluateGate 통과</b>(권한 ④ &lt; HMI ③) · blocked→rejected + AUD-* · <b class="k">직결 절대 금지</b>(REQ-F02) · verb 매핑 <a href="#f6">F6</a>.</p>
+
+    <table>
+      <caption><b class="k">IF-X-OTA</b> · 외부 · Cloud OTA → AGENT(via TEL) · MQTT QoS1</caption>
+      <thead><tr><th>kind</th><th>topic / payload</th><th>dir</th><th>qos</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>FW</td><td class="mono">robot/{robotId}/ota/cmd ← FW-{MODULE}-{VERSION}</td><td>down</td><td>QoS1</td><td>firmware ref</td></tr>
+        <tr><td>E</td><td class="mono">robot/{robotId}/ota/progress → OTA-PROGRESS · canary</td><td>up</td><td>QoS1</td><td>Event</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Agent OTA Coordinator가 G3(version)/G4(calibration)/G6·7(preflight) gate 검증 → canary rollout → 이상 지표 시 rollback · <b class="k">클라우드가 gate 우회 불가</b>.</p>
+
+    <table>
+      <caption><b class="k">IF-X-REGISTRY</b> · 외부 · Cloud Registry ↔ TEL/HMI · MQTT/REST</caption>
+      <thead><tr><th>kind</th><th>topic / record</th><th>dir</th><th>payload</th></tr></thead>
+      <tbody>
+        <tr><td>PAIR</td><td class="mono">registry/pair/{PAIR-XXXX} · handshake</td><td>↔</td><td>PairingCode (TTL)</td></tr>
+        <tr><td>REG</td><td class="mono">registry/{robotId}/device · {robot_id,type,gh,modules[],hmi,tel,pairing,firmware_set}</td><td>↔</td><td>DeviceRecord</td></tr>
+      </tbody>
+    </table>
+    <p class="note">페어링 성공 시 노드 구성(어느 ORG 노드 조합)이 고정 · device cert X.509 · robotId=per-robot, site=fleet 스코프.</p>
+  </section>
+
+  <section id="f6">
+    <h3><span class="sid">F6</span> Cloud Interface — Detail</h3>
+    <h4>MQTT 토픽 트리 (reference)</h4>
+    <div class="code">robot/{robotId}/cmd            ← downlink CommandEnvelope <span class="c">candidate</span>   (IF-X-CLOUD-CMD)
+robot/{robotId}/telemetry      → uplink Signal/stats/OBS/Event       (IF-X-TEL-CLOUD-UP)
+site/{site}/robot/+/telemetry  → fleet fan-in (read, control plane)
+robot/{robotId}/ota/cmd        ← FW-{MODULE}-{VERSION} push          (IF-X-OTA)
+robot/{robotId}/ota/progress   → OTA-PROGRESS · canary status        (IF-X-OTA)
+registry/pair/{PAIR-XXXX}      ↔ pairing handshake                   (IF-X-REGISTRY)
+registry/{robotId}/device      ↔ device record                       (IF-X-REGISTRY)
+<span class="c"># QoS 1 · ack at_least_once · TLS·X.509 · broker tls://edge-gw.local:8883 (reference)</span></div>
+    <h4>클라우드 명령 인가 경로 (load-bearing)</h4>
+    <div class="code">Cloud → robot/{robotId}/cmd (MQTT) → TEL (transport only) → Agent CommandRouter.dispatch
+   → evaluateGate: authority(cloud ④) &lt; HMI(③) &lt; policy(②) &lt; physical(①)
+   → GateResult {pass|warn|confirm_required|blocked}
+   → pass: ACK received/accepted → 대상 노드 스포크 라우팅 → executed
+   → blocked: ACK rejected(reason) · AUD-* 로그 · <span class="c">노드 도달 안 함</span></div>
+    <div class="safe"><span class="tag">CLOUD MAY NOT</span> &nbsp;① 실행 명령 발행 불가(candidate만, Gate 필수) · ② 물리안전(①)·Agent정책(②)·현장 HMI(③) 우회 불가 · ③ raw image/video·raw LiDAR 수신 불가(파생 신호·OBS-*만) · ④ TEL 우회 불가(제2 경로 없음, TEL 제어권 0) · ⑤ OTA gate 우회 불가.</div>
+  </section>
+
+  <section id="f7">
+    <h3><span class="sid">F7</span> Conformance &amp; Versioning</h3>
+    <table>
+      <caption>표 F7 — Conformance &amp; Versioning</caption>
+      <thead><tr><th>항목</th><th>규칙</th></tr></thead>
+      <tbody>
+        <tr><td>인터페이스 버전</td><td><b class="k">semver</b> — minor=가산(채널 추가) · major=파괴(채널 제거/개명·safety 등급·ack 의미 변경)</td></tr>
+        <tr><td>참조</td><td>각 시트 <span class="mono">profileRef: PRT-*-vN</span> + <span class="mono">schemaRefs</span>(signal/command-envelope/command-ack/event.schema.json)</td></tr>
+        <tr><td>conformance</td><td>노드 <span class="mono">manifest(signals ∪ commands) ∪ protocolRef == IF-P 시트</span>. 현재 MCU/VPU/ACU 예시 protocolRef는 spec과 불일치 → <a href="#anx-e">Annex E</a> 정합 변경안.</td></tr>
+        <tr><td>IF-L 버전</td><td>provider profile 변경 시 해당 IF-L의 영향 consumer를 명시(예: pose schema 변경 → IF-L-ACU-LPU + ACU 영향).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="divider"><div class="dv-id">ANNEXES</div><div class="dv-title">A – H</div><div class="dv-sub">ProtocolProfile JSON · Node JSON · ID Grammar · Drawing Index · Contract Alignment · Requirements · Figures &amp; Tables · Change Log</div></section>
+
+  <!-- ============ ANNEXES ============ -->
+  <section id="anx-a">
+    <h3><span class="sid">A</span> ProtocolProfile JSON (예시)</h3>
+    <div class="row r2">
+      <div class="code"><span class="c">// PRT-CAN-v1 (제안 — Annex E)</span>
+{
+  "id": "PRT-CAN-v1",
+  "transport": "CAN",
+  "ack": "at_least_once",
+  "timeout": "&lt;10ms",
+  "security": "bus-physical / no transport crypto",
+  "topics": [
+    {"dir":"telemetry","topic":"machine.motion.speed","payload":"Signal"},
+    {"dir":"cmd","topic":"motion.stop","payload":"CommandEnvelope"},
+    {"dir":"event","topic":"machine.safety.estop","payload":"Event"}
+  ]
+}</div>
+      <div class="code"><span class="c">// PRT-MQTT-v2 (정본)</span>
+{
+  "id": "PRT-MQTT-v2",
+  "transport": "MQTT",
+  "ack": "at_least_once",
+  "timeout": "batch",
+  "security": "TLS · X.509",
+  "topics": [
+    {"dir":"telemetry","topic":"machine.telemetry.cloud_connected","payload":"Signal"},
+    {"dir":"cmd","topic":"telemetry.uplink.flush","payload":"CommandEnvelope"}
+  ]
+}</div>
+    </div>
+  </section>
+
+  <section id="anx-b">
+    <h3><span class="sid">B</span> Node Contract JSON (예시 — NODE-MCU-AGE)</h3>
+    <div class="code">{
+  "nodeId": "NODE-MCU-AGE",
+  "kind": "MCU",
+  "ownerOrg": "ORG-AGE",
+  "protocolRef": "PRT-CAN-v1",          <span class="c">// 정합 후 (현 코드 예시는 PRT-MQTT-v2 — Annex E)</span>
+  "signals": ["machine.motion.speed","machine.power.battery_voltage","machine.safety.estop"],
+  "commands": ["motion.set_speed_limit","motion.stop"],
+  "manifestRef": "age.node.mcu.v1"
+}</div>
+  </section>
+
+  <section id="anx-c">
+    <h3><span class="sid">C</span> ID Grammar (ids.ts)</h3>
+    <table>
+      <thead><tr><th>kind</th><th>regex</th></tr></thead>
+      <tbody>
+        <tr><td>org</td><td class="mono">^ORG-[A-Z]+$</td></tr>
+        <tr><td>node</td><td class="mono">^NODE-[A-Z]+-[A-Z]+$</td></tr>
+        <tr><td>channel</td><td class="mono">^[a-z]+(\.[a-z0-9_]+)+$</td></tr>
+        <tr><td>manifest</td><td class="mono">^[a-z]+\.(module|node)\.[a-z0-9_]+\.v[0-9]+$</td></tr>
+        <tr><td>command</td><td class="mono">^CMD-[A-Z0-9-]+$</td></tr>
+        <tr><td>calibration</td><td class="mono">^CAL-[A-Z0-9-]+$</td></tr>
+        <tr><td>firmware</td><td class="mono">^FW-[A-Z0-9.-]+$</td></tr>
+        <tr><td>audit</td><td class="mono">^AUD-[A-Z0-9-]+$</td></tr>
+        <tr><td>workSession</td><td class="mono">^WKS-\d{8}-\d{5}$</td></tr>
+        <tr><td>robot</td><td class="mono">^RBT-(THIN|PINCH)-\d{4}$</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="anx-d">
+    <h3><span class="sid">D</span> Drawing Item Index (RIG-1 + RIG-2)</h3>
+    <p class="note">RIG-1 항목 IT-01~14 = 표 D2. RIG-2 추가 항목 IT-21~29 = 표 D3. 노드 항목 매핑: IT-01·05=HMI · IT-02=MCU · IT-03=Jetson(VPU+ACU) · IT-04=AGENT · IT-06=TEL · IT-07=LPU · IT-08=카메라(VPU). 두 리그 공통 항목은 동일 IT 번호를 사용하며 자산은 AST-R1-* / AST-R2-*로 분기한다.</p>
+  </section>
+
+  <section id="anx-e">
+    <h3><span class="sid">E</span> Contract Alignment Follow-up (코드 동결 — 변경안만)</h3>
+    <p class="sub">본 문서가 정본 코드와 상이한 지점과 정식 정합 변경안. 별도 승인 시 적용.</p>
+    <table>
+      <caption>표 Annex E — 정합 변경안</caption>
+      <thead><tr><th>#</th><th>대상</th><th>현재</th><th>변경안</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">E1</td><td class="mono">protocol-profile.schema.json · transport enum</td><td class="mono">["MQTT","ROS2","DDS"]</td><td class="mono">+ "CAN","SERIAL","WS"</td></tr>
+        <tr><td class="mono">E2</td><td>ProtocolProfile 인스턴스 신설</td><td>없음</td><td class="mono">PRT-CAN-v1 · PRT-WS-v1</td></tr>
+        <tr><td class="mono">E3</td><td>MCU node 예시 protocolRef</td><td class="mono no">PRT-MQTT-v2 (오표기)</td><td class="mono">PRT-CAN-v1</td></tr>
+        <tr><td class="mono">E3b</td><td>VPU node 예시 protocolRef</td><td class="mono no">PRT-MQTT-v2 (stale)</td><td class="mono">PRT-ROS-v1</td></tr>
+        <tr><td class="mono">E3c</td><td>ACU node 예시 protocolRef</td><td class="mono no">PRT-ROS-v1 (stale)</td><td class="mono">PRT-DDS-v1</td></tr>
+        <tr><td class="mono">E4</td><td class="mono">ids.ts · ID_PATTERNS</td><td>SCN·OBS·RT 미등록</td><td class="mono">+ scanSession·observation·route 추가</td></tr>
+        <tr><td class="mono">E5</td><td class="mono">node-kinds.ts</td><td>AGENT·HMI 비표준</td><td>host pseudo-node로 문서화 (STANDARD 미편입 유지)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="anx-f">
+    <h3><span class="sid">F</span> Requirements Register (정규 요구사항)</h3>
+    <p class="sub">본 기준서의 핵심 원칙을 추적 가능한 정규 요구사항으로 집약한다. <span class="mono">shall</span>=필수.</p>
+    <table>
+      <caption>표 Annex F — 요구사항 레지스터 (발췌)</caption>
+      <thead><tr><th>REQ</th><th>요구사항 (shall)</th><th>출처 §</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">REQ-A01</td><td>실시간 하위제어·물리 안전은 MCU/하드웨어 회로가 담당하며, 비실시간 컴퓨트(Jetson/Linux)는 motor PWM·encoder 하드루프·emergency 직접 판단을 <b class="k">하지 않는다</b>.</td><td>A1·A2</td></tr>
+        <tr><td class="mono">REQ-A02</td><td>ACU는 하위 노드(MCU/VPU/LPU)를 직접 제어하지 않으며, 모든 제어 명령은 Local Agent CommandRouter·PolicyEngine를 경유한다.</td><td>A2·C5</td></tr>
+        <tr><td class="mono">REQ-A03</td><td>최종 결정권은 ① 물리 안전 > ② Agent 정책 > ③ HMI > ④ Cloud > ⑤ ACU 자율 순서를 따른다(Cloud &lt; HMI).</td><td>A3</td></tr>
+        <tr><td class="no">REQ-A04</td><td>E-stop은 물리 회로로 모터 enable/power 도메인을 차단하며, 1차 안전기능은 SW에 의존하지 않는다. SW는 보고·로그만 수행한다.</td><td>A3·D1</td></tr>
+        <tr><td class="mono">REQ-A05</td><td>HMI·Telemetry 장애는 Agent의 안전정책·node health를 중단시키지 않는다. 로봇은 HMI 없이도 현재 안전 정책을 유지한다.</td><td>A5</td></tr>
+        <tr><td class="mono">REQ-A06</td><td>Raw image/video·raw LiDAR는 기본 통합 경로로 전송하지 않으며, 정책 승인 시에만 제한 제공한다.</td><td>A6·C3</td></tr>
+        <tr><td class="mono">REQ-B01</td><td>논리 Node ID는 리그·보드와 무관하게 불변이며, 리그별 물리 인스턴스는 Asset-tag(AST-R*)로만 구분한다.</td><td>B1·B4</td></tr>
+        <tr><td class="mono">REQ-B02</td><td>식별자 표기는 정본 레지스트리(TEL·AGENT)를 따르며 폐기 변형(TLM·AGT)을 사용하지 않는다.</td><td>B2</td></tr>
+        <tr><td class="mono">REQ-B03</td><td>보드 1대에 노드 N개가 적재되는 관계는 Compute Host(HOST-*)로 명시한다(HOST-JETSON=VPU+ACU).</td><td>B1·B3</td></tr>
+        <tr><td class="mono">REQ-C01</td><td>전송은 물리 링크와 메시지 프로파일(PRT-*)의 2계층으로 분리하며, 노드의 protocolRef는 실제 물리 링크를 정확히 반영한다.</td><td>C1·C2</td></tr>
+        <tr><td class="no">REQ-C02</td><td>Command은 evaluateGate(권한·상태·안전) 통과 후에만 accepted되며, ACK는 received→accepted→executed(예외 rejected·timeout)를 따른다.</td><td>C5·C7</td></tr>
+        <tr><td class="mono">REQ-C03</td><td>Telemetry는 Cloud transport만 담당하고 내부 제어 권한을 갖지 않으며, Cloud-origin command도 Agent Policy를 경유한다.</td><td>C3·E3</td></tr>
+        <tr><td class="no">REQ-D01</td><td>모터 전원 도메인과 컴퓨트 전원 도메인을 분리하고, 단일점(star) 접지를 적용하며, CAN 버스 양끝을 120Ω로 종단한다.</td><td>D1</td></tr>
+        <tr><td class="mono">REQ-D02</td><td>RIG-1·RIG-2는 동일 논리 노드·계약을 공유하며, 차이는 물리 배치와 Asset-tag(AST-R1/R2)에 한정한다.</td><td>D2·D3</td></tr>
+        <tr><td class="mono">REQ-D03</td><td>각 보드·케이블은 논리 ID(NODE-*)와 자산태그(AST-*)를 병기 라벨링한다.</td><td>D4</td></tr>
+        <tr><td class="mono">REQ-E01</td><td>스캔 결과(GrowthObservation)는 VPU 추론 ⊕ LPU pose ⊕ ACU mission의 결합으로 Agent가 합성한다.</td><td>E1·C6</td></tr>
+        <tr><td class="mono">REQ-B04</td><td>모든 식별자는 B0 Master Prefix Registry의 prefix·문법·표기 규율(UPPER-HYPHEN / lower.dot / slash)을 따르며, 할당 권한(B0c)을 준수한다.</td><td>B0·B0c</td></tr>
+        <tr><td class="no">REQ-F01</td><td>모든 module↔module 인터페이스(IF-L)는 Local Agent가 매개하며 노드를 직결하지 않는다 — 각 IF-L은 realizedOver 물리 스포크를 명시한다.</td><td>F0·F3</td></tr>
+        <tr><td class="no">REQ-F02</td><td>클라우드 명령(IF-X-CLOUD-CMD)은 candidate이며 반드시 Agent evaluateGate를 통과한다 — 노드 직결·게이트 우회는 금지된다.</td><td>F5.X·F6</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="anx-g">
+    <h3><span class="sid">G</span> List of Figures &amp; Tables</h3>
+    <div class="row r2">
+      <table>
+        <caption>도식 (Figures)</caption>
+        <thead><tr><th>번호</th><th>제목</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">그림 A1</td><td>시스템 토폴로지</td></tr>
+          <tr><td class="mono">그림 A4</td><td>기동·디스커버리</td></tr>
+          <tr><td class="mono">그림 B0b</td><td>Namespace Map (식별자 관계)</td></tr>
+          <tr><td class="mono">그림 B4</td><td>Asset-tag 분기</td></tr>
+          <tr><td class="mono">그림 C1</td><td>2-tier 전송</td></tr>
+          <tr><td class="mono">그림 C5</td><td>Command ACK 라이프사이클</td></tr>
+          <tr><td class="mono">그림 D1</td><td>공통 전원·E-stop 회로</td></tr>
+          <tr><td class="mono">그림 D2</td><td>RIG-1 제작 명세 도면</td></tr>
+          <tr><td class="mono">그림 D3</td><td>RIG-2 프로파일 로버 입면</td></tr>
+          <tr><td class="mono">그림 E1</td><td>Run loop rail</td></tr>
+          <tr><td class="mono">그림 F1</td><td>Interface Map (허브-스포크)</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <caption>표 (Tables) — 발췌</caption>
+        <thead><tr><th>번호</th><th>제목</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">표 0.3a/b</td><td>노드 약어 · 기관 레지스트리</td></tr>
+          <tr><td class="mono">표 A2</td><td>노드 책임·I/O·금지</td></tr>
+          <tr><td class="mono">표 B0</td><td>식별자 레지스터 (전 family)</td></tr>
+          <tr><td class="mono">표 B1</td><td>10-레이어 식별자 모델</td></tr>
+          <tr><td class="mono">표 B3a/b</td><td>Master Deployment Matrix</td></tr>
+          <tr><td class="mono">표 C2/C3</td><td>ProtocolProfile · Transport Matrix</td></tr>
+          <tr><td class="mono">표 C7a/b</td><td>GateResult · 대표 게이트</td></tr>
+          <tr><td class="mono">표 D2/D3</td><td>RIG-1 BOM · RIG-2 델타</td></tr>
+          <tr><td class="mono">표 F2/F3/F4</td><td>인터페이스 인벤토리·의존 매트릭스·heartbeat</td></tr>
+          <tr><td class="mono">표 Annex F</td><td>요구사항 레지스터</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="anx-h">
+    <h3><span class="sid">H</span> Change Log</h3>
+    <table>
+      <thead><tr><th>Rev</th><th>Date</th><th>Description</th><th>By</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">A</td><td class="mono">2026-06-03</td><td>최초 발행. rig.html · build-sheet.html · build-guide.md 통합·대체. RIG-2 신규. 식별자 체계(TEL·AGENT) 정합.</td><td class="mono">ORG-VIA</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- INSERT:PARTS -->
+
+  <footer>
+    STATION-SDV-SPEC-2026-001 · Rev A · 2026-06-03 · ORG-VIA / R&amp;D · RS-2025-02219411<br>
+    Normative source: <span class="mono">@station/contracts</span> (Signal · Command · Event · ProtocolProfile · Node · Organization · RobotBlueprint).
+    본 기준서는 <span class="mono">sdv-crop-growth-rig.html</span> · <span class="mono">sdv-rig-build-sheet.html</span> · <span class="mono">sdv-rig-build-guide.md</span>를 대체한다.
+  </footer>
+
+</main>
+</div>
+
+<script>
+/* ===== RIG-1 fabrication-spec drawing (physical construction) ===== */
+(function(){
+  var svg=document.getElementById('rig1'); if(!svg) return;
+  var INK='#1a1a1a',CF='#eeeeee',CF2='#dcdcdc',DIN='#c4c4c4',PW='#c0392b',DT='#1f6feb',G='#8a8a8a';
+  var SC=0.96, X0=72, Y0=128, PWD=600, PHD=400;
+  var px=function(v){return X0+v*SC}, py=function(v){return Y0+v*SC}, s=function(v){return v*SC};
+  function txt(x,y,t,o){o=o||{};return '<text x="'+x+'" y="'+y+'" text-anchor="'+(o.a||'middle')+'" font-size="'+(o.fs||10)+'" font-weight="'+(o.fw||400)+'" fill="'+(o.c||INK)+'"'+(o.mono?' class="mono"':'')+'>'+t+'</text>';}
+  function ml(x,y,t,o){o=o||{};var L=t.split('|');var fs=o.fs||9;var r='';for(var i=0;i<L.length;i++){r+=txt(x,y+i*(fs+2),L[i],o);}return r;}
+  function balloon(x,y,n,red){var c=red?PW:INK;return '<circle cx="'+x+'" cy="'+y+'" r="9" fill="#fff" stroke="'+c+'" stroke-width="1.3"/>'+txt(x,y+3,n,{fs:9,fw:700,c:c});}
+  // DIN rail with slot detail
+  function dinRail(xa,xb,ymm,label){
+    var x=px(xa),w=s(xb-xa),y=py(ymm),h=13;var r='';
+    r+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+DIN+'" stroke="#9a9a9a"/>';
+    r+='<line x1="'+x+'" y1="'+(y+3)+'" x2="'+(x+w)+'" y2="'+(y+3)+'" stroke="#fff" stroke-width="0.8"/>';
+    r+='<line x1="'+x+'" y1="'+(y+h-3)+'" x2="'+(x+w)+'" y2="'+(y+h-3)+'" stroke="#9a9a9a" stroke-width="0.8"/>';
+    for(var sx=x+8;sx<x+w-6;sx+=15){r+='<rect x="'+sx+'" y="'+(y+5)+'" width="6" height="3" fill="#fff" stroke="#b0b0b0" stroke-width="0.4"/>';}
+    if(label){r+=txt(x+3,y-3,label,{a:'start',fs:8,c:G,mono:true});}
+    return r;
+  }
+  function standoffs(c){ // 4 corner standoff dots
+    var r='',m=6;var X=px(c.x),Y=py(c.y),W=s(c.w),H=s(c.h);
+    [[X+m,Y+m],[X+W-m,Y+m],[X+m,Y+H-m],[X+W-m,Y+H-m]].forEach(function(p){
+      r+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3" fill="#fff" stroke="'+INK+'" stroke-width="1"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="1" fill="'+INK+'"/>';});
+    return r;
+  }
+  function box(c,fill){return '<rect x="'+px(c.x)+'" y="'+py(c.y)+'" width="'+s(c.w)+'" height="'+s(c.h)+'" rx="3" fill="'+(fill||CF)+'" stroke="'+INK+'" stroke-width="1.2"/>';}
+  function comp(c){
+    var X=px(c.x),Y=py(c.y),W=s(c.w),H=s(c.h),cx=X+W/2,cy=Y+H/2,r='';
+    if(c.t==='board'){
+      r+=box(c);r+=standoffs(c);
+      // header pin strip
+      r+='<rect x="'+(X+6)+'" y="'+(Y+5)+'" width="'+(W-12)+'" height="4" fill="#bdbdbd"/>';
+      r+=ml(cx,cy-2,c.n,{fs:9,fw:700});
+    } else if(c.t==='display'){
+      r+='<rect x="'+X+'" y="'+Y+'" width="'+W+'" height="'+H+'" rx="6" fill="#2b2b2b" stroke="'+INK+'" stroke-width="1.4"/>';
+      r+='<rect x="'+(X+8)+'" y="'+(Y+8)+'" width="'+(W-16)+'" height="'+(H-16)+'" rx="2" fill="#3f4a57"/>';
+      r+=txt(cx,cy+4,c.n,{fs:11,fw:700,c:'#fff'});
+      // mounting brackets (top arms)
+      r+='<rect x="'+(X+W*0.25-10)+'" y="'+(Y-12)+'" width="20" height="14" rx="2" fill="'+CF2+'" stroke="'+INK+'"/>';
+      r+='<rect x="'+(X+W*0.75-10)+'" y="'+(Y-12)+'" width="20" height="14" rx="2" fill="'+CF2+'" stroke="'+INK+'"/>';
+    } else if(c.t==='camera'){
+      r+='<rect x="'+X+'" y="'+(Y+H-18)+'" width="'+W+'" height="18" rx="2" fill="'+CF2+'" stroke="'+INK+'"/>'; // bracket bar
+      r+=box({x:c.x,y:c.y,w:c.w,h:c.h-20},CF);
+      r+='<circle cx="'+(X+W*0.32)+'" cy="'+(Y+H*0.34)+'" r="7" fill="#2b2b2b" stroke="'+INK+'"/><circle cx="'+(X+W*0.68)+'" cy="'+(Y+H*0.34)+'" r="7" fill="#2b2b2b" stroke="'+INK+'"/>';
+      r+=txt(cx,Y+H+11,'RGB/NIR',{fs:8,c:G});
+    } else if(c.t==='switch'){
+      r+=box(c);r+=txt(cx,Y+18,c.n,{fs:9,fw:700});
+      var pn=5,pw=(W-16)/pn;for(var i=0;i<pn;i++){r+='<rect x="'+(X+8+i*pw+1)+'" y="'+(Y+H-16)+'" width="'+(pw-3)+'" height="11" fill="#3f4a57" stroke="'+INK+'" stroke-width="0.5"/>';}
+    } else if(c.t==='fuse'){
+      r+=box(c);r+=txt(cx,Y+13,c.n,{fs:8.5,fw:700});
+      var fn=4,fw=(W-14)/fn;for(var j=0;j<fn;j++){r+='<rect x="'+(X+7+j*fw+1)+'" y="'+(Y+H-22)+'" width="'+(fw-3)+'" height="16" fill="#e9e9e9" stroke="'+INK+'" stroke-width="0.6"/><rect x="'+(X+7+j*fw+1)+'" y="'+(Y+H-22)+'" width="'+(fw-3)+'" height="4" fill="'+PW+'"/>';}
+    } else if(c.t==='dcdc'){
+      r+=box(c);r+=ml(cx,cy-2,c.n,{fs:8.5,fw:700});
+      for(var k=0;k<5;k++){r+='<circle cx="'+(X+10+k*((W-20)/4))+'" cy="'+(Y+H-6)+'" r="2.4" fill="#cfcfcf" stroke="'+INK+'" stroke-width="0.6"/>';}
+    } else if(c.t==='modem'){
+      r+=box(c);r+=txt(cx,cy+3,c.n,{fs:9,fw:700});
+      r+='<line x1="'+(X+W-10)+'" y1="'+Y+'" x2="'+(X+W-10)+'" y2="'+(Y-12)+'" stroke="'+INK+'" stroke-width="1.4"/><circle cx="'+(X+W-10)+'" cy="'+(Y-13)+'" r="2.2" fill="'+INK+'"/>';
+    } else { r+=box(c);r+=ml(cx,cy,c.n,{fs:9,fw:700}); }
+    r+=balloon(X+11,Y+11,c.it);
+    return r;
+  }
+  var COMP=[
+    {it:'09',n:'단자대·퓨즈',t:'fuse',x:18,y:14,w:96,h:48},
+    {it:'10',n:'DC-DC|24→12/5V',t:'dcdc',x:126,y:14,w:120,h:48},
+    {it:'12',n:'5-port Switch',t:'switch',x:300,y:12,w:130,h:62},
+    {it:'12',n:'WiFi AP',t:'box',x:444,y:12,w:60,h:62},
+    {it:'08',n:'Camera',t:'camera',x:528,y:14,w:60,h:64},
+    {it:'01',n:'10.1" Touch Display',t:'display',x:18,y:120,w:248,h:158},
+    {it:'02',n:'Arduino Portenta|MCU',t:'board',x:300,y:118,w:120,h:96},
+    {it:'03',n:'Jetson Orin Nano|VPU + ACU',t:'board',x:300,y:228,w:120,h:92},
+    {it:'04',n:'RPi5|Agent',t:'board',x:438,y:118,w:96,h:58},
+    {it:'05',n:'RPi5|HMI',t:'board',x:438,y:190,w:96,h:58},
+    {it:'06',n:'LTE Modem',t:'modem',x:438,y:262,w:96,h:40},
+    {it:'07',n:'LPU SBC|옵션',t:'board',x:300,y:334,w:120,h:54}
+  ];
+  var o='<defs><marker id="arP2" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#c0392b"/></marker></defs>';
+  o+=txt(40,40,'판넬 배치도 (Panel Layout) — 600 × 400 × 4 mm',{a:'start',fs:13,fw:800});
+  // panel with rounded corners + corner mount holes + cable channel
+  o+='<rect x="'+px(0)+'" y="'+py(0)+'" width="'+s(PWD)+'" height="'+s(PHD)+'" rx="14" fill="#fafafa" stroke="'+INK+'" stroke-width="1.6"/>';
+  o+='<rect x="'+(px(0)+9)+'" y="'+(py(0)+9)+'" width="'+(s(PWD)-18)+'" height="'+(s(PHD)-18)+'" rx="9" fill="none" stroke="#cfcfcf" stroke-dasharray="3 3"/>';
+  [[12,12],[PWD-12,12],[12,PHD-12],[PWD-12,PHD-12]].forEach(function(p){o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="4" fill="#fff" stroke="'+INK+'"/>';});
+  // DIN rails (physical construction emphasis)
+  o+=dinRail(14,586,76,'DIN 레일 (상단 전원·통신)');
+  o+=dinRail(14,586,308,'DIN 레일 (하단 · 케이블 채널)');
+  // wiring under components: POWER (red) from DC-DC fanning to boards
+  function wire(path,col,w){return '<path d="'+path+'" fill="none" stroke="'+col+'" stroke-width="'+(w||2)+'"/>';}
+  var dcx=px(186),dcy=py(62);
+  o+=wire('M'+px(114)+','+py(40)+' L'+px(126)+','+py(40),PW,2.2); // fuse->dcdc
+  o+=wire('M'+dcx+','+dcy+' L'+dcx+','+py(104)+' L'+px(360)+','+py(104)+' L'+px(360)+','+py(118),PW,2); // ->MCU
+  o+=wire('M'+dcx+','+dcy+' L'+dcx+','+py(104)+' L'+px(486)+','+py(104)+' L'+px(486)+','+py(118),PW,2); // ->Agent
+  o+=wire('M'+px(486)+','+py(176)+' L'+px(486)+','+py(190),PW,2); // Agent->HMI rail
+  o+=wire('M'+px(360)+','+py(214)+' L'+px(360)+','+py(228),PW,2); // ->Jetson
+  o+=wire('M'+px(486)+','+py(248)+' L'+px(486)+','+py(262),PW,2); // ->LTE
+  o+=txt(px(300),py(100),'12V',{fs:9,fw:700,c:PW});o+=txt(px(450),py(100),'5V',{fs:9,fw:700,c:PW});
+  o+=txt(px(372),py(225),'5V',{fs:8.5,fw:700,c:PW,a:'start'});
+  // DATA (blue)
+  o+=wire('M'+px(420)+','+py(150)+' L'+px(438)+','+py(150),DT,2);o+=txt(px(429),py(144),'CAN',{fs:8,fw:700,c:DT}); // MCU-Agent CAN
+  o+=wire('M'+px(534)+','+py(140)+' L'+px(560)+','+py(140)+' L'+px(560)+','+py(60)+' L'+px(430)+','+py(60),DT,1.8); // Agent->switch
+  o+=wire('M'+px(420)+','+py(255)+' L'+px(556)+','+py(255)+' L'+px(556)+','+py(64)+' L'+px(430)+','+py(64),DT,1.8); // Jetson->switch
+  o+=wire('M'+px(534)+','+py(212)+' L'+px(552)+','+py(212)+' L'+px(552)+','+py(68)+' L'+px(430)+','+py(68),DT,1.8); // HMI->switch
+  o+=txt(px(540),py(120),'Cat6',{fs:8,fw:700,c:DT});
+  o+=wire('M'+px(540)+','+py(78)+' L'+px(540)+','+py(150)+' L'+px(420)+','+py(150),DT,1.6); // camera->Jetson(area)
+  o+=txt(px(470),py(86),'USB3/CSI',{fs:7.5,fw:700,c:DT});
+  // 120Ω terminator marks at CAN ends
+  o+='<rect x="'+(px(420)-2)+'" y="'+(py(150)-6)+'" width="4" height="12" fill="'+DT+'"/>';
+  o+=txt(px(395),py(168),'120Ω',{fs:7.5,c:DT});
+  // components
+  COMP.forEach(function(c){o+=comp(c);});
+  // E-stop (mushroom) IT-11
+  var ex=px(268),ey=py(40);
+  o+='<circle cx="'+ex+'" cy="'+ey+'" r="'+s(15)+'" fill="#fff" stroke="'+PW+'" stroke-width="2"/><circle cx="'+ex+'" cy="'+ey+'" r="'+s(10)+'" fill="'+PW+'"/>';
+  o+=txt(ex,ey+s(26),'E-STOP',{fs:8,fw:800,c:PW});o+=balloon(ex-s(15)-4,ey-s(15),'11',true);
+  // legend (bottom-right empty area)
+  var lx=px(446),ly=py(330),lw=s(146),lh=s(60);
+  o+='<rect x="'+lx+'" y="'+ly+'" width="'+lw+'" height="'+lh+'" rx="3" fill="#fff" stroke="#bdbdbd"/>';
+  o+=txt(lx+7,ly+14,'범례 (Legend)',{a:'start',fs:8.5,fw:700});
+  o+='<rect x="'+(lx+8)+'" y="'+(ly+21)+'" width="14" height="9" fill="'+CF+'" stroke="'+INK+'"/>'+txt(lx+27,ly+29,'보드 · 스탠드오프',{a:'start',fs:7.5});
+  o+='<rect x="'+(lx+8)+'" y="'+(ly+34)+'" width="14" height="6" fill="'+DIN+'" stroke="#9a9a9a"/>'+txt(lx+27,ly+40,'DIN 레일',{a:'start',fs:7.5});
+  o+='<line x1="'+(lx+8)+'" y1="'+(ly+50)+'" x2="'+(lx+22)+'" y2="'+(ly+50)+'" stroke="'+PW+'" stroke-width="2"/>'+txt(lx+26,ly+53,'전원',{a:'start',fs:7.5,c:PW});
+  o+='<line x1="'+(lx+58)+'" y1="'+(ly+50)+'" x2="'+(lx+72)+'" y2="'+(ly+50)+'" stroke="'+DT+'" stroke-width="2"/>'+txt(lx+76,ly+53,'데이터',{a:'start',fs:7.5,c:DT});
+  // dims
+  var dimTop=Y0-26,dimL=X0-30;
+  o+='<line x1="'+px(0)+'" y1="'+dimTop+'" x2="'+px(PWD)+'" y2="'+dimTop+'" stroke="'+INK+'" stroke-width="0.7"/>';
+  o+='<line x1="'+px(0)+'" y1="'+(dimTop-4)+'" x2="'+px(0)+'" y2="'+(dimTop+4)+'" stroke="'+INK+'"/><line x1="'+px(PWD)+'" y1="'+(dimTop-4)+'" x2="'+px(PWD)+'" y2="'+(dimTop+4)+'" stroke="'+INK+'"/>';
+  o+='<rect x="'+(px(PWD/2)-20)+'" y="'+(dimTop-8)+'" width="40" height="13" fill="#fff"/>'+txt(px(PWD/2),dimTop+3,'600',{fs:10,mono:true});
+  o+='<line x1="'+dimL+'" y1="'+py(0)+'" x2="'+dimL+'" y2="'+py(PHD)+'" stroke="'+INK+'" stroke-width="0.7"/>';
+  o+='<line x1="'+(dimL-4)+'" y1="'+py(0)+'" x2="'+(dimL+4)+'" y2="'+py(0)+'" stroke="'+INK+'"/><line x1="'+(dimL-4)+'" y1="'+py(PHD)+'" x2="'+(dimL+4)+'" y2="'+py(PHD)+'" stroke="'+INK+'"/>';
+  o+='<text x="'+dimL+'" y="'+py(PHD/2)+'" text-anchor="middle" font-size="10" class="mono" transform="rotate(-90 '+dimL+' '+py(PHD/2)+')">400</text>';
+
+  /* ===== RIGHT ZONE — wiring tree / data bus / network / safety ===== */
+  var RX=712,RW=452;
+  function rbox(y,h,title){return '<rect x="'+RX+'" y="'+y+'" width="'+RW+'" height="'+h+'" rx="4" fill="#fff" stroke="#bdbdbd"/>'+txt(RX+10,y+18,title,{a:'start',fs:11,fw:800});}
+  function unit(x,y,w,h,t,fill){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(fill||CF)+'" stroke="'+INK+'" stroke-width="1.1"/>'+ml(x+w/2,y+h/2+(t.indexOf('|')>-1?-3:3),t,{fs:9,fw:700});}
+  function arrow(x1,y1,x2,y2,col){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="2" marker-end="url(#arP2)"/>';}
+  // 1) Power Tree
+  o+=rbox(40,150,'전원 트리 (Power Tree)');
+  o+=unit(RX+14,78,86,38,'24V 배터리');o+=unit(RX+116,78,58,38,'퓨즈');o+=unit(RX+190,78,80,38,'DC-DC');
+  o+=unit(RX+316,62,120,30,'12V 공급|(드라이버·팬)');o+=unit(RX+316,108,120,30,'5V 공급|(RPi·Jetson)');
+  o+=arrow(RX+100,97,RX+116,97,PW);o+=arrow(RX+174,97,RX+190,97,PW);
+  o+=arrow(RX+270,90,RX+316,77,PW);o+=arrow(RX+270,104,RX+316,123,PW);
+  // 2) Data Bus
+  o+=rbox(202,108,'데이터 버스 (Data Bus · CAN)');
+  o+=unit(RX+14,238,80,38,'MCU');o+=unit(RX+150,238,96,38,'Agent (RPi5)');
+  o+='<rect x="'+(RX+330)+'" y="'+232+'" width="60" height="50" rx="3" fill="#fff" stroke="'+INK+'"/>'+txt(RX+360,252,'120Ω',{fs:8.5,fw:700})+txt(RX+360,266,'종단',{fs:8});
+  o+='<line x1="'+(RX+94)+'" y1="257" x2="'+(RX+150)+'" y2="257" stroke="'+DT+'" stroke-width="2.4"/>';
+  o+='<line x1="'+(RX+246)+'" y1="257" x2="'+(RX+330)+'" y2="257" stroke="'+DT+'" stroke-width="2.4" stroke-dasharray="6 4"/>';
+  o+=txt(RX+160,250,'CAN Twisted Pair',{fs:8,c:DT,fw:700});
+  // 3) Local Network
+  o+=rbox(320,122,'로컬 네트워크 (Ethernet)');
+  o+='<rect x="'+(RX+22)+'" y="372" width="80" height="42" rx="2" fill="'+CF+'" stroke="'+INK+'"/><rect x="'+(RX+18)+'" y="368" width="80" height="42" rx="2" fill="'+CF2+'" stroke="'+INK+'"/>'+txt(RX+58,393,'Compute|Nodes',{fs:8.5,fw:700});
+  o+=unit(RX+150,370,96,42,'Cameras|USB3/CSI');
+  o+='<rect x="'+(RX+300)+'" y="368" width="120" height="46" rx="3" fill="'+CF+'" stroke="'+INK+'"/>'+txt(RX+360,384,'Eth SW',{fs:9,fw:700});
+  for(var pi=0;pi<5;pi++){o+='<rect x="'+(RX+308+pi*22)+'" y="398" width="16" height="10" fill="#3f4a57" stroke="'+INK+'" stroke-width="0.5"/>';}
+  o+='<line x1="'+(RX+98)+'" y1="389" x2="'+(RX+300)+'" y2="389" stroke="'+DT+'" stroke-width="1.8"/>';
+  o+='<line x1="'+(RX+246)+'" y1="391" x2="'+(RX+300)+'" y2="391" stroke="'+DT+'" stroke-width="1.8"/>';
+  o+=txt(RX+250,384,'RJ45 Cat6',{fs:8,c:DT,fw:700});
+  // 4) Safety & Authority
+  o+=rbox(454,180,'안전 장치 및 제어 권한 (Safety &amp; Authority)');
+  // estop symbol
+  o+='<circle cx="'+(RX+60)+'" cy="510" r="20" fill="#fff" stroke="'+PW+'" stroke-width="2"/><circle cx="'+(RX+60)+'" cy="510" r="12" fill="'+PW+'"/>';
+  o+=txt(RX+60,548,'Ø22 2NC',{fs:9,fw:700,c:PW});
+  // NC contact + cutoff line (red solid physical)
+  o+='<line x1="'+(RX+100)+'" y1="500" x2="'+(RX+150)+'" y2="500" stroke="'+PW+'" stroke-width="2"/><line x1="'+(RX+150)+'" y1="500" x2="'+(RX+185)+'" y2="488" stroke="'+PW+'" stroke-width="2"/><line x1="'+(RX+185)+'" y1="500" x2="'+(RX+240)+'" y2="500" stroke="'+PW+'" stroke-width="2"/>';
+  o+=txt(RX+170,520,'모터 enable 물리 차단',{fs:8.5,c:PW,fw:700});
+  // star ground symbol
+  o+='<line x1="'+(RX+360)+'" y1="486" x2="'+(RX+360)+'" y2="506" stroke="'+INK+'" stroke-width="1.6"/>';
+  o+='<line x1="'+(RX+346)+'" y1="506" x2="'+(RX+374)+'" y2="506" stroke="'+INK+'" stroke-width="1.6"/><line x1="'+(RX+350)+'" y1="512" x2="'+(RX+370)+'" y2="512" stroke="'+INK+'" stroke-width="1.4"/><line x1="'+(RX+354)+'" y1="518" x2="'+(RX+366)+'" y2="518" stroke="'+INK+'" stroke-width="1.2"/>';
+  o+=txt(RX+360,536,'Star Ground|1점 접지',{fs:8.5,fw:700});
+  o+=txt(RX+60,580,'권한: 물리안전 > Agent정책 > HMI > Cloud > ACU',{a:'start',fs:8.5,c:G});
+  o+=txt(RX+60,600,'전원/모터 도메인 분리 · E-stop은 컴퓨트 비차단',{a:'start',fs:8.5,c:G});
+  svg.innerHTML=o;
+})();
+</script>
+</body></html>

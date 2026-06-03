@@ -1,3 +1,5 @@
+> ⛔ **DEPRECATED** — 이 문서는 통합 기준서 **[STATION-SDV-SPEC-2026-001 (Technical Baseline)](sdv-reference-platform.html)** Part D(RIG-1 평면 패널 · RIG-2 프로파일 로버)로 대체되었습니다. 최신 규정은 마스터 문서를 참조하세요.
+
 # SDV 레퍼런스 리그 — 실물 제작·배치 가이드 (NotebookLM 인포그래픽 스크립트)
 
 > **이 문서대로 보드를 베이스플레이트에 부착·배선하면 리그가 완성된다.** 개념 설명이 아니라 **실측 지시서**.
