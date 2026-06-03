@@ -353,6 +353,7 @@
         <tr><td class="mono">ADR-012</td><td>CommandEnvelope + 3단계 ACK</td></tr>
         <tr><td class="mono">ADR-013</td><td>신호 네임스페이스 (machine.* · env.* · crop.*)</td></tr>
         <tr><td class="mono">ADR-014</td><td>Robot Blueprint · 개방형 NodeKind · platform/profile 분리</td></tr>
+        <tr><td class="mono">ADR-015</td><td>첫 구현 단위 = Reference Local Agent (HMI는 하류)</td></tr>
         <tr><td class="mono">ROS REP-105</td><td>좌표 프레임 규약 (map · odom · base_link)</td></tr>
       </tbody>
     </table>
@@ -1717,6 +1718,9 @@ registry/{robotId}/device      ↔ device record                       (IF-X-REG
         <tr><td>IF-L 버전</td><td>provider profile 변경 시 해당 IF-L의 영향 consumer를 명시(예: pose schema 변경 → IF-L-ACU-LPU + ACU 영향).</td></tr>
       </tbody>
     </table>
+    <div class="req"><span class="tag">IMPLEMENTATION SEQUENCE</span> &nbsp;첫 구현 단위는 <b class="k">HMI가 아니라 Reference Local Agent</b>다(<a href="../adr/ADR-015-reference-local-agent-first.md">ADR-015</a>).
+      허브-스포크상 HMI는 <span class="mono">IF-L-HMI-AGG</span>로 Agent aggregate만 구독하는 하류 thin client이므로, Agent가 정규화 데이터를 내놓기 전엔 그릴 게 없다.
+      순서: <b class="k">① SignalStore+EventBus → ② NodeRegistry+Health → ③ CommandRouter+ACK+Gate</b>(+ mock 노드 1개로 vertical slice: Signal up · Command/3-stage ACK down) → 이후 Policy·Scan·Telemetry, 그다음 <span class="mono">nodes/*</span> 확장과 <span class="mono">apps/sdv</span> HMI. <b class="k">seam(NodeAdapter + Agent API)을 먼저 고정</b>해 노드팀·HMI팀 병렬 개발을 언블록한다.</div>
   </section>
 
   <section class="divider"><div class="dv-id">ANNEXES</div><div class="dv-title">A – H</div><div class="dv-sub">ProtocolProfile JSON · Node JSON · ID Grammar · Drawing Index · Contract Alignment · Requirements · Figures &amp; Tables · Change Log</div></section>

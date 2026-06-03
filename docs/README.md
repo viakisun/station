@@ -23,7 +23,7 @@ STATION = **Ops·Build·Field 3제품 × 하나의 Platform Core / Integration F
 ## 3. 결정 기록 (ADR)
 [adr/](adr/) — 001 제품 분리(단계적) · 002 Context 전송 · 003 실시간 프로토콜 · 004 ID 문법 ·
 005 상태 색상 · 006 Gate 4단계 · 007 Audit/Event 분리 · 008 async 전환 · 009 Incident `closed` ·
-**010 Contracts SSOT(JSON Schema)** · **011 노드/기관 소유 모델** · **012 CommandEnvelope+3단계 ACK** · **013 신호 NS(machine.*/env.*)** · **014 Robot Blueprint·개방형 NodeKind·platform/profile 분리**.
+**010 Contracts SSOT(JSON Schema)** · **011 노드/기관 소유 모델** · **012 CommandEnvelope+3단계 ACK** · **013 신호 NS(machine.*/env.*)** · **014 Robot Blueprint·개방형 NodeKind·platform/profile 분리** · **015 첫 구현 단위=Reference Local Agent(HMI는 하류)**.
 
 ## 4. 수행 완료 보고서 (목업 스크린샷 포함)
 - [04. Ops 수행 완료 보고서](reports/04-ops-수행완료보고서.md) — 폐루프 L1·L2, 신규 원인분류·재발·Close
