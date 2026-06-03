@@ -1,21 +1,21 @@
 {
-  "manifestId": "meta.module.thinning_ee.v1",
-  "moduleType": "thinning_ee",
+  "manifestId": "meta.module.pinching_ee.v1",
+  "moduleType": "pinching_ee",
   "version": "v1",
   "ownerOrg": "ORG-META",
   "vendorAlias": "VND-GREEN",
-  "legacyModuleId": "MOD-EE-THIN",
+  "legacyModuleId": "MOD-EE-PINCH",
   "attachesToNode": "ACU",
   "controller": { "kind": "ACU" },
   "protocol": { "transport": "DDS", "profileRef": "PRT-DDS-v1" },
   "requiredDriver": { "id": "meta.driver.ee-modbus", "minVersion": "1.0.0" },
   "requiredApps": [
-    { "id": "station.app.thin-control", "minVersion": "1.0.0" },
+    { "id": "station.app.pinch-control", "minVersion": "1.0.0" },
     { "id": "station.app.ee-calibration", "minVersion": "1.0.0" }
   ],
   "signals": ["machine.ee.grip_force"],
   "commands": ["ee.pinch", "ee.release", "ee.calibrate"],
   "calibration": [{ "req": "grip-force zero/span", "cadence": "주 1회" }],
-  "firmwareRef": "FW-EE-3.1.2",
-  "conformance": { "suite": "TS-SAFETY", "passRate": 96 }
+  "firmwareRef": "FW-EEP-3.0.9",
+  "conformance": { "suite": "TS-SAFETY", "passRate": 95 }
 }

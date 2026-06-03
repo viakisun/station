@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/panel-host.json",
+  "title": "PanelDescriptor",
+  "description": "HMI panel-host 계약(Part G G8 / Annex E8 갭 정형화). 작업 앱·모듈이 제공하는 운영자 패널(Operator Interaction Face)이 어느 벤더 HMI 셸에도 렌더되도록 하는 host-agnostic 디스크립터. 패널은 Agent API(IF-L-HMI-AGG)만 통해 데이터를 구독하고 명령은 evaluateGate를 경유한다 — 게이트 우회·노드 직결 불가.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["panelId", "title", "slot", "apiVersion", "entry"],
+  "properties": {
+    "panelId": {
+      "type": "string",
+      "pattern": "^panel\\.[a-z0-9-]+$",
+      "description": "패널 식별자. 예 panel.growth-scan"
+    },
+    "ownerAppId": {
+      "type": "string",
+      "pattern": "^station\\.app\\.[a-z0-9-]+$",
+      "description": "이 패널을 제공하는 앱(모듈 제공 시 생략 가능)"
+    },
+    "title": { "type": "string" },
+    "slot": {
+      "type": "string",
+      "enum": ["work", "status", "modal", "sidebar"],
+      "description": "host 셸 마운트 위치 — 고정 셸 영역(E2.1)"
+    },
+    "apiVersion": { "type": "string", "description": "panel-host 계약 버전(semver)" },
+    "minHostVersion": { "type": "string", "description": "요구 최소 HMI 셸 버전(멀티벤더 HMI 호환)" },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "ref"],
+      "description": "host가 패널을 로드하는 방식 — 셸 종류와 무관하게 해석 가능해야 한다",
+      "properties": {
+        "kind": { "type": "string", "enum": ["webview", "native", "declarative"] },
+        "ref": { "type": "string", "description": "번들/URL/선언 스펙 참조" }
+      }
+    },
+    "dataBindings": {
+      "type": "array",
+      "description": "패널이 구독하는 신호/관측 — Agent aggregate(read-only) 경유",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source"],
+        "properties": {
+          "source": { "type": "string", "description": "channel NS 또는 observation. 예 crop.growth.ndvi · OBS-*" },
+          "as": { "type": "string" }
+        }
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "패널이 발신 가능한 verb — 전부 evaluateGate 경유(노드 직결 0)"
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "샌드박스 — 패널이 접근 가능한 범위",
+      "properties": {
+        "signals": { "type": "array", "items": { "type": "string" } },
+        "commands": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

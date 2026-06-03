@@ -1,0 +1,12 @@
+{
+  "id": "PRT-ROS-v1",
+  "transport": "ROS2",
+  "ack": "at_least_once",
+  "timeout": "<50ms",
+  "security": "SROS2 (optional)",
+  "topics": [
+    { "dir": "telemetry", "topic": "crop.growth.ndvi", "payload": "Signal" },
+    { "dir": "telemetry", "topic": "machine.vision.fps", "payload": "Signal" },
+    { "dir": "cmd", "topic": "vision.capture.start", "payload": "CommandEnvelope" }
+  ]
+}

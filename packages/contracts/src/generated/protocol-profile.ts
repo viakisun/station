@@ -9,7 +9,7 @@ export interface ProtocolProfile {
    * 예 PRT-MQTT-v2
    */
   id: string;
-  transport: "MQTT" | "ROS2" | "DDS";
+  transport: "MQTT" | "ROS2" | "DDS" | "CAN" | "SERIAL" | "WS";
   topics?: {
     dir: "cmd" | "telemetry" | "event";
     topic: string;

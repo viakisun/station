@@ -27,6 +27,8 @@ const schemaFor = (name) => {
   if (name.startsWith("org.")) return "organization";
   if (name.startsWith("node.")) return "node";
   if (name.startsWith("manifest.")) return "module-manifest";
+  if (name.startsWith("app.")) return "app-manifest";
+  if (name.startsWith("panel.")) return "panel-host";
   if (name.startsWith("blueprint.")) return "robot-blueprint";
   if (name.startsWith("signal-channel.")) return "signal-channel";
   if (name.startsWith("signal.")) return "signal";

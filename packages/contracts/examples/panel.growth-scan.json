@@ -1,0 +1,19 @@
+{
+  "panelId": "panel.growth-scan",
+  "ownerAppId": "station.app.growth-scan",
+  "title": "생육분석 스캔",
+  "slot": "work",
+  "apiVersion": "1.0.0",
+  "minHostVersion": "1.0.0",
+  "entry": { "kind": "declarative", "ref": "meta.panel.growth-scan" },
+  "dataBindings": [
+    { "source": "crop.growth.ndvi", "as": "ndvi" },
+    { "source": "crop.growth.lai", "as": "lai" },
+    { "source": "GrowthObservation", "as": "observations" }
+  ],
+  "commands": ["scan.start", "scan.stop"],
+  "permissions": {
+    "signals": ["crop.growth.ndvi", "crop.growth.lai", "crop.growth.plant_height"],
+    "commands": ["scan.start", "scan.stop"]
+  }
+}

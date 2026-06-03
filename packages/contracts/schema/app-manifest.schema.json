@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/app-manifest.json",
+  "title": "AppManifest",
+  "description": "작업 앱(station.app.*)의 매니페스트. Software-Defined Work Layer(Part G G1)의 정형화 — 모듈/노드 requiredApps[].id가 가리키는 대상. 앱은 작업 로직을 선언·제공하되 플랫폼 권한을 갖지 않는다(명령은 CommandCatalog 등록 후 evaluateGate를 통과해야 실행, 앱 선언 safety는 비신뢰).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["appId", "version", "appType", "ownerOrg"],
+  "properties": {
+    "appId": {
+      "type": "string",
+      "pattern": "^station\\.app\\.[a-z0-9-]+$",
+      "description": "platform 네임스페이스 식별자. 예 station.app.growth-scan"
+    },
+    "version": { "type": "string", "description": "semver. 버전은 식별자가 아니라 매니페스트에." },
+    "appType": {
+      "type": "string",
+      "enum": ["control", "calibration", "scan", "aggregate"],
+      "description": "작업 유형"
+    },
+    "ownerOrg": { "type": "string", "pattern": "^ORG-[A-Z]+$", "description": "공급 벤더(멀티벤더 추적)" },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "호환 범위(semver range)",
+      "properties": {
+        "platform": { "type": "string" },
+        "contracts": { "type": "string" },
+        "runtime": { "type": "string" }
+      }
+    },
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "resolving 입력 — 필요 노드·모듈·보정·계약",
+      "properties": {
+        "nodes": { "type": "array", "items": { "type": "string" }, "description": "필요 NodeKind. 예 VPU·LPU·ACU" },
+        "modules": { "type": "array", "items": { "type": "string" }, "description": "필요 ModuleManifest.manifestId" },
+        "calibration": { "type": "array", "items": { "type": "string" }, "description": "필요 보정. 예 CAL-VPU-NIR" },
+        "contracts": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "provides": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "앱이 가산하는 verb·channel·관측",
+      "properties": {
+        "commands": { "type": "array", "items": { "type": "string" }, "description": "추가 명령 verb. CommandCatalog 등록 대상(G3.5)" },
+        "signals": { "type": "array", "items": { "type": "string" } },
+        "observations": { "type": "array", "items": { "type": "string" }, "description": "예 GrowthObservation(OBS-*)" }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "3rd-party 샌드박스 — 앱이 접근 가능한 범위",
+      "properties": {
+        "commands": { "type": "array", "items": { "type": "string" } },
+        "signals": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "앱 선언(참고값 — 플랫폼이 재판단). 최종 판단은 Platform Policy.",
+      "properties": {
+        "class": { "type": "string", "enum": ["none", "guarded", "safety_critical"] },
+        "requiresGate": { "type": "boolean" }
+      }
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "미션 program 위치·번들 참조",
+      "properties": {
+        "runsOn": { "type": "string", "description": "(개방형) 권장 Agent·ACU·VPU" },
+        "ref": { "type": "string" }
+      }
+    },
+    "aggregator": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "관측 합성기(Agent측, 선택)",
+      "properties": {
+        "ref": { "type": "string" },
+        "produces": { "type": "string" }
+      }
+    },
+    "panel": {
+      "type": "string",
+      "description": "Operator Interaction Face — PanelDescriptor.panelId 참조(panel-host 계약). 선택."
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "배포-오케스트레이션 힌트(선택·후속)",
+      "properties": {
+        "cpu": { "type": "string" },
+        "gpu": { "type": "string" },
+        "storage": { "type": "string" }
+      }
+    },
+    "conformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "suite": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    }
+  }
+}

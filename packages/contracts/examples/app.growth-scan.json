@@ -1,0 +1,26 @@
+{
+  "appId": "station.app.growth-scan",
+  "version": "1.0.0",
+  "appType": "scan",
+  "ownerOrg": "ORG-META",
+  "compatibility": { "platform": ">=1.0.0", "contracts": ">=1.0.0", "runtime": ">=1.0.0" },
+  "requires": {
+    "nodes": ["VPU", "LPU", "ACU"],
+    "calibration": ["CAL-VPU-NIR", "CAL-VPU-RGB"],
+    "contracts": ["Signal", "Command", "Event"]
+  },
+  "provides": {
+    "commands": ["scan.start", "scan.stop"],
+    "signals": ["crop.growth.plant_height", "crop.growth.lai", "crop.growth.ndvi"],
+    "observations": ["GrowthObservation"]
+  },
+  "permissions": {
+    "commands": ["scan.start", "scan.stop"],
+    "signals": ["crop.growth.plant_height", "crop.growth.lai", "crop.growth.ndvi", "machine.localization.pose", "machine.autonomy.state"]
+  },
+  "safety": { "class": "guarded", "requiresGate": true },
+  "program": { "runsOn": "ACU", "ref": "meta.program.growth-scan" },
+  "aggregator": { "ref": "meta.aggregator.growth", "produces": "GrowthObservation" },
+  "panel": "panel.growth-scan",
+  "conformance": { "suite": "TS-SCAN", "version": "1.0" }
+}

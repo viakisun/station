@@ -1,0 +1,12 @@
+{
+  "id": "PRT-CAN-v1",
+  "transport": "CAN",
+  "ack": "at_least_once",
+  "timeout": "<10ms",
+  "security": "bus-physical / no transport crypto",
+  "topics": [
+    { "dir": "telemetry", "topic": "machine.motion.speed", "payload": "Signal" },
+    { "dir": "cmd", "topic": "motion.stop", "payload": "CommandEnvelope" },
+    { "dir": "event", "topic": "machine.safety.estop", "payload": "Event" }
+  ]
+}

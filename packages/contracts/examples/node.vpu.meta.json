@@ -6,5 +6,5 @@
   "role": "카메라·객체/작물/사람 인식",
   "signals": ["machine.vision.fps", "machine.vision.framedrop", "machine.vision.worker_detected"],
   "commands": ["vision.capture.start", "vision.capture.stop", "vision.calibrate"],
-  "protocolRef": "PRT-MQTT-v2"
+  "protocolRef": "PRT-ROS-v1"
 }

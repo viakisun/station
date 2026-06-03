@@ -1,0 +1,12 @@
+{
+  "id": "PRT-WS-v1",
+  "transport": "WS",
+  "ack": "at_least_once",
+  "timeout": "interactive",
+  "security": "TLS (wss)",
+  "topics": [
+    { "dir": "telemetry", "topic": "machine.*", "payload": "Signal" },
+    { "dir": "cmd", "topic": "operator.command", "payload": "CommandEnvelope" },
+    { "dir": "event", "topic": "event.*", "payload": "Event" }
+  ]
+}

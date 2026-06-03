@@ -6,5 +6,5 @@
   "role": "구동·조향·충전·비상정지·엔코더 (저수준 실시간 I/O)",
   "signals": ["machine.motion.speed", "machine.power.battery_voltage", "machine.safety.estop"],
   "commands": ["motion.set_speed_limit", "motion.stop"],
-  "protocolRef": "PRT-MQTT-v2"
+  "protocolRef": "PRT-CAN-v1"
 }

@@ -8,7 +8,7 @@
   "required": ["id", "transport"],
   "properties": {
     "id": { "type": "string", "description": "예 PRT-MQTT-v2" },
-    "transport": { "type": "string", "enum": ["MQTT", "ROS2", "DDS"] },
+    "transport": { "type": "string", "enum": ["MQTT", "ROS2", "DDS", "CAN", "SERIAL", "WS"] },
     "topics": {
       "type": "array",
       "items": {

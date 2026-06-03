@@ -3,7 +3,8 @@
    ============================================================ */
 
 export const ID_PATTERNS = {
-  robot: /^RBT-(THIN|PINCH)-\d{4}$/,
+  // robot class는 개방형 SDV — 작업 종류를 enum으로 가두지 않는다(과거 THIN|PINCH 하드코딩 일반화).
+  robot: /^RBT-[A-Z0-9]+-\d{4}$/,
   module: /^MOD-[A-Z0-9-]+$/,
   workSession: /^WKS-\d{8}-\d{5}$/,
   command: /^CMD-[A-Z0-9-]+$/,
@@ -14,6 +15,14 @@ export const ID_PATTERNS = {
   node: /^NODE-[A-Z]+-[A-Z]+$/,
   channel: /^[a-z]+(\.[a-z0-9_]+)+$/,
   manifest: /^[a-z]+\.(module|node)\.[a-z0-9_]+\.v[0-9]+$/,
+  // 작업 앱 식별자 (Part G) — platform 네임스페이스
+  appId: /^station\.app\.[a-z0-9-]+$/,
+  // 런타임 인스턴스 식별자 — 설계 baseline에서 normative (Part B5)
+  scanSession: /^SCN-\d{8}-\d{4}$/,
+  observation: /^OBS-\d{8}-\d{4}$/,
+  route: /^RT-[A-Z0-9]+-[A-Z0-9]+-\d{2}$/,
+  map: /^MAP-[A-Z0-9-]+-v\d+$/,
+  incident: /^INC-\d{8}-\d{4}$/,
 } as const;
 
 export type IdKind = keyof typeof ID_PATTERNS;

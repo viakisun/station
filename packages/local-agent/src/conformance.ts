@@ -19,7 +19,7 @@ export const EXPECTED_PROTOCOL: Record<string, string> = {
 /**
  * F7 conformance — 노드 선언이 계약/IF-P 시트와 정합하는지 검사.
  * signals·commands 는 표준 NS(채널 문법), protocolRef 는 기대값과 대조.
- * (현재 examples/node.*.json 의 stale protocolRef 가 Annex E 불일치로 드러난다.)
+ * (examples/node.*.json 의 protocolRef 는 SSOT 정합 완료 — ADR-018. 불일치 노드는 여기서 검출된다.)
  */
 export function checkNodeConformance(node: Node): ConformanceIssue[] {
   const issues: ConformanceIssue[] = [];

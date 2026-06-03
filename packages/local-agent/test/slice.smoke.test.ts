@@ -61,12 +61,22 @@ describe("M1 vertical slice — Reference Local Agent", () => {
     expect(stages).toEqual(["received", "rejected"]);
   });
 
-  it("Conformance: node.mcu.age.json protocolRef가 Annex E 불일치", () => {
+  it("Conformance: node.mcu.age.json protocolRef가 IF-P 시트와 정합(SSOT 정합 완료)", () => {
     const p = fileURLToPath(new URL("../../contracts/examples/node.mcu.age.json", import.meta.url));
     const node = JSON.parse(readFileSync(p, "utf8")) as Node;
-    const issues = checkNodeConformance(node);
-    const proto = issues.filter((i) => i.kind === "protocol");
+    const proto = checkNodeConformance(node).filter((i) => i.kind === "protocol");
+    expect(proto).toHaveLength(0); // 정합 후 0 (구 stale PRT-MQTT-v2 → PRT-CAN-v1)
+  });
+
+  it("Conformance: harness가 의도적 protocolRef 불일치를 검출한다", () => {
+    const bad: Node = {
+      nodeId: "NODE-MCU-AGE",
+      kind: "MCU",
+      ownerOrg: "ORG-AGE",
+      label: "test",
+      protocolRef: "PRT-MQTT-v2", // MCU 기대=PRT-CAN-v1
+    };
+    const proto = checkNodeConformance(bad).filter((i) => i.kind === "protocol");
     expect(proto).toHaveLength(1);
-    console.log("CONFORMANCE", proto[0]?.detail);
   });
 });

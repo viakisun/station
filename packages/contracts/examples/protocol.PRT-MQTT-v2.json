@@ -1,0 +1,11 @@
+{
+  "id": "PRT-MQTT-v2",
+  "transport": "MQTT",
+  "ack": "at_least_once",
+  "timeout": "batch",
+  "security": "TLS · X.509",
+  "topics": [
+    { "dir": "telemetry", "topic": "machine.telemetry.cloud_connected", "payload": "Signal" },
+    { "dir": "cmd", "topic": "telemetry.uplink.flush", "payload": "CommandEnvelope" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "PRT-DDS-v1",
+  "transport": "DDS",
+  "ack": "at_least_once",
+  "timeout": "<20ms",
+  "security": "DDS-Security (optional)",
+  "topics": [
+    { "dir": "telemetry", "topic": "machine.localization.pose", "payload": "Signal" },
+    { "dir": "telemetry", "topic": "machine.autonomy.state", "payload": "Signal" },
+    { "dir": "cmd", "topic": "autonomy.mission.start", "payload": "CommandEnvelope" }
+  ]
+}

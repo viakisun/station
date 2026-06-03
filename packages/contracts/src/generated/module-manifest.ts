@@ -35,7 +35,7 @@ export interface ModuleManifest {
     model?: string;
   };
   protocol?: {
-    transport: "MQTT" | "ROS2" | "DDS";
+    transport: "MQTT" | "ROS2" | "DDS" | "CAN" | "SERIAL" | "WS";
     /**
      * ProtocolProfile.id
      */
@@ -46,7 +46,7 @@ export interface ModuleManifest {
     minVersion: string;
   };
   /**
-   * App Runtime(인포테인먼트 런처)가 보장해야 할 모듈 앱
+   * 이 모듈이 요구하는 작업 앱(station.app.*). App Runtime이 부팅·모듈 교체 시 derive·로드한다(Part G). id는 AppManifest.appId를 가리킴.
    */
   requiredApps?: {
     id: string;
