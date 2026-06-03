@@ -44,6 +44,16 @@
 - **멀티벤더 생태계** — 번들 모델로 구조가 다른 제조사 모듈·노드를 코어 변경 없이 채용한다. 플랫폼은 부품이 아니라 **통합 규제(integration regime)**를 소유한다.
 - **구현 경로 정렬** — App Runtime은 Agent측 가산이므로 M1/M2(ADR-015) 위에 비파괴로 얹힌다. 첫 앱(`station.app.growth-scan`)이 후속 Step5다.
 
+## 구현
+
+- **M3 (2026-06-04) — App Runtime + 첫 작업 앱 구현.** 본 ADR의 5층·생명주기·CommandCatalog·파생 모델이 `packages/local-agent`에 코드로 실현됨(M1/M2 코어 비파괴 가산).
+  - `app-runtime.ts` — `WorkApp`·`AppContext`(샌드박스 면)·`AppRegistry`(managed-load, `resolve()` 경계)·`AppRuntime`(derive→resolving→loaded→gating→**active/gate_blocked**→unloaded). 트리거 = 명시 `deriveAndLoad()`(노드 안정 후, 결정적).
+  - `command-catalog.ts` — verb→`{ownerAppId·targetNodeKind·safetyClass·requiredRole·gateRefs·handler}` 런타임 등록(계약 미변경). `evaluateGate`가 입력으로만 참조.
+  - `command-router.ts` — 옵셔널 `catalog?` 주입 시 앱 verb를 노드 경로 *앞에서* 분기(앱 active·requiredRole·gateRefs(보정) 판정, 노드 registry 미요구). 핸들러는 Agent-hosted(노드 직결 0, REQ-A02). 미주입 경로(M1/M2)는 바이트 동일 — 회귀 10/10 green.
+  - `apps/growth-scan.ts` — `station.app.growth-scan` 실체. `scan.start`→세션 open(SCN-*)+ACU 미션+VPU capture(둘 다 게이트 경유)→aggregator(`crop.growth.ndvi` 도착 트리거)가 pose⊕crop⊕autonomy state 스냅샷→**GrowthObservation(OBS-*)** 합성→`ObservationStore`.
+  - 검증: `test/app-runtime.scan.test.ts` 10 케이스(derive→active · scan 슬라이스 · OBS 합성 · **gate_blocked**(보정 누락) · 의존 노드 게이트 · **모듈 교체**=unload→verb deregister→rejected · 미등록 verb rejected). 데모 `run-scan.ts`.
+- **이번 범위 밖(후속):** 실 OTA `AppRegistry`(static factory 유지) · HMI/panel 렌더 · OBS 클라우드 업링크 · Driver Runtime(mock) · 2nd 앱(thin/pinch)에서 resolving 충돌해소·다중 앱 우선순위 본검증 · ACU-hosted program(레퍼런스=Agent-hosted, G6).
+
 ## 대안 (기각)
 
 - **앱을 `ModuleManifest`에 과적** — 프로즌 계약을 깨고, 작업 behavior·생명주기를 정적 선언에 욱여넣어 거버넌스가 사라진다. 기각(파생 모델 채택).

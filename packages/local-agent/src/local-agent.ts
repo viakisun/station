@@ -1,4 +1,4 @@
-import type { ModuleManifest } from "@station/contracts";
+import type { CommandAck, CommandEnvelope, ModuleManifest } from "@station/contracts";
 import type {
   CommandRouter,
   EventBus,
@@ -10,22 +10,62 @@ import { InMemorySignalStore } from "./signal-store";
 import { InMemoryEventBus } from "./event-bus";
 import { NodeRegistry } from "./node-registry";
 import { GatedCommandRouter } from "./command-router";
+import { InMemoryCommandCatalog, type CommandCatalog } from "./command-catalog";
+import { InMemoryObservationStore, type ObservationStore } from "./observation-store";
+import { AppRegistry, AppRuntime, type AppContext, type WorkApp } from "./app-runtime";
+import { GrowthScanApp } from "./apps/growth-scan";
+
+export interface LocalAgentOptions {
+  /** 시드 보정(gating 입력). 비우면 앱이 gate_blocked. */
+  calibrations?: Iterable<string>;
+  /** AppRegistry 사전 등록(미지정 시 기본 = growth-scan). */
+  apps?: Array<{ appId: string; factory: () => WorkApp }>;
+}
 
 /**
  * Reference Local Agent (ADR-015) — 허브.
  * 노드(NodeAdapter)를 흡수해 표준 Signal/Event/Command 면을 노출한다.
  * register 시 노드의 Signal→SignalStore, Event→EventBus, Ack→CommandRouter 로 연결.
+ * M3: observations(ObservationStore) + apps(AppRuntime) 가산. 코어 비파괴 — catalog 미주입 경로 불변.
  */
 export class ReferenceLocalAgent implements LocalAgent {
   readonly signals: SignalStore = new InMemorySignalStore();
   readonly events: EventBus = new InMemoryEventBus();
+  readonly observations: ObservationStore = new InMemoryObservationStore();
+  /** 시드 보정 집합 — 테스트/데모가 주입(CAL-VPU-NIR·RGB). gating 입력. */
+  readonly calibrations = new Set<string>();
+
   readonly #registry = new NodeRegistry();
-  readonly #router = new GatedCommandRouter(this.#registry);
+  readonly #catalog: CommandCatalog = new InMemoryCommandCatalog();
+  readonly #router = new GatedCommandRouter(this.#registry, this.#catalog);
   readonly commands: CommandRouter = this.#router;
+  readonly apps: AppRuntime;
 
   #adapters: NodeAdapter[] = [];
   #unsub: Array<() => void> = [];
   #started = false;
+
+  constructor(options: LocalAgentOptions = {}) {
+    for (const c of options.calibrations ?? []) this.calibrations.add(c);
+    this.#catalog.bindCalibrations(this.calibrations);
+
+    const ctx: AppContext = {
+      signals: this.signals,
+      events: this.events,
+      observations: this.observations,
+      calibrations: this.calibrations,
+      dispatch: (cmd: CommandEnvelope, onAck?: (a: CommandAck) => void) =>
+        this.#router.dispatch(cmd, onAck ?? (() => {})),
+    };
+
+    const registry = new AppRegistry();
+    const entries = options.apps ?? [
+      { appId: "station.app.growth-scan", factory: () => new GrowthScanApp() },
+    ];
+    for (const e of entries) registry.register(e.appId, e.factory);
+
+    this.apps = new AppRuntime(registry, this.#catalog, ctx, (kind) => this.#registry.get(kind) !== undefined);
+  }
 
   register(adapter: NodeAdapter): void {
     const node = adapter.manifest.attachesToNode; // M1: 노드 kind 식별자
@@ -68,6 +108,6 @@ export class ReferenceLocalAgent implements LocalAgent {
   }
 }
 
-export function createLocalAgent(): ReferenceLocalAgent {
-  return new ReferenceLocalAgent();
+export function createLocalAgent(options?: LocalAgentOptions): ReferenceLocalAgent {
+  return new ReferenceLocalAgent(options);
 }

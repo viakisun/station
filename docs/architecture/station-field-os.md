@@ -244,10 +244,10 @@ HMI 셸은 자동차 인포테인먼트 OS의 앱 런처에 대응한다. 모듈
 | 단계 | 내용 | 산출물 | 상태 |
 | --- | --- | --- | --- |
 | **1단계** | STATION Contracts(스키마 SSOT) + 노드/기관 모델 + 런타임 인터페이스 + 본 문서 | `packages/contracts/{schema,src,runtime}` · ADR-010~013 · 본 문서 · [시나리오 변경 명세](scenario-change-spec.md) | ✅ 완료 |
-| **2단계** | 참조 런타임 — Local Agent 구현 + 에이전트 앱(NodeAdapter·PolicyEngine·CommandRouter 실체) | `packages/local-agent` · `apps/agent` | ⬜ 후속 |
+| **2단계** | 참조 런타임 — Local Agent 구현 + 에이전트 앱(NodeAdapter·CommandRouter·App Runtime 실체) | `packages/local-agent` · `nodes/*` | 🟡 진행(M1·M2·M3) |
 | **3단계** | Flutter HMI — `schema/`에서 Dart 모델 생성, App Runtime 셸 | Flutter HMI · Dart codegen | ⬜ 후속 |
 
-1단계는 **계약과 문서**가 끝났다. 노드 프로토콜 흡수(런타임)와 HMI(경험층)는 같은 계약 위에 후속 단계로 올라간다.
+1단계는 **계약과 문서**가 끝났다. 2단계는 **M1**(Reference Local Agent 코어 — SignalStore·EventBus·NodeRegistry·CommandRouter 3단계 ACK·Gate, ADR-015) → **M2**(NodeTransport + 다중 노드 분산 seam) → **M3**(App Runtime + 첫 작업 앱 `station.app.growth-scan`, ADR-016 — scan.start→ACU 미션+VPU capture→GrowthObservation(OBS-*) 합성)까지 구현됨(`local-agent` test 20/20 green). 남은 것: PolicyEngine 전체·Telemetry bridge·`apps/agent` 상주화. HMI(경험층)는 같은 계약 위에 3단계로 올라간다.
 
 ---
 
