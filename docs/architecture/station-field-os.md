@@ -244,10 +244,10 @@ HMI 셸은 자동차 인포테인먼트 OS의 앱 런처에 대응한다. 모듈
 | 단계 | 내용 | 산출물 | 상태 |
 | --- | --- | --- | --- |
 | **1단계** | STATION Contracts(스키마 SSOT) + 노드/기관 모델 + 런타임 인터페이스 + 본 문서 | `packages/contracts/{schema,src,runtime}` · ADR-010~013 · 본 문서 · [시나리오 변경 명세](scenario-change-spec.md) | ✅ 완료 |
-| **2단계** | 참조 런타임 — Local Agent 구현 + 에이전트 앱(NodeAdapter·CommandRouter·App Runtime 실체) + 목업 런타임-백드 | `packages/local-agent` · `nodes/*` · `packages/domain/runtime` · `apps/console` | 🟡 진행(M1·M2·M3·M4) |
+| **2단계** | 참조 런타임 — Local Agent 구현 + App Runtime + HMI 옵저버 면(IF-L-HMI-AGG) + 원격 모니터링 목업 | `packages/local-agent` · `nodes/*` · `packages/domain/runtime` · `apps/console` | 🟡 진행(M1·M2·M3·M4·M5) |
 | **3단계** | Flutter HMI — `schema/`에서 Dart 모델 생성, App Runtime 셸 | Flutter HMI · Dart codegen | ⬜ 후속 |
 
-1단계는 **계약과 문서**가 끝났다. 2단계는 **M1**(Reference Local Agent 코어 — SignalStore·EventBus·NodeRegistry·CommandRouter 3단계 ACK·Gate, ADR-015) → **M2**(NodeTransport + 다중 노드 분산 seam) → **M3**(App Runtime + 첫 작업 앱 `station.app.growth-scan`, ADR-016 — scan.start→ACU 미션+VPU capture→GrowthObservation(OBS-*) 합성) → **M4**(목업을 실제 런타임 위에 — `apps/console`의 `/control/agent`가 브라우저 인프로세스 `createLocalAgent()` + mock 노드 위에서 실 Signal·ACK·OBS 를 렌더; `@station/domain/runtime` provider/hooks, ws-free browser 서브패스, DB/JSON 영속화 seam 주석)까지 구현됨(`local-agent` test 20/20 green · console build·런타임 동작 검증). 남은 것: PolicyEngine 전체·Telemetry bridge·앱-레벨 데이터 런타임/DB 연결·`apps/agent` 상주화. HMI(경험층)는 같은 계약 위에 3단계로 올라간다.
+1단계는 **계약과 문서**가 끝났다. 2단계는 **M1**(Reference Local Agent 코어 — SignalStore·EventBus·NodeRegistry·CommandRouter 3단계 ACK·Gate, ADR-015) → **M2**(NodeTransport + 다중 노드 분산 seam) → **M3**(App Runtime + 첫 작업 앱 `station.app.growth-scan`, ADR-016 — scan.start→ACU 미션+VPU capture→GrowthObservation(OBS-*) 합성) → **M4**(목업을 실제 런타임 위에 — `/control/agent`가 라이브 Local Agent 면을 렌더; `@station/domain/runtime` provider/hooks, ws-free browser 서브패스) → **M5**(원격 모니터링 토폴로지 — **Local Agent app**(`run-agent.ts`, 로컬/엣지 상주: 노드+growth-scan+**HmiHub** 옵저버 WS `:7101`) ↔ 웹은 `RemoteAgentClient`(네이티브 WebSocket)로 접속해 모니터링·명령; §11 `HMI↔Local Agent = WS(실시간 신호·ACK·이벤트)` 정합. 인프로세스는 폴백 모드 보존)까지 구현됨(`local-agent` test 20/20 green · console build ws-free · 원격 연결·scan→OBS over WS·미연결 empty 검증). 남은 것: PolicyEngine 전체·Telemetry bridge·앱-레벨 데이터 런타임/DB 연결·다중 에이전트 클라우드 fan-in·`apps/agent` 상주화. HMI(경험층)는 같은 계약 위에 3단계로 올라간다.
 
 ---
 

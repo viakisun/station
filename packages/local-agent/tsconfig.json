@@ -1,5 +1,5 @@
 {
   "extends": "@station/tsconfig/base.json",
-  "include": ["src", "test", "run.ts", "run-scan.ts"],
+  "include": ["src", "test", "run.ts", "run-scan.ts", "run-agent.ts"],
   "exclude": ["node_modules"]
 }

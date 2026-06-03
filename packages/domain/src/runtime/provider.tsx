@@ -1,32 +1,86 @@
 "use client";
 /* ============================================================
-   AgentRuntimeProvider — 라이브 Local Agent 를 React 트리에 노출.
-   mount 시 인프로세스 런타임을 부팅(싱글톤)하고 useAgent()로 제공.
-   싱글톤은 탭 수명 동안 유지(StrictMode 이중 마운트에 teardown 안 함).
+   AgentRuntimeProvider — Local Agent 면(AgentFacade)을 React 트리에 노출.
+   기본 = 원격(RemoteAgentClient → ws://localhost:7101, 별 프로세스의 Local
+   Agent app). NEXT_PUBLIC_AGENT_MODE=inproc 시 M4 인프로세스 시뮬 폴백
+   (오프라인/CI). useAgent()/useAgentStatus() 노출.
    ============================================================ */
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { ReferenceLocalAgent } from "@station/local-agent/browser";
+import type { AgentFacade, ConnectionState } from "./agent-facade";
+import { RemoteAgentClient } from "./remote-agent";
 import { getRuntime, peekRuntime } from "./agent-runtime";
 
-const AgentContext = createContext<ReferenceLocalAgent | null>(null);
+const MODE: "remote" | "inproc" =
+  process.env.NEXT_PUBLIC_AGENT_MODE === "inproc" ? "inproc" : "remote";
+const AGENT_WS = process.env.NEXT_PUBLIC_AGENT_WS ?? "ws://localhost:7101";
+
+export interface AgentStatus {
+  mode: "remote" | "inproc";
+  state: ConnectionState;
+  agentId: string;
+  endpoint: string;
+}
+
+const AgentContext = createContext<AgentFacade | null>(null);
+const StatusContext = createContext<AgentStatus>({
+  mode: MODE,
+  state: "connecting",
+  agentId: "",
+  endpoint: MODE === "remote" ? AGENT_WS : "in-process",
+});
+
+// 원격 클라이언트 싱글톤(탭 수명 — 네비게이션마다 재연결 방지).
+let remoteSingleton: RemoteAgentClient | undefined;
+function getRemote(): RemoteAgentClient {
+  if (!remoteSingleton) remoteSingleton = new RemoteAgentClient(AGENT_WS);
+  return remoteSingleton;
+}
 
 export function AgentRuntimeProvider({ children }: { children: ReactNode }) {
-  const [agent, setAgent] = useState<ReferenceLocalAgent | null>(() => peekRuntime());
+  const [agent, setAgent] = useState<AgentFacade | null>(() =>
+    MODE === "remote" ? getRemote() : peekRuntime(),
+  );
+  const [status, setStatus] = useState<AgentStatus>(() => ({
+    mode: MODE,
+    state: "connecting",
+    agentId: "",
+    endpoint: MODE === "remote" ? AGENT_WS : "in-process",
+  }));
 
   useEffect(() => {
+    if (MODE === "remote") {
+      const client = getRemote();
+      setAgent(client);
+      const sync = () =>
+        setStatus({ mode: "remote", state: client.state, agentId: client.agentId, endpoint: client.endpoint });
+      sync();
+      return client.subscribeState(sync);
+    }
+    // inproc 폴백
     let alive = true;
     void getRuntime().then((a) => {
-      if (alive) setAgent(a);
+      if (!alive) return;
+      setAgent(a);
+      setStatus({ mode: "inproc", state: "connected", agentId: "NODE-AGENT-VIA", endpoint: "in-process" });
     });
     return () => {
       alive = false;
     };
   }, []);
 
-  return <AgentContext.Provider value={agent}>{children}</AgentContext.Provider>;
+  return (
+    <AgentContext.Provider value={agent}>
+      <StatusContext.Provider value={status}>{children}</StatusContext.Provider>
+    </AgentContext.Provider>
+  );
 }
 
-/** 라이브 에이전트(부팅 전엔 null). */
-export function useAgent(): ReferenceLocalAgent | null {
+/** 라이브 에이전트 면(부팅/연결 전엔 null 또는 빈 미러). */
+export function useAgent(): AgentFacade | null {
   return useContext(AgentContext);
+}
+
+/** 연결 상태(remote: ws 연결 / inproc: 부팅). */
+export function useAgentStatus(): AgentStatus {
+  return useContext(StatusContext);
 }

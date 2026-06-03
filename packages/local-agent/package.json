@@ -12,6 +12,7 @@
     "test": "vitest run",
     "start": "tsx run.ts",
     "start:scan": "tsx run-scan.ts",
+    "start:agent": "tsx run-agent.ts",
     "lint": "echo \"(local-agent) no lint\" && exit 0"
   },
   "dependencies": {

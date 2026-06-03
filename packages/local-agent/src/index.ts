@@ -13,3 +13,5 @@ export { MockMcuNode } from "./nodes/mock-mcu";
 export * from "./wire/transport-adapter";
 export * from "./wire/serve";
 export * from "./wire/ws-hub";
+export * from "./wire/hmi-protocol";
+export * from "./wire/hmi-hub";

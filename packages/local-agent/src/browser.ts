@@ -19,4 +19,5 @@ export * from "./conformance";
 export { MockMcuNode } from "./nodes/mock-mcu";
 export * from "./wire/transport-adapter";
 export * from "./wire/serve";
-// 제외: ./wire/ws-hub (import WebSocketServer from "ws" — Node 전용)
+export * from "./wire/hmi-protocol"; // 순수 타입(browser-safe) — RemoteAgentClient 가 소비
+// 제외: ./wire/ws-hub, ./wire/hmi-hub (import ... from "ws" — Node 전용)

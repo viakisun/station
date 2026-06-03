@@ -1,14 +1,13 @@
 "use client";
 /* ============================================================
-   Local Agent 런타임 (in-process · 실제 런타임)
-   M4: Math.random 시뮬을 걷어내고 실제 Reference Local Agent(M1·M2·M3)를
-   브라우저에서 구동(@station/domain/runtime). 노드(MCU/VPU/ACU/LPU)가
-   loopback 으로 합류해 표준 Signal 을 스트림하고, 명령은 실 CommandRouter
-   3단계 ACK 를 거치며, growth-scan 앱이 scan.start 시 GrowthObservation(OBS-*)
-   을 합성한다. 데이터 소스는 mock 노드(setInterval) — 향후 Real 소스·WsHub 스왑.
+   Local Agent 런타임 — 원격 모니터(M5)
+   웹(Ops 콘솔)은 별 프로세스의 Local Agent app 에 HMI uplink(WS, IF-L-HMI-AGG)
+   로 접속해 실 Signal·ACK·Event·Observation 을 모니터링·명령한다(@station/domain
+   /runtime). 기본 토폴로지 = 원격(ws://localhost:7101) · 폴백 = 인프로세스 시뮬
+   (NEXT_PUBLIC_AGENT_MODE=inproc). 에이전트는 노드(MCU/VPU/ACU/LPU)를 흡수하고
+   growth-scan 으로 scan.start 시 GrowthObservation(OBS-*)을 합성한다.
 
    PolicyEngine·e-stop 게이트는 런타임 미구현(Step4) → "시뮬" 라벨 유지.
-   단 발행하는 event/command 는 실제 런타임을 경유한다.
    디자인은 기존 목업 100% 보존, 데이터 배선만 교체.
    ============================================================ */
 import { useEffect, useRef, useState } from "react";
@@ -29,7 +28,7 @@ import {
   useEvents,
   useObservations,
   useDispatch,
-  type RuntimeNode,
+  useAgentStatus,
 } from "@station/domain/runtime";
 import type { CommandAck, Event, Signal } from "@station/contracts";
 
@@ -134,8 +133,10 @@ function AgentConsole() {
   const events = useEvents(60);
   const observations = useObservations(40);
   const dispatch = useDispatch();
+  const status = useAgentStatus();
 
-  const booted = nodes.length > 0;
+  const connected = status.state === "connected";
+  const booted = connected && nodes.length > 0;
 
   /* ---- 노드별 채널 롤링 시계열(라이브 신호에서 누적) ---- */
   type Series = Record<string, Record<string, number[]>>;
@@ -262,8 +263,8 @@ function AgentConsole() {
       <div style={{ flex: "none", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
         padding: "12px 18px", borderBottom: "1px solid var(--line)", background: "var(--surface)" }}>
         <span className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-3)", letterSpacing: ".4px" }}>LOCAL AGENT · RUNTIME</span>
-        <h1 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Local Agent · 런타임 (in-process)</h1>
-        <span style={{ fontSize: 10.5, color: "var(--ink-3)", fontWeight: 600 }}>실제 런타임 · mock 노드</span>
+        <h1 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Local Agent · {status.mode === "remote" ? "원격 모니터" : "인프로세스"}</h1>
+        <span className="mono" style={{ fontSize: 10, color: "var(--ink-3)", fontWeight: 600 }}>{status.endpoint}{status.agentId ? ` · ${status.agentId}` : ""}</span>
         <div style={{ flex: 1 }} />
         <label style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11.5, fontWeight: 700,
           color: estop ? "var(--st-critical)" : "var(--ink-3)", cursor: "pointer" }}>
@@ -274,8 +275,9 @@ function AgentConsole() {
           <Icon name="power" size={14} /> e-stop {estop ? "활성" : "해제"}
         </label>
         <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11.5, color: "var(--ink-2)", fontWeight: 600 }}>
-          <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: booted ? "var(--st-normal)" : "var(--st-warning)" }} />
-          {booted ? `agent live · ${nodes.length} nodes` : "런타임 부팅 중…"}
+          <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%",
+            background: connected ? "var(--st-normal)" : status.state === "connecting" ? "var(--st-warning)" : "var(--st-critical)" }} />
+          {connected ? `connected · ${nodes.length} nodes` : status.state === "connecting" ? "연결 중…" : "연결 끊김"}
         </span>
       </div>
 
@@ -300,7 +302,12 @@ function AgentConsole() {
             right={<span className="mono" style={{ fontSize: 10.5, color: "var(--ink-3)" }}>{nodes.length} nodes</span>} />
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
             {!booted ? (
-              <EmptyNote icon="waves" title="런타임 부팅 중" sub="노드가 loopback 으로 합류하는 중입니다." />
+              status.mode === "remote" && status.state !== "connected" ? (
+                <EmptyNote icon="plug" title={status.state === "connecting" ? "Local Agent app 연결 중…" : "Local Agent app 미연결"}
+                  sub={`${status.endpoint} · 별 터미널에서  pnpm --filter @station/local-agent start:agent`} />
+              ) : (
+                <EmptyNote icon="waves" title="노드 합류 중" sub="에이전트에서 노드 스냅샷 수신 중입니다." />
+              )
             ) : nodes.map((n) => {
               const oc = orgColor(n.ownerOrg);
               return (

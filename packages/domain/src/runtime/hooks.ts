@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CommandAck, CommandEnvelope, Event, Signal } from "@station/contracts";
 import type { GrowthObservation } from "@station/local-agent/browser";
-import { useAgent } from "./provider";
+import { useAgent, useAgentStatus } from "./provider";
 
 /** 노드 종류별 표시 메타(런타임 manifest 스냅샷). */
 export interface RuntimeNode {
@@ -19,9 +19,13 @@ export interface RuntimeNode {
   commands: string[];
 }
 
-/** 부팅된 노드들의 manifest 스냅샷(부팅 후 고정). */
+/**
+ * 노드들의 manifest 스냅샷. remote 의 경우 manifest 는 연결 후 snapshot 으로
+ * 도착하므로(클라이언트 identity 는 불변) status.state·agentId 변화에 재계산한다.
+ */
 export function useNodes(): RuntimeNode[] {
   const agent = useAgent();
+  const status = useAgentStatus();
   return useMemo(() => {
     if (!agent) return [];
     return agent.manifests().map((m) => ({
@@ -32,7 +36,8 @@ export function useNodes(): RuntimeNode[] {
       signals: m.signals ?? [],
       commands: m.commands ?? [],
     }));
-  }, [agent]);
+    // status.state/agentId 가 snapshot 도착(연결) 시 바뀌어 재계산을 트리거.
+  }, [agent, status.state, status.agentId]);
 }
 
 /** 채널별 최신 Signal 맵(250ms 스로틀). */
