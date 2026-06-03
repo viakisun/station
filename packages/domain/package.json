@@ -4,15 +4,28 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./runtime": "./src/runtime/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "echo \"(domain) no lint\" && exit 0"
   },
-  "devDependencies": {
+  "dependencies": {
     "@station/contracts": "workspace:*",
+    "@station/local-agent": "workspace:*",
+    "@station/node-kit": "workspace:*",
+    "@station/node-mcu": "workspace:*",
+    "@station/node-vpu": "workspace:*",
+    "@station/node-lpu": "workspace:*",
+    "@station/node-acu": "workspace:*"
+  },
+  "devDependencies": {
     "@station/tsconfig": "workspace:*",
+    "@types/react": "^19.0.0",
     "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
   }
 }

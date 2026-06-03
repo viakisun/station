@@ -1,11 +1,15 @@
 "use client";
 /* ============================================================
-   Local Agent 런타임 시뮬 (목업 · 실제 서버 0)
-   노드 어댑터(MCU/VPU/ACU/Telemetry/LPU)가 표준 Signal 을 스트림하고
-   Local Agent 허브(SignalStore·CommandRouter·EventBus·PolicyEngine)가
-   인입 신호를 승격하고, 명령 ACK(received→accepted→executed)를 시연하며,
-   PolicyEngine 이 WORKER-PROXIMITY(critical) 발화 시 자동 안전 명령을 건다.
-   모든 값 mock(Math.random). 공유 파일 미수정.
+   Local Agent 런타임 (in-process · 실제 런타임)
+   M4: Math.random 시뮬을 걷어내고 실제 Reference Local Agent(M1·M2·M3)를
+   브라우저에서 구동(@station/domain/runtime). 노드(MCU/VPU/ACU/LPU)가
+   loopback 으로 합류해 표준 Signal 을 스트림하고, 명령은 실 CommandRouter
+   3단계 ACK 를 거치며, growth-scan 앱이 scan.start 시 GrowthObservation(OBS-*)
+   을 합성한다. 데이터 소스는 mock 노드(setInterval) — 향후 Real 소스·WsHub 스왑.
+
+   PolicyEngine·e-stop 게이트는 런타임 미구현(Step4) → "시뮬" 라벨 유지.
+   단 발행하는 event/command 는 실제 런타임을 경유한다.
+   디자인은 기존 목업 100% 보존, 데이터 배선만 교체.
    ============================================================ */
 import { useEffect, useRef, useState } from "react";
 import {
@@ -19,11 +23,15 @@ import {
   type Sev,
 } from "@station/design-system";
 import {
-  modulesToNodes,
-  telemetryToSignalChannels,
-  capabilityToCommands,
-  type CommandDescriptor,
-} from "@station/domain";
+  AgentRuntimeProvider,
+  useNodes,
+  useSignals,
+  useEvents,
+  useObservations,
+  useDispatch,
+  type RuntimeNode,
+} from "@station/domain/runtime";
+import type { CommandAck, Event, Signal } from "@station/contracts";
 
 /* ---- owner_org 색 인라인 매핑 ---- */
 const ORG_COLOR: Record<string, string> = {
@@ -34,7 +42,7 @@ const ORG_COLOR: Record<string, string> = {
 };
 const orgColor = (org: string) => ORG_COLOR[org] ?? "var(--ink-3)";
 
-/* ---- 품질 판정: policy warn/crit 문자열("≥ 28","≤ 10")을 파싱 ---- */
+/* ---- 품질(실 Signal.quality) ---- */
 type Qual = "good" | "warn" | "bad";
 const QUAL_SEV: Record<Qual, Sev> = { good: "normal", warn: "warning", bad: "critical" };
 const QUAL_COLOR: Record<Qual, string> = {
@@ -43,65 +51,50 @@ const QUAL_COLOR: Record<Qual, string> = {
   bad: "var(--st-critical)",
 };
 
-interface Thr { op: ">=" | "<="; n: number }
-function parseThr(s?: string): Thr | null {
-  if (!s) return null;
-  const m = /([≥≤><]=?)\s*([\d.]+)/.exec(s);
-  if (!m) return null;
-  const op = m[1] === "≥" || m[1] === ">=" || m[1] === ">" ? ">=" : "<=";
-  return { op, n: parseFloat(m[2]!) };
-}
-function judge(v: number, warn: Thr | null, crit: Thr | null): Qual {
-  const hit = (t: Thr | null) => (t ? (t.op === ">=" ? v >= t.n : v <= t.n) : false);
-  if (hit(crit)) return "bad";
-  if (hit(warn)) return "warn";
-  return "good";
-}
-
-/* ---- 채널 메타 인덱스 (NS channel → unit/policy/label) ---- */
-interface ChanMeta {
-  label: string;
-  unit: string;
-  base: number; // 시드 기준값
-  warn: Thr | null;
-  crit: Thr | null;
-}
-// NS 채널별 시드 기준값(목업). 매핑 없으면 50.
-const BASE_HINT: Record<string, number> = {
-  temperature: 25,
-  humidity: 72,
-  co2: 760,
-  illuminance: 18000,
-  fps: 28,
-  "joint-temp": 58,
-  "joint": 58,
-  "grip-force": 14,
-  grip: 14,
-  deviation: 6,
-  voltage: 48,
+/* ---- 런타임 채널 표시 메타(label/unit) — 없으면 채널명·무단위 ---- */
+const CH_META: Record<string, { label: string; unit: string }> = {
+  "machine.motion.speed": { label: "주행 속도", unit: "m/s" },
+  "machine.vision.fps": { label: "비전 FPS", unit: "fps" },
+  "machine.navigation.deviation": { label: "경로 편차", unit: "mm" },
+  "machine.localization.confidence": { label: "측위 신뢰도", unit: "" },
+  "machine.localization.pose.x": { label: "pose · x", unit: "m" },
+  "machine.localization.pose.y": { label: "pose · y", unit: "m" },
+  "machine.localization.pose.theta": { label: "pose · θ", unit: "rad" },
+  "machine.autonomy.state": { label: "자율주행 상태", unit: "" },
+  "crop.growth.plant_height": { label: "초장", unit: "m" },
+  "crop.growth.lai": { label: "엽면적지수(LAI)", unit: "" },
+  "crop.growth.ndvi": { label: "NDVI", unit: "" },
 };
-function seedBase(channel: string, label: string): number {
-  const hay = (channel + " " + label).toLowerCase();
-  for (const k of Object.keys(BASE_HINT)) if (hay.includes(k)) return BASE_HINT[k]!;
-  return 50;
-}
+const chLabel = (ch: string) => CH_META[ch]?.label ?? ch;
+const chUnit = (ch: string) => CH_META[ch]?.unit ?? "";
+
+/* ---- verb → safety 등급(표시용 휴리스틱) ---- */
+const CRITICAL_VERBS = new Set(["motion.stop"]);
+const GUARDED_VERBS = new Set([
+  "autonomy.pause",
+  "autonomy.slow_down",
+  "vision.calibrate",
+  "localization.relocalize",
+]);
+type Safety = "none" | "guarded" | "safety_critical";
+const verbSafety = (v: string): Safety =>
+  CRITICAL_VERBS.has(v) ? "safety_critical" : GUARDED_VERBS.has(v) ? "guarded" : "none";
 
 /* ---- 명령 ACK 단계 ---- */
-type AckPhase = "received" | "accepted" | "executed" | "rejected";
+type AckPhase = "received" | "accepted" | "executed" | "rejected" | "timeout";
 const ACK_META: Record<AckPhase, { label: string; sev: Sev }> = {
   received: { label: "received", sev: "notice" },
   accepted: { label: "accepted", sev: "notice" },
   executed: { label: "executed", sev: "normal" },
   rejected: { label: "rejected", sev: "critical" },
+  timeout: { label: "timeout", sev: "warning" },
 };
-interface CmdEnvelope {
+interface CmdRow {
   id: string;
   ts: string;
   nodeId: string;
-  nodeLabel: string;
   verb: string;
-  safety: CommandDescriptor["safety"];
-  ack: CommandDescriptor["ack"];
+  safety: Safety;
   phase: AckPhase;
   reason?: string;
 }
@@ -115,185 +108,153 @@ const LOG_COLOR: Record<LogKind, string> = {
   safety: "#ff7b72",
 };
 interface LogLine { id: string; ts: string; kind: LogKind; text: string }
+const eventKind = (e: Event): LogKind =>
+  e.severity === "critical" || e.severity === "emergency"
+    ? "safety"
+    : e.severity === "warning" || e.severity === "notice"
+      ? "policy"
+      : "signal";
 
 const now = () => new Date().toLocaleTimeString("ko-KR", { hour12: false });
+const nowISO = () => new Date().toISOString();
 const rid = () => Math.random().toString(36).slice(2, 7).toUpperCase();
 
-/* ---- 노드별 명령: capabilityToCommands 우선, 없으면 node.commands, 없으면 합성 ---- */
-const NODE_MODULE: Record<string, string> = {
-  VPU: "MOD-CAM-V01",
-  ACU: "MOD-EE-PINCH",
-};
-function commandsForNode(kind: string, nodeCmds: string[] | undefined): CommandDescriptor[] {
-  const mod = NODE_MODULE[kind];
-  if (mod) {
-    const cs = capabilityToCommands(mod);
-    if (cs.length) return cs;
-  }
-  if (nodeCmds && nodeCmds.length)
-    return nodeCmds.map((v) => ({ verb: v, ack: "at_least_once" as const, timeoutMs: 1000, safety: "none" as const }));
-  // 합성(목업) — 노드 종류별 대표 명령
-  const SYN: Record<string, CommandDescriptor[]> = {
-    MCU: [
-      { verb: "drive.speed_limit", ack: "at_least_once", timeoutMs: 800, safety: "guarded" },
-      { verb: "drive.stop", ack: "exactly_once", timeoutMs: 500, safety: "safety_critical" },
-    ],
-    Telemetry: [{ verb: "telemetry.flush", ack: "at_most_once", timeoutMs: 1200, safety: "none" }],
-    LPU: [{ verb: "localize.recalibrate", ack: "at_least_once", timeoutMs: 1500, safety: "none" }],
-  };
-  return SYN[kind] ?? [{ verb: "node.ping", ack: "at_most_once", timeoutMs: 500, safety: "none" }];
+/* 페이지 = Provider + 런타임 콘솔. Provider 가 인프로세스 에이전트를 부팅. */
+export function AgentLive() {
+  return (
+    <AgentRuntimeProvider>
+      <AgentConsole />
+    </AgentRuntimeProvider>
+  );
 }
 
-export function AgentLive() {
-  const nodes = useRef(modulesToNodes()).current;
-  const chanMeta = useRef<Record<string, ChanMeta>>({}).current;
-  if (Object.keys(chanMeta).length === 0) {
-    for (const c of telemetryToSignalChannels()) {
-      chanMeta[c.channel] = {
-        label: c.label,
-        unit: c.unit,
-        base: seedBase(c.channel, c.label),
-        warn: parseThr(c.policy?.warn),
-        crit: parseThr(c.policy?.crit),
-      };
-    }
-  }
+function AgentConsole() {
+  const nodes = useNodes();
+  const signals = useSignals();
+  const events = useEvents(60);
+  const observations = useObservations(40);
+  const dispatch = useDispatch();
 
-  // 노드별 시그널 시계열: { channel: { series, value, qual } }
-  type SigState = Record<string, Record<string, { series: number[]; value: number; qual: Qual }>>;
-  const [sigs, setSigs] = useState<SigState>(() => {
-    const init: SigState = {};
-    for (const n of nodes) {
-      init[n.nodeId] = {};
-      for (const ch of n.signals ?? []) {
-        const meta = chanMeta[ch];
-        const base = meta?.base ?? 50;
-        const series = Array.from({ length: 16 }, () => base);
-        init[n.nodeId]![ch] = { series, value: base, qual: "good" };
+  const booted = nodes.length > 0;
+
+  /* ---- 노드별 채널 롤링 시계열(라이브 신호에서 누적) ---- */
+  type Series = Record<string, Record<string, number[]>>;
+  const [series, setSeries] = useState<Series>({});
+  useEffect(() => {
+    if (!booted) return;
+    setSeries((prev) => {
+      const next: Series = { ...prev };
+      for (const n of nodes) {
+        next[n.nodeId] = { ...(prev[n.nodeId] ?? {}) };
+        for (const ch of n.signals) {
+          const s = signals[ch];
+          const v = typeof s?.value === "number" ? s.value : s?.value ? 1 : 0;
+          const arr = [...(prev[n.nodeId]?.[ch] ?? []), v].slice(-16);
+          // Sparkline 은 ≥2 포인트 필요(단일 포인트 → x 스케일 div0 → NaN path).
+          next[n.nodeId]![ch] = arr.length < 2 ? [v, v] : arr;
+        }
       }
-    }
-    return init;
-  });
+      return next;
+    });
+  }, [signals, nodes, booted]);
 
+  /* ---- 명령 이력 + 통계 ---- */
+  const [cmds, setCmds] = useState<CmdRow[]>([]);
   const [signalCount, setSignalCount] = useState(0);
-  const [eventCount, setEventCount] = useState(0);
-  const [promotedCount, setPromotedCount] = useState(0);
   const [estop, setEstop] = useState(false);
-  const [cmds, setCmds] = useState<CmdEnvelope[]>([]);
-  const [log, setLog] = useState<LogLine[]>([]);
   const [policyActive, setPolicyActive] = useState(false);
-
-  // 언마운트 시 정리할 timeout 핸들
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
+  const [log, setLog] = useState<LogLine[]>([]);
 
   const pushLog = (kind: LogKind, text: string) =>
     setLog((prev) => [{ id: rid(), ts: now(), kind, text }, ...prev].slice(0, 60));
 
-  /* ---- 실시간 신호 스트림 tick (~1000ms) ---- */
+  /* 인입 신호 카운트(스로틀된 signals 변화마다 +채널수) */
   useEffect(() => {
-    const t = setInterval(() => {
-      let promotedThisTick = 0;
-      let signalsThisTick = 0;
-      setSigs((prev) => {
-        const next: SigState = {};
-        for (const n of nodes) {
-          next[n.nodeId] = {};
-          for (const ch of n.signals ?? []) {
-            const meta = chanMeta[ch];
-            const cur = prev[n.nodeId]?.[ch];
-            const base = meta?.base ?? 50;
-            const span = Math.max(base * 0.18, 2);
-            // 이전값 기준 wobble + 가끔 스파이크
-            const prevV = cur?.value ?? base;
-            const drift = (Math.random() - 0.5) * span;
-            const spike = Math.random() < 0.08 ? (Math.random() - 0.5) * span * 3 : 0;
-            let v = prevV + drift + spike;
-            // base 근처로 약하게 회귀
-            v += (base - v) * 0.15;
-            v = Math.round(v * 10) / 10;
-            const hasThr = !!(meta?.warn || meta?.crit);
-            const qual: Qual = hasThr
-              ? judge(v, meta!.warn, meta!.crit)
-              : Math.random() < 0.85 ? "good" : Math.random() < 0.6 ? "warn" : "bad";
-            const series = [...(cur?.series ?? [base]), v].slice(-16);
-            next[n.nodeId]![ch] = { series, value: v, qual };
-            signalsThisTick++;
-            // 승격 정책: warn/bad 또는 promote 채널은 EventBus 승격
-            if (qual !== "good") promotedThisTick++;
-          }
-        }
-        return next;
-      });
-      setSignalCount((c) => c + signalsThisTick);
-      if (promotedThisTick > 0) {
-        setPromotedCount((c) => c + promotedThisTick);
-        setEventCount((c) => c + promotedThisTick);
-      }
-    }, 1000);
-    return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (booted) setSignalCount((c) => c + Object.keys(signals).length);
+  }, [signals, booted]);
 
-  /* ---- 명령 발행 + 3단계 ACK 체인 ---- */
-  function issueCommand(node: { nodeId: string; label: string }, c: CommandDescriptor, auto = false) {
+  /* EventBus 이벤트를 통합 로그로 흘림(신규만) */
+  const seenEvt = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    for (const e of [...events].reverse()) {
+      const key = e.ts + e.code + e.message;
+      if (seenEvt.current.has(key)) continue;
+      seenEvt.current.add(key);
+      pushLog(eventKind(e), `${e.code} · ${e.message}`);
+    }
+  }, [events]);
+
+  /* ---- 실 명령 발행 + ACK 구독 ---- */
+  function issueCommand(node: { nodeId: string; kind: string }, verb: string, auto = false) {
+    const safety = verbSafety(verb);
+    if (estop && safety === "safety_critical") {
+      const id = `CMD-${rid()}`;
+      setCmds((prev) => [{ id, ts: now(), nodeId: node.nodeId, verb, safety, phase: "rejected" as const, reason: "SAFETY_LOCK" }, ...prev].slice(0, 30));
+      pushLog("safety", `${id} ${verb} → REJECTED · SAFETY_LOCK (e-stop 활성, 페이지 게이트)`);
+      return;
+    }
     const id = `CMD-${rid()}`;
-    const rejected = estop && c.safety === "safety_critical";
-    const env: CmdEnvelope = {
-      id,
-      ts: now(),
-      nodeId: node.nodeId,
-      nodeLabel: node.label,
-      verb: c.verb,
-      safety: c.safety,
-      ack: c.ack,
-      phase: "received",
-      reason: rejected ? "SAFETY_LOCK" : undefined,
-    };
-    setCmds((prev) => [env, ...prev].slice(0, 30));
-    setEventCount((c) => c + 1);
-    pushLog("command", `${id} ${c.verb} → ${node.nodeId} · received${auto ? " (policy auto)" : ""}`);
+    setCmds((prev) => [{ id, ts: now(), nodeId: node.nodeId, verb, safety, phase: "received" as const }, ...prev].slice(0, 30));
+    pushLog("command", `${id} ${verb} → ${node.nodeId} · received${auto ? " (policy auto)" : ""}`);
 
     const setPhase = (phase: AckPhase, reason?: string) =>
       setCmds((prev) => prev.map((e) => (e.id === id ? { ...e, phase, reason } : e)));
 
-    if (rejected) {
-      const t = setTimeout(() => {
-        setPhase("rejected", "SAFETY_LOCK");
-        pushLog("safety", `${id} ${c.verb} → REJECTED · SAFETY_LOCK (e-stop 활성)`);
-      }, 250);
-      timers.current.push(t);
-      return;
-    }
-    const t1 = setTimeout(() => { setPhase("accepted"); pushLog("command", `${id} accepted · ack=${c.ack}`); }, 250);
-    const t2 = setTimeout(() => {
-      setPhase("executed");
-      pushLog("command", `${id} executed · ${node.nodeId} (${c.timeoutMs}ms timeout)`);
-    }, 520);
-    timers.current.push(t1, t2);
+    dispatch(
+      {
+        commandId: id,
+        verb,
+        target: { node: node.kind },
+        issuedBy: { role: "operator" },
+        issuedAt: nowISO(),
+        safety,
+      },
+      (a: CommandAck) => {
+        if (a.stage === "received") return; // 이미 표시
+        setPhase(a.stage as AckPhase, a.detail ?? a.code);
+        const k: LogKind = a.stage === "rejected" ? "safety" : "command";
+        pushLog(k, `${id} ${a.stage}${a.detail ? ` · ${a.detail}` : a.code ? ` · ${a.code}` : ""}`);
+      },
+    );
   }
 
-  /* ---- PolicyEngine: 작업자 감지 주입 ---- */
+  /* ---- growth-scan ---- */
+  const [scanning, setScanning] = useState(false);
+  function startScan() {
+    const id = `CMD-SCAN-${rid()}`;
+    pushLog("command", `${id} scan.start → AGENT · received`);
+    dispatch(
+      { commandId: id, verb: "scan.start", target: { node: "AGENT" }, issuedBy: { role: "operator" }, issuedAt: nowISO() },
+      (a) => {
+        if (a.stage === "executed") { setScanning(true); pushLog("command", `${id} executed · ${a.detail ?? ""}`); }
+        else if (a.stage === "rejected") pushLog("safety", `${id} rejected · ${a.code ?? a.detail ?? ""}`);
+        else if (a.stage === "accepted") pushLog("command", `${id} accepted`);
+      },
+    );
+  }
+  function stopScan() {
+    const id = `CMD-SCAN-${rid()}`;
+    dispatch(
+      { commandId: id, verb: "scan.stop", target: { node: "AGENT" }, issuedBy: { role: "operator" }, issuedAt: nowISO() },
+      (a) => { if (a.stage === "executed") { setScanning(false); pushLog("command", `${id} scan.stop executed`); } },
+    );
+  }
+
+  /* ---- PolicyEngine 시뮬(Step4 후속) — 실 event/command 경유 ---- */
   function injectWorkerProximity() {
     setPolicyActive(true);
-    setEventCount((c) => c + 1);
-    pushLog("policy", "EVT WORKER-PROXIMITY (critical) 발행 · PolicyEngine 트리거");
-
+    pushLog("policy", "EVT WORKER-PROXIMITY (critical) · PolicyEngine 시뮬(Step4) 트리거");
     const acu = nodes.find((n) => n.kind === "ACU");
     const mcu = nodes.find((n) => n.kind === "MCU");
-    // 자동 안전 명령: ACU slow_down + MCU speed_limit
-    const t1 = setTimeout(() => {
-      if (acu) issueCommand(acu, { verb: "ee.slow_down", ack: "exactly_once", timeoutMs: 500, safety: "guarded" }, true);
-    }, 120);
-    const t2 = setTimeout(() => {
-      if (mcu) issueCommand(mcu, { verb: "drive.speed_limit", ack: "exactly_once", timeoutMs: 500, safety: "guarded" }, true);
-    }, 300);
-    timers.current.push(t1, t2);
+    if (acu) issueCommand(acu, "autonomy.slow_down", true);
+    if (mcu) issueCommand(mcu, "motion.stop", true);
   }
   function resetPolicy() {
     setPolicyActive(false);
-    pushLog("policy", "PolicyEngine 리셋 · WORKER-PROXIMITY 해제");
+    pushLog("policy", "PolicyEngine 시뮬 리셋 · WORKER-PROXIMITY 해제");
   }
+
+  const latestObs = observations[0];
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
@@ -301,46 +262,47 @@ export function AgentLive() {
       <div style={{ flex: "none", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
         padding: "12px 18px", borderBottom: "1px solid var(--line)", background: "var(--surface)" }}>
         <span className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-3)", letterSpacing: ".4px" }}>LOCAL AGENT · RUNTIME</span>
-        <h1 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Local Agent · 런타임 시뮬 (목업)</h1>
+        <h1 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Local Agent · 런타임 (in-process)</h1>
+        <span style={{ fontSize: 10.5, color: "var(--ink-3)", fontWeight: 600 }}>실제 런타임 · mock 노드</span>
         <div style={{ flex: 1 }} />
         <label style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11.5, fontWeight: 700,
           color: estop ? "var(--st-critical)" : "var(--ink-3)", cursor: "pointer" }}>
           <input type="checkbox" checked={estop} onChange={(e) => {
             setEstop(e.target.checked);
-            pushLog("safety", `e-stop ${e.target.checked ? "활성" : "해제"} · safety-critical 명령 ${e.target.checked ? "차단" : "허용"}`);
+            pushLog("safety", `e-stop ${e.target.checked ? "활성" : "해제"} · safety-critical 명령 ${e.target.checked ? "차단" : "허용"} (Step4 게이트 시뮬)`);
           }} />
           <Icon name="power" size={14} /> e-stop {estop ? "활성" : "해제"}
         </label>
         <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11.5, color: "var(--ink-2)", fontWeight: 600 }}>
-          <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--st-normal)" }} />
-          agent live · {nodes.length} nodes
+          <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: booted ? "var(--st-normal)" : "var(--st-warning)" }} />
+          {booted ? `agent live · ${nodes.length} nodes` : "런타임 부팅 중…"}
         </span>
       </div>
 
-      {/* e-stop / policy 안전 배너 */}
+      {/* 안전 배너 */}
       {policyActive && (
         <SafetyBanner sev="critical" icon="alert">
-          PolicyEngine 발화 — WORKER-PROXIMITY 감지. ACU slow_down · MCU speed_limit 자동 인가됨.
+          PolicyEngine 시뮬(Step4) — WORKER-PROXIMITY 감지. ACU slow_down · MCU stop 자동 인가(실 명령 경유).
         </SafetyBanner>
       )}
       {estop && !policyActive && (
         <SafetyBanner sev="emergency" icon="power">
-          긴급정지(e-stop) 활성 — safety-critical 명령은 SAFETY_LOCK 으로 거부됩니다.
+          긴급정지(e-stop) 활성 — safety-critical 명령은 SAFETY_LOCK 으로 거부됩니다(Step4 게이트 시뮬).
         </SafetyBanner>
       )}
 
       {/* ---- 3열 본문 ---- */}
       <div style={{ flex: 1, minHeight: 0, display: "grid",
-        gridTemplateColumns: "minmax(300px,1.1fr) minmax(240px,0.9fr) minmax(300px,1.1fr)",
-        gap: 0 }}>
+        gridTemplateColumns: "minmax(300px,1.1fr) minmax(240px,0.9fr) minmax(300px,1.1fr)", gap: 0 }}>
         {/* === 좌: 노드 레인 === */}
         <section style={{ minHeight: 0, overflow: "auto", borderRight: "1px solid var(--line)", display: "flex", flexDirection: "column" }}>
           <PanelHead title="노드 레인" sub="기관 산출 노드 · 표준 신호 스트림" dense
             right={<span className="mono" style={{ fontSize: 10.5, color: "var(--ink-3)" }}>{nodes.length} nodes</span>} />
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
-            {nodes.map((n) => {
+            {!booted ? (
+              <EmptyNote icon="waves" title="런타임 부팅 중" sub="노드가 loopback 으로 합류하는 중입니다." />
+            ) : nodes.map((n) => {
               const oc = orgColor(n.ownerOrg);
-              const nodeSigs = sigs[n.nodeId] ?? {};
               return (
                 <div key={n.nodeId} className="card" style={{ padding: 0, overflow: "hidden", borderLeft: `3px solid ${oc}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "10px 12px", borderBottom: "1px solid var(--line)" }}>
@@ -354,22 +316,22 @@ export function AgentLive() {
                       background: "var(--surface-2)", border: `1px solid ${oc}33` }}>{n.ownerOrg}</span>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    {(n.signals ?? []).length === 0 ? (
+                    {n.signals.length === 0 ? (
                       <div style={{ padding: "10px 12px", fontSize: 11, color: "var(--ink-3)" }}>표준 신호 없음</div>
-                    ) : (n.signals ?? []).map((ch) => {
-                      const s = nodeSigs[ch];
-                      const meta = chanMeta[ch];
-                      const q = s?.qual ?? "good";
+                    ) : n.signals.map((ch) => {
+                      const s: Signal | undefined = signals[ch];
+                      const q = (s?.quality ?? "good") as Qual;
+                      const val = s === undefined ? "—" : typeof s.value === "number" ? s.value : String(s.value);
                       return (
                         <div key={ch} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderTop: "1px solid var(--line)" }}>
                           <div style={{ width: 116, flex: "none", minWidth: 0 }}>
-                            <div style={{ fontSize: 11.5, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{meta?.label ?? ch}</div>
+                            <div style={{ fontSize: 11.5, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{chLabel(ch)}</div>
                             <div className="mono" style={{ fontSize: 9, color: "var(--ink-3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ch}</div>
                           </div>
-                          <Sparkline data={s?.series ?? [0, 0]} w={86} h={24} color={QUAL_COLOR[q]} />
+                          <Sparkline data={series[n.nodeId]?.[ch] ?? [0, 0]} w={86} h={24} color={QUAL_COLOR[q]} />
                           <div style={{ flex: 1 }} />
                           <span className="mono tnum" style={{ fontSize: 11.5, fontWeight: 700, width: 58, textAlign: "right" }}>
-                            {s?.value ?? "—"}<span style={{ fontSize: 9, color: "var(--ink-3)", marginLeft: 2 }}>{meta?.unit}</span>
+                            {val}<span style={{ fontSize: 9, color: "var(--ink-3)", marginLeft: 2 }}>{chUnit(ch)}</span>
                           </span>
                           <span style={{ width: 8, height: 8, borderRadius: "50%", flex: "none", background: `var(--st-${QUAL_SEV[q]})` }} title={q} />
                         </div>
@@ -391,43 +353,74 @@ export function AgentLive() {
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <HubCounter label="인입 신호" value={signalCount} icon="waves" />
-              <HubCounter label="발행 이벤트" value={eventCount} icon="zap" />
-              <HubCounter label="승격 신호" value={promotedCount} icon="trending" />
+              <HubCounter label="발행 이벤트" value={events.length} icon="zap" />
+              <HubCounter label="관측 OBS" value={observations.length} icon="trending" />
               <HubCounter label="발행 명령" value={cmds.length} icon="terminal" />
             </div>
 
             {([
-              { id: "SignalStore", desc: "표준 채널 수집·승격", icon: "database" as const },
-              { id: "CommandRouter", desc: "verb → 노드 라우팅 · ACK", icon: "route" as const },
-              { id: "EventBus", desc: "신호·명령·정책 이벤트", icon: "waves" as const },
-              { id: "PolicyEngine", desc: "안전 규칙 자동 인가", icon: "shield" as const },
-            ]).map((b) => {
-              const hot = b.id === "PolicyEngine" && policyActive;
-              return (
-                <div key={b.id} style={{ display: "flex", alignItems: "center", gap: 11, padding: "12px 13px",
-                  borderRadius: "var(--r-sm)", background: "#16181d",
-                  border: `1px solid ${hot ? "var(--st-critical)" : "#2a2f37"}` }}>
-                  <Icon name={b.icon} size={18} style={{ color: hot ? "#ff7b72" : "#79c0ff", flex: "none" }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="mono" style={{ fontSize: 12, fontWeight: 700, color: "#e6edf3" }}>{b.id}</div>
-                    <div style={{ fontSize: 10.5, color: "#8b949e" }}>{b.desc}</div>
-                  </div>
-                  <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%",
-                    background: hot ? "#ff7b72" : "#3fb950", flex: "none" }} />
+              { id: "SignalStore", desc: "표준 채널 수집·승격", icon: "database" as const, hot: false },
+              { id: "CommandRouter", desc: "verb → 게이트 → 노드/앱 ACK", icon: "route" as const, hot: false },
+              { id: "EventBus", desc: "신호·명령·정책 이벤트", icon: "waves" as const, hot: false },
+              { id: "AppRuntime", desc: "growth-scan active", icon: "pkg" as const, hot: scanning },
+              { id: "PolicyEngine", desc: "안전 규칙(Step4 시뮬)", icon: "shield" as const, hot: policyActive },
+            ]).map((b) => (
+              <div key={b.id} style={{ display: "flex", alignItems: "center", gap: 11, padding: "12px 13px",
+                borderRadius: "var(--r-sm)", background: "#16181d",
+                border: `1px solid ${b.hot ? "var(--st-critical)" : "#2a2f37"}` }}>
+                <Icon name={b.icon} size={18} style={{ color: b.hot ? "#ff7b72" : "#79c0ff", flex: "none" }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="mono" style={{ fontSize: 12, fontWeight: 700, color: "#e6edf3" }}>{b.id}</div>
+                  <div style={{ fontSize: 10.5, color: "#8b949e" }}>{b.desc}</div>
                 </div>
-              );
-            })}
+                <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%",
+                  background: b.hot ? "#ff7b72" : "#3fb950", flex: "none" }} />
+              </div>
+            ))}
 
-            {/* PolicyEngine 시연 */}
+            {/* growth-scan 카드 */}
             <div className="card" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 9 }}>
               <div style={{ fontSize: 12, fontWeight: 800, display: "flex", alignItems: "center", gap: 7 }}>
-                <Icon name="shield" size={15} style={{ color: "var(--ink-2)" }} /> PolicyEngine 시연
+                <Icon name="scan" size={15} style={{ color: "var(--ink-2)" }} /> 생육 스캔 · station.app.growth-scan
               </div>
               <div style={{ fontSize: 11, color: "var(--ink-3)", lineHeight: 1.45 }}>
-                작업자 근접 이벤트를 EventBus 에 주입하면 ACU slow_down · MCU speed_limit 가 자동 인가됩니다.
+                scan.start → ACU 미션 + VPU capture(게이트 경유) → ndvi 프레임마다 pose⊕crop⊕state 를 합성해 GrowthObservation(OBS-*) 생성.
               </div>
               <div style={{ display: "flex", gap: 8 }}>
-                <button className="btn primary sm" onClick={injectWorkerProximity} style={{ flex: 1 }}>
+                <button className="btn primary sm" onClick={startScan} disabled={!booted || scanning} style={{ flex: 1 }}>
+                  <Icon name="play" size={14} /> scan.start
+                </button>
+                <button className="btn sm" onClick={stopScan} disabled={!scanning}>
+                  <Icon name="power" size={14} /> scan.stop
+                </button>
+              </div>
+              {latestObs ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "8px 10px", borderRadius: "var(--r-sm)", background: "var(--surface-2)", border: "1px solid var(--line)" }}>
+                  <div className="mono" style={{ fontSize: 10, fontWeight: 700, color: "var(--ink-2)" }}>{latestObs.observationId}</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 10.5, color: "var(--ink-2)" }}>
+                    <span className="mono">ndvi {latestObs.crop.ndvi}</span>
+                    <span className="mono">h {latestObs.crop.plant_height}m</span>
+                    <span className="mono">lai {latestObs.crop.lai}</span>
+                    {latestObs.pose && <span className="mono">pose ({latestObs.pose.x},{latestObs.pose.y})</span>}
+                    <StatusBadge sev={QUAL_SEV[latestObs.quality]} label={latestObs.quality} />
+                  </div>
+                  <div className="mono" style={{ fontSize: 9, color: "var(--ink-3)" }}>{latestObs.scanSessionId} · {observations.length} obs</div>
+                </div>
+              ) : (
+                <div style={{ fontSize: 10.5, color: "var(--ink-3)" }}>관측 없음 — scan.start 로 합성을 시작하세요.</div>
+              )}
+            </div>
+
+            {/* PolicyEngine 시뮬 */}
+            <div className="card" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 9 }}>
+              <div style={{ fontSize: 12, fontWeight: 800, display: "flex", alignItems: "center", gap: 7 }}>
+                <Icon name="shield" size={15} style={{ color: "var(--ink-2)" }} /> PolicyEngine 시뮬 <span style={{ fontSize: 9.5, fontWeight: 600, color: "var(--ink-3)" }}>(Step4 후속)</span>
+              </div>
+              <div style={{ fontSize: 11, color: "var(--ink-3)", lineHeight: 1.45 }}>
+                작업자 근접 이벤트 주입 → ACU slow_down · MCU stop 자동 인가(실 CommandRouter 경유). 자동 정책 로직은 Step4에서 런타임化.
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button className="btn primary sm" onClick={injectWorkerProximity} disabled={!booted} style={{ flex: 1 }}>
                   <Icon name="alert" size={14} /> 작업자 감지 주입
                 </button>
                 <button className="btn sm" onClick={resetPolicy} disabled={!policyActive}>
@@ -444,43 +437,41 @@ export function AgentLive() {
           <PanelHead title="명령 발행 · 3단계 ACK" sub="received → accepted → executed" dense
             right={estop ? <StatusBadge sev="critical" label="e-stop" /> : <StatusBadge sev="normal" label="armed" />} />
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
-            {/* 노드별 명령 버튼 */}
-            {nodes.map((n) => {
-              const cs = commandsForNode(n.kind, n.commands);
-              return (
-                <div key={n.nodeId} style={{ border: "1px solid var(--line)", borderRadius: "var(--r-sm)", padding: 10 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
-                    <span style={{ width: 18, height: 18, borderRadius: 5, flex: "none", display: "grid", placeItems: "center",
-                      background: orgColor(n.ownerOrg), color: "#fff", fontSize: 8, fontWeight: 800 }}>{n.kind}</span>
-                    <span className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-2)" }}>{n.nodeId}</span>
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {cs.map((c, i) => {
-                      const danger = c.safety === "safety_critical";
-                      const locked = estop && danger;
-                      return danger ? (
-                        <HoldButton key={c.verb + i} label={<span className="mono" style={{ fontSize: 10.5 }}>{c.verb}</span>}
-                          holdLabel="hold…" danger disabled={locked} duration={700}
-                          onConfirm={() => issueCommand(n, c)}
-                          style={{ height: 30, padding: "0 10px", fontSize: 10.5 }} />
-                      ) : (
-                        <button key={c.verb + i} className="btn sm" onClick={() => issueCommand(n, c)}
-                          style={{ height: 30 }} title={`ack=${c.ack} · ${c.timeoutMs}ms · safety=${c.safety}`}>
-                          <span className="mono" style={{ fontSize: 10.5 }}>{c.verb}</span>
-                          {c.safety === "guarded" && <Icon name="shield" size={11} style={{ marginLeft: 3, color: "var(--ink-3)" }} />}
-                        </button>
-                      );
-                    })}
-                  </div>
+            {nodes.map((n) => (
+              <div key={n.nodeId} style={{ border: "1px solid var(--line)", borderRadius: "var(--r-sm)", padding: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
+                  <span style={{ width: 18, height: 18, borderRadius: 5, flex: "none", display: "grid", placeItems: "center",
+                    background: orgColor(n.ownerOrg), color: "#fff", fontSize: 8, fontWeight: 800 }}>{n.kind}</span>
+                  <span className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-2)" }}>{n.nodeId}</span>
                 </div>
-              );
-            })}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {n.commands.length === 0 ? (
+                    <span style={{ fontSize: 10.5, color: "var(--ink-3)" }}>명령 없음</span>
+                  ) : n.commands.map((verb, i) => {
+                    const safety = verbSafety(verb);
+                    const danger = safety === "safety_critical";
+                    const locked = estop && danger;
+                    return danger ? (
+                      <HoldButton key={verb + i} label={<span className="mono" style={{ fontSize: 10.5 }}>{verb}</span>}
+                        holdLabel="hold…" danger disabled={locked} duration={700}
+                        onConfirm={() => issueCommand(n, verb)}
+                        style={{ height: 30, padding: "0 10px", fontSize: 10.5 }} />
+                    ) : (
+                      <button key={verb + i} className="btn sm" onClick={() => issueCommand(n, verb)}
+                        style={{ height: 30 }} title={`safety=${safety}`}>
+                        <span className="mono" style={{ fontSize: 10.5 }}>{verb}</span>
+                        {safety === "guarded" && <Icon name="shield" size={11} style={{ marginLeft: 3, color: "var(--ink-3)" }} />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
 
-            {/* 발행 이력 */}
             <div style={{ marginTop: 4 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-3)", marginBottom: 7 }}>발행 이력</div>
               {cmds.length === 0 ? (
-                <EmptyNote icon="terminal" title="발행된 명령 없음" sub="노드 명령을 눌러 ACK 흐름을 시연하세요." />
+                <EmptyNote icon="terminal" title="발행된 명령 없음" sub="노드 명령을 눌러 실 ACK 흐름을 확인하세요." />
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {cmds.map((e) => {

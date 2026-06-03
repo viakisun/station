@@ -81,5 +81,6 @@ hold-to-confirm·Audit 고지·제품 간 Context 핸드오프(`ctx` 쿼리)를 
 - 이식 화면의 인라인 스타일·색상·px·텍스트 1:1 보존. 빌드는 타입 검증으로 게이팅(`pnpm lint` 별도).
 
 ## 현황
-typecheck 6/6 · build 3/3 · 전 라우트 200. UX/UI 과업(공통기준→과업지시서→목업→완료보고서) 완료.
-다음: 본 개발 Phase 0(Thin Contract: ContextEnvelope·GateResult·AuditEntry·can()·RealtimeClient 타입 + Core Spine).
+typecheck all green · 전 라우트 200. UX/UI 과업(공통기준→과업지시서→목업→완료보고서) 완료.
+**참조 런타임 트랙**: M1(Local Agent 코어) · M2(다중 노드 transport) · M3(App Runtime + `station.app.growth-scan`) · **M4(목업을 실제 런타임 위에 — `/control/agent`가 브라우저 인프로세스 Local Agent + mock 노드 위에서 실 Signal·ACK·OBS 렌더)**. `local-agent` test 20/20. 상세 로드맵 = [docs/architecture/station-field-os.md §12](docs/architecture/station-field-os.md).
+다음: 데모 시나리오 S3~S6 UI 연결 · 앱-레벨 데이터 런타임/DB 연결 · PolicyEngine(Step4).

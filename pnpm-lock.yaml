@@ -26,12 +26,33 @@ importers:
 
   apps/console:
     dependencies:
+      '@station/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@station/design-system':
         specifier: workspace:*
         version: link:../../packages/design-system
       '@station/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@station/local-agent':
+        specifier: workspace:*
+        version: link:../../packages/local-agent
+      '@station/node-acu':
+        specifier: workspace:*
+        version: link:../../nodes/acu
+      '@station/node-kit':
+        specifier: workspace:*
+        version: link:../../packages/node-kit
+      '@station/node-lpu':
+        specifier: workspace:*
+        version: link:../../nodes/lpu
+      '@station/node-mcu':
+        specifier: workspace:*
+        version: link:../../nodes/mcu
+      '@station/node-vpu':
+        specifier: workspace:*
+        version: link:../../nodes/vpu
       '@station/shell':
         specifier: workspace:*
         version: link:../../packages/shell
@@ -249,13 +270,38 @@ importers:
         version: 5.9.3
 
   packages/domain:
-    devDependencies:
+    dependencies:
       '@station/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@station/local-agent':
+        specifier: workspace:*
+        version: link:../local-agent
+      '@station/node-acu':
+        specifier: workspace:*
+        version: link:../../nodes/acu
+      '@station/node-kit':
+        specifier: workspace:*
+        version: link:../node-kit
+      '@station/node-lpu':
+        specifier: workspace:*
+        version: link:../../nodes/lpu
+      '@station/node-mcu':
+        specifier: workspace:*
+        version: link:../../nodes/mcu
+      '@station/node-vpu':
+        specifier: workspace:*
+        version: link:../../nodes/vpu
+      react:
+        specifier: ^19.0.0
+        version: 19.2.6
+    devDependencies:
       '@station/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.15
       typescript:
         specifier: ^5.7.2
         version: 5.9.3

@@ -31,6 +31,14 @@ export interface ObservationStore {
   subscribe(cb: (o: GrowthObservation) => void): () => void;
 }
 
+/**
+ * [영속화 seam] 현재 in-memory(프로세스/탭 메모리). 향후 Repository 교체:
+ *   addObservation(o)  → repo.insert(o)
+ *   bySession(scn)     → repo.query({ scanSessionId: scn })
+ *   latest()           → repo.queryLatest()
+ * 백엔드는 SQLite/Postgres 또는 .json append-only 어느 쪽이든 가능 — subscribe
+ * fan-out(라이브 구독)은 그대로 두고 저장만 영속화하면 UI/aggregator 불변.
+ */
 export class InMemoryObservationStore implements ObservationStore {
   #open = new Set<string>();
   #observations: GrowthObservation[] = [];
