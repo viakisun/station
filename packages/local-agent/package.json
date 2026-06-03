@@ -9,13 +9,21 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "start": "tsx run.ts",
     "lint": "echo \"(local-agent) no lint\" && exit 0"
   },
   "dependencies": {
-    "@station/contracts": "workspace:*"
+    "@station/contracts": "workspace:*",
+    "@station/node-kit": "workspace:*",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@station/node-acu": "workspace:*",
+    "@station/node-lpu": "workspace:*",
+    "@station/node-mcu": "workspace:*",
+    "@station/node-vpu": "workspace:*",
     "@station/tsconfig": "workspace:*",
+    "@types/ws": "^8.5.13",
     "typescript": "^5.7.2",
     "vitest": "^3.0.0"
   }

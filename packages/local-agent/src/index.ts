@@ -5,3 +5,6 @@ export * from "./command-router";
 export * from "./local-agent";
 export * from "./conformance";
 export { MockMcuNode } from "./nodes/mock-mcu";
+export * from "./wire/transport-adapter";
+export * from "./wire/serve";
+export * from "./wire/ws-hub";

@@ -1,5 +1,5 @@
 {
   "extends": "@station/tsconfig/base.json",
-  "include": ["src", "test", "run.ts"],
+  "include": ["src", "run.ts"],
   "exclude": ["node_modules"]
 }

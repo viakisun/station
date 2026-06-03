@@ -1,0 +1,22 @@
+{
+  "name": "@station/node-vpu",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "start": "tsx run.ts",
+    "lint": "echo \"(node-vpu) no lint\" && exit 0"
+  },
+  "dependencies": {
+    "@station/contracts": "workspace:*",
+    "@station/node-kit": "workspace:*"
+  },
+  "devDependencies": {
+    "@station/tsconfig": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

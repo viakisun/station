@@ -25,6 +25,7 @@ export class ReferenceLocalAgent implements LocalAgent {
 
   #adapters: NodeAdapter[] = [];
   #unsub: Array<() => void> = [];
+  #started = false;
 
   register(adapter: NodeAdapter): void {
     const node = adapter.manifest.attachesToNode; // M1: 노드 kind 식별자
@@ -33,6 +34,16 @@ export class ReferenceLocalAgent implements LocalAgent {
     this.#unsub.push(adapter.onSignal((s) => this.signals.write(s)));
     this.#unsub.push(adapter.onEvent((e) => this.events.publish(e)));
     this.#unsub.push(adapter.onAck((a) => this.#router.routeAck(a)));
+    if (this.#started) {
+      // 이미 가동 중에 합류한 노드(동적 디스커버리, A4) — 즉시 start·healthy.
+      void adapter.start();
+      this.#registry.setHealthy(node, true);
+    }
+  }
+
+  /** 노드 연결 종료 시 unhealthy 처리(HealthMonitor) — 게이트가 차단. */
+  markNodeUnhealthy(node: string): void {
+    this.#registry.setHealthy(node, false);
   }
 
   manifests(): ModuleManifest[] {
@@ -44,6 +55,7 @@ export class ReferenceLocalAgent implements LocalAgent {
       await a.start();
       this.#registry.setHealthy(a.manifest.attachesToNode, true);
     }
+    this.#started = true;
   }
 
   async stop(): Promise<void> {
