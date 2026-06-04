@@ -23,8 +23,9 @@ export default function Page() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {getRobotsOfSite(s.id).map((r) => (
                     <button key={r.id} className="btn sm" onClick={() => { setProject(p.id); setRobot(r.id); }}
-                      style={{ height: 26, borderColor: scope.robotId === r.id ? "var(--ink)" : undefined }}>
+                      style={{ height: 28, borderColor: scope.robotId === r.id ? "var(--ink)" : undefined }}>
                       <span className="mono" style={{ fontSize: 10.5 }}>{r.id}</span>
+                      <span style={{ fontSize: 9.5, color: "var(--ink-2)", marginLeft: 5 }}>{r.type}</span>
                       <span style={{ fontSize: 9.5, color: "var(--ink-3)", marginLeft: 5 }}>{r.state} · {r.battery}%</span>
                     </button>
                   ))}

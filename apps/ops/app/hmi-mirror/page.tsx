@@ -29,7 +29,7 @@ function Mirror({ robotId }: { robotId: string | null }) {
       {!connected ? (
         <div style={{ padding: 16 }}>
           <EmptyNote icon="hmi" title={robotId ? `${robotId} — 라이브 미러 없음` : "로봇 미선택"}
-            sub="Field HMI(③)의 cloud 미러(④, observe/assist). 라이브는 RBT-THIN-0001 + start:agent." />
+            sub="Field HMI(③)의 cloud 미러(④, observe/assist). 라이브는 RBT-SCAN-0001(생육분석) + start:agent." />
         </div>
       ) : (
         <div style={{ padding: 14 }}>

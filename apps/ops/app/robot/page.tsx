@@ -53,7 +53,7 @@ function RobotLive({ robotId }: { robotId: string | null }) {
       ) : !connected ? (
         <div style={{ padding: 16 }}>
           <EmptyNote icon="plug" title={status.state === "connecting" ? `${robotId} 연결 중…` : `${robotId} — 라이브 에이전트 없음(offline)`}
-            sub={status.state === "connecting" ? status.endpoint : "이 로봇은 데모 endpoint가 없습니다. RBT-THIN-0001 선택 + start:agent 실행 시 라이브."} />
+            sub={status.state === "connecting" ? status.endpoint : "이 로봇은 데모 endpoint가 없습니다. 생육분석 로봇 RBT-SCAN-0001(국립농업과학원) 선택 + start:agent 실행 시 라이브."} />
         </div>
       ) : (
         <div style={{ padding: 14, display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 14 }}>

@@ -10,9 +10,10 @@ import { RemoteAgentClient } from "./remote-agent";
 
 const DEFAULT_WS = process.env.NEXT_PUBLIC_AGENT_WS ?? "ws://localhost:7101";
 
-// robot → WS endpoint. 데모는 RBT-THIN-0001 한 대만 라이브, 나머지 null(offline).
+// robot → WS endpoint. 데모는 생육분석 로봇 RBT-SCAN-0001 한 대만 라이브(growth-scan
+// = scan→OBS, start:agent와 의미 일치), 나머지 null(offline).
 const ENDPOINTS: Record<string, string> = {
-  "RBT-THIN-0001": DEFAULT_WS,
+  "RBT-SCAN-0001": DEFAULT_WS,
 };
 
 class FleetManager {
