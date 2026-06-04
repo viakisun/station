@@ -203,6 +203,14 @@
   <a href="#g6"><span class="nn">G6</span>Reference vs Production</a>
   <a href="#g7"><span class="nn">G7</span>Vendor Bundle</a>
   <a href="#g8"><span class="nn">G8</span>Multi-Vendor</a>
+  <a class="h">Part H · SW-WBS</a>
+  <a href="#h0"><span class="nn">H0</span>Architecture Summary</a>
+  <a href="#h1"><span class="nn">H1</span>Identifier System</a>
+  <a href="#h2"><span class="nn">H2</span>Product IA &amp; Surfaces</a>
+  <a href="#h3"><span class="nn">H3</span>Component Registry</a>
+  <a href="#h4"><span class="nn">H4</span>Task Backlog</a>
+  <a href="#h5"><span class="nn">H5</span>Annotation Convention</a>
+  <a href="#h6"><span class="nn">H6</span>Done &amp; Shippability</a>
   <a class="h">Annexes</a>
   <a href="#anx-a"><span class="nn">A</span>ProtocolProfile JSON</a>
   <a href="#anx-b"><span class="nn">B</span>Node Contract JSON</a>
@@ -240,7 +248,7 @@
     <div class="abstract" style="margin-top:14px">
       본 문서는 분산 노드 구조의 농업용 SDV(Software-Defined Robot) 레퍼런스 플랫폼에 대한 단일 기술 기준서다.
       소프트웨어 아키텍처(Part A), 식별자·배치 체계(Part B), 프로토콜·메시지 교환(Part C),
-      두 종의 레퍼런스 리그(Part D: RIG-1 평면 패널 · RIG-2 프로파일 로버), 운용 절차(Part E), 모듈 인터페이스 ICD(Part F), 작업 레이어(Part G: Application·App Runtime·멀티벤더)를 규정한다.
+      두 종의 레퍼런스 리그(Part D: RIG-1 평면 패널 · RIG-2 프로파일 로버), 운용 절차(Part E), 모듈 인터페이스 ICD(Part F), 작업 레이어(Part G: Application·App Runtime·멀티벤더), 그리고 <b class="k">상업 SaaS 재구성을 위한 SW 작업분해 식별체계(Part H: SW-WBS)</b>를 규정한다.
       본 문서는 "이 로봇의 기준"이 아니라 <span class="mono">제3자 채택용 오픈 SDV 레퍼런스 표준 + 레퍼런스 구현</span>이다(§0.1 · ADR-017).
       계약(contract) 정의는 <span class="mono">@station/contracts</span>를 정본으로 참조하며, SSOT는 본 baseline에 정합 완료(<span class="mono">ADR-018</span>) — 정합 내역은 Annex E.
     </div>
@@ -330,6 +338,15 @@
         <a class="toc-row" href="#g7"><span class="tid">G7</span><span class="tt">Vendor Bundle &amp; Adoption</span><span class="lead"></span><span class="toc-pg" data-anchor="g7"></span></a>
         <a class="toc-row" href="#g8"><span class="tid">G8</span><span class="tt">Multi-Vendor Conformance</span><span class="lead"></span><span class="toc-pg" data-anchor="g8"></span></a>
       </div>
+      <div class="toc-grp"><div class="gh">Part H · Software Work-Breakdown &amp; Commercial SaaS</div>
+        <a class="toc-row" href="#h0"><span class="tid">H0</span><span class="tt">Architecture Completion Summary</span><span class="lead"></span><span class="toc-pg" data-anchor="h0"></span></a>
+        <a class="toc-row" href="#h1"><span class="tid">H1</span><span class="tt">SW-WBS Identifier System</span><span class="lead"></span><span class="toc-pg" data-anchor="h1"></span></a>
+        <a class="toc-row" href="#h2"><span class="tid">H2</span><span class="tt">Product IA &amp; Surface Registry</span><span class="lead"></span><span class="toc-pg" data-anchor="h2"></span></a>
+        <a class="toc-row" href="#h3"><span class="tid">H3</span><span class="tt">Component Registry</span><span class="lead"></span><span class="toc-pg" data-anchor="h3"></span></a>
+        <a class="toc-row" href="#h4"><span class="tid">H4</span><span class="tt">Task Backlog</span><span class="lead"></span><span class="toc-pg" data-anchor="h4"></span></a>
+        <a class="toc-row" href="#h5"><span class="tid">H5</span><span class="tt">Code Annotation Convention</span><span class="lead"></span><span class="toc-pg" data-anchor="h5"></span></a>
+        <a class="toc-row" href="#h6"><span class="tid">H6</span><span class="tt">Definition of Done &amp; Shippability</span><span class="lead"></span><span class="toc-pg" data-anchor="h6"></span></a>
+      </div>
       <div class="toc-grp"><div class="gh">Annexes</div>
         <a class="toc-row" href="#anx-a"><span class="tid">A</span><span class="tt">ProtocolProfile JSON</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-a"></span></a>
         <a class="toc-row" href="#anx-b"><span class="tid">B</span><span class="tt">Node Contract JSON</span><span class="lead"></span><span class="toc-pg" data-anchor="anx-b"></span></a>
@@ -355,7 +372,7 @@
       제3자(HW 제조사·SW 개발사)가 참고·채택·준수해 각자의 SDV를 만들도록 공개한다(<a href="../adr/ADR-017-open-source-sdv-reference.md">ADR-017</a>). 3축:
       ① <b class="k">표준</b>(언어 중립 계약 <span class="mono">@station/contracts</span> · IF-P/L/X 시트 · 식별자 · 레이어링 · ADR) ·
       ② <b class="k">레퍼런스 구현</b>(<span class="mono">packages/local-agent · node-kit · nodes/*</span>) ·
-      ③ <b class="k">conformance</b>(IF-P 시트 · AppManifest · 적합성 suite F7). 플랫폼은 부품이 아니라 <b class="k">통합 규제(integration regime)</b>를 소유한다(Part G G8).
+      ③ <b class="k">conformance</b>(IF-P 시트 · AppManifest · 적합성 suite F7). 플랫폼은 부품이 아니라 <b class="k">통합 규제(integration regime)</b>를 소유한다(Part G G8). 상업 SaaS(Ops·Build·Field·Agent) 재구성의 식별 인덱스는 <a href="#h0">Part H</a>(SW-WBS)에 고정한다.
       거버넌스(라이선스·표준 버저닝·인증 주체·기여 절차)는 ADR-017의 <b class="k">Open Issue</b>로 둔다.</div>
     <div class="req"><span class="tag">PRINCIPLE</span> &nbsp;단일 컴퓨트 보드 중심(Jetson 일체형) 구조가 아니라, 기능을 독립 노드
       (<span class="nc rt">MCU</span> <span class="nc cmp">VPU</span> <span class="nc cmp">ACU</span> <span class="nc cmp">LPU</span> <span class="nc ui">TEL</span> <span class="nc gw host">AGENT</span> <span class="nc ui host">HMI</span>)로
@@ -730,10 +747,13 @@
         <tr><td class="mono">INC-</td><td>런타임</td><td class="mono">INC-YYYYMMDD-NNNN</td><td class="mono">L10</td><td>Event 승격</td><td>영구</td><td class="mono">INC-20260603-0231</td></tr>
         <tr><td class="mono">PAIR-</td><td>외부</td><td class="mono">^PAIR-[A-Z0-9-]+$</td><td>ext</td><td>Cloud Registry</td><td>TTL</td><td class="mono">PAIR-7F3A-2196</td></tr>
         <tr><td class="mono">RBT-</td><td>외부</td><td class="mono">^RBT-[A-Z0-9]+-\d{4}$</td><td>—</td><td>Cloud Registry</td><td>영구</td><td class="mono">RBT-THIN-0011</td></tr>
+        <tr><td class="mono">PRJ-</td><td>외부</td><td class="mono">^PRJ-[A-Z0-9-]+-\d{4}$</td><td>—</td><td>Cloud Registry</td><td>영구</td><td class="mono">PRJ-JINJU-DEMO-2026</td></tr>
+        <tr><td class="mono">SITE-</td><td>외부</td><td class="mono">^SITE-[A-Z0-9]+-\d{2}$</td><td>—</td><td>Cloud Registry</td><td>영구</td><td class="mono">SITE-JINJU-01</td></tr>
         <tr><td>cloud topic</td><td>외부</td><td class="mono">robot/{id}/… · site/{site}/…</td><td>ext</td><td>ORG-VIA</td><td>per config</td><td class="mono">robot/{robotId}/telemetry</td></tr>
       </tbody>
     </table>
     <p class="note">5 class: <b class="k">논리</b>(rig-independent) · <b class="k">물리</b>(per-rig) · <b class="k">계약</b>(contract) · <b class="k">런타임</b>(ephemeral) · <b class="k">외부</b>(cloud). 표기 규율·할당 권한은 <a href="#b0c">B0c</a>, 관계는 <a href="#b0b">B0b</a>.</p>
+    <p class="note"><b class="k">PRJ- · SITE-</b>는 상업 SaaS 스코핑(<a href="#h0">Part H</a> · ORG→PRJ→SITE→RBT)을 위한 가산 식별자다 — <b class="k">현재 문서 선행분</b>: <span class="mono">documented · code: pending SWT-ID-001</span>(runtime validator <span class="mono">ids.ts</span> 갱신은 후속 MVP). <span class="mono">CommandEnvelope</span>는 불변(connection-scoped, <a href="#h0">H0</a>).</p>
   </section>
 
   <section id="b0b">
@@ -2132,6 +2152,169 @@ registry/{robotId}/device      ↔ device record                       (IF-X-REG
   </section>
 
 
+  <section class="divider"><div class="dv-id">PART H</div><div class="dv-title">Software Work-Breakdown &amp; Commercial SaaS Structure</div><div class="dv-sub">SW-WBS Identifier System · Product IA · Surface / Component / Task Registry · Annotation Convention · Definition of Done</div></section>
+
+  <!-- ============ PART H — SOFTWARE WORK-BREAKDOWN STRUCTURE ============ -->
+  <section id="h0">
+    <h3><span class="sid">H0</span> Architecture Completion Summary</h3>
+    <p>Part A–G가 <b class="k">현재 레퍼런스 플랫폼</b>(단일 로봇·on-robot baseline)을 규정했다면, Part H는 그 위에서 STATION을 <b class="k">VIA 상업용 통합관제 SaaS 제품군</b>으로 재구성하기 위한 <b class="k">소프트웨어 식별 인덱스(SW-WBS)</b>를 고정한다. 식별체계는 Part B L4(SW Unit)의 하위 확장이다.</p>
+    <div class="req"><span class="tag">SCOPE · MVP-1</span> &nbsp;본 Part는 상업 SaaS 구조를 <b class="k">구현하지 않는다</b>. 목적은 제품·표면·컴포넌트·작업 단위를 <b class="k">문서상 고정</b>하는 것이며, 코드 주석·스캐폴드·멀티에이전트 런타임·제품 물리분리는 후속 MVP에서 SW-WBS 식별자에 따라 수행한다(<a href="#h6">H6</a> · <a href="../adr/ADR-019-commercial-saas-scoping-and-sw-wbs.md">ADR-019</a>).</div>
+    <p><b class="k">On-robot 실체 ↔ Cloud 미러.</b> HMI·Telemetry·Local Agent는 로봇/엣지에서 도는 <b class="k">on-robot 실체</b>이고, 웹(Ops·Build)이 보여주는 것은 그 <b class="k">원격 미러</b>다. 미러 관계의 seam은 <span class="mono">AgentFacade</span>(in-process <span class="mono">ReferenceLocalAgent</span> ↔ 원격 <span class="mono">RemoteAgentClient</span>) — on-robot이 emit(HmiHub, <a href="#f5p">IF-L-HMI-AGG</a>), cloud가 render.</p>
+    <div class="safe"><span class="tag">AUTHORITY</span> &nbsp;권한 위계 = ① 물리 안전(E-stop) &gt; ② Local Agent Policy &gt; ③ 현장 HMI(operator) &gt; ④ Cloud/원격(Ops) &gt; ⑤ ACU 자율. <b class="k">Cloud는 의도적으로 field HMI보다 낮다(④&lt;③)</b> — 미러 UI는 종속(observe/assist)으로 표현하고, 모든 cloud 명령은 robot-side <span class="mono">evaluateGate</span>를 통과한다. <b class="k">Telemetry는 제어권 0</b>(read-only uplink).</div>
+    <table>
+      <caption>표 H0 — 상업 SaaS 스코핑 위계 (ORG → … → MOD). Fleet은 식별자가 아니라 프로젝트 across <b>뷰</b></caption>
+      <thead><tr><th>레벨</th><th>의미</th><th>식별자</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">ORG</td><td>테넌트/컨소시엄 (VIA=플랫폼 소유)</td><td class="mono">ORG-*</td><td>존재 (B0) — 향후 테넌트 격리 경계</td></tr>
+        <tr><td class="mono">PRJ</td><td>프로젝트 = 배포 프로그램/계약/고객 engagement</td><td class="mono">PRJ-*</td><td><b class="k">신규</b> (B0 · code-pending SWT-ID-001)</td></tr>
+        <tr><td class="mono">SITE</td><td>물리 사이트 (Jinju·Sangju …)</td><td class="mono">SITE-*</td><td><b class="k">신규</b> (데이터엔 존재, ID 형식화)</td></tr>
+        <tr><td class="mono">RBT</td><td>로봇 = <b class="k">1 Local Agent = 1 HmiHub 연결</b></td><td class="mono">RBT-*</td><td>존재 — 연결 스코프 단위</td></tr>
+        <tr><td class="mono">NODE</td><td>on-robot compute 노드 (MCU·VPU·ACU·LPU·TEL)</td><td class="mono">NODE-*</td><td>로봇-로컬 (연결 스코프 내 kind-only)</td></tr>
+        <tr><td class="mono">MOD</td><td>HW 모듈</td><td class="mono">MOD-*</td><td>존재</td></tr>
+      </tbody>
+    </table>
+    <p class="note"><b class="k">CommandEnvelope 불변(connection-scoped).</b> 멀티로봇 선택은 cloud-side <b class="k">연결 스코프</b>(어느 Agent 연결인가)로 해결하며 <span class="mono">CommandEnvelope</span>에 <span class="mono">robot_id</span>를 주입하지 않는다 — 한 연결 안에선 <span class="mono">target.node</span>가 kind-only로 충분(에이전트당 VPU 하나). on-robot command-router·node-registry 계약 무변경. 근거 = <a href="../adr/ADR-019-commercial-saas-scoping-and-sw-wbs.md">ADR-019</a>.</p>
+  </section>
+
+  <section id="h1">
+    <h3><span class="sid">H1</span> SW-WBS Identifier System</h3>
+    <p class="sub">소프트웨어 개발 상세항목의 식별체계. 3 패밀리(컴포넌트·표면·작업) + 관계 규칙 + status. 기존 UX 화면코드(C0x·H01·T01)를 폐기하지 않고 SWS로 <b class="k">흡수</b>한다.</p>
+    <table>
+      <caption>표 H1a — SW-WBS 패밀리</caption>
+      <thead><tr><th>Family</th><th>의미</th><th>문법</th><th>예시</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">SWC-</td><td>Software Component — 코드/서브시스템 <b class="k">소유 단위</b>(실 패키지·앱·서브시스템 또는 계획 컴포넌트)</td><td class="mono">SWC-&lt;AREA&gt;</td><td class="mono">SWC-LOCAL-AGENT</td></tr>
+        <tr><td class="mono">SWS-</td><td>Software Surface — 사용자가 인지하는 <b class="k">제품 표면</b>(화면·라우트·패널·미러·인스펙터·설정·운영플로우)</td><td class="mono">SWS-&lt;PRODUCT&gt;-&lt;SURFACE&gt;</td><td class="mono">SWS-OPS-FLEET</td></tr>
+        <tr><td class="mono">SWT-</td><td>Software Task — 구현 가능한 <b class="k">작업 단위</b>(개발자 TODO 입자)</td><td class="mono">SWT-&lt;AREA&gt;-&lt;NNN&gt;</td><td class="mono">SWT-FLEET-001</td></tr>
+      </tbody>
+    </table>
+    <div class="req"><span class="tag">RELATION RULES</span> &nbsp;① SWT는 반드시 ≥1 <b class="k">SWC</b>에 연결. ② SWT가 UI/제품 변경이면 반드시 ≥1 <b class="k">SWS</b>에 연결. ③ 문서/아키텍처 작업은 surface가 없을 수 있고 그땐 SWS=<span class="mono">"-"</span>/N/A. ④ 한 SWS ↔ 여러 SWC, 한 SWC ↔ 여러 SWS(노출).</div>
+    <table>
+      <caption>표 H1b — status (7종). done은 식별자 범위 상대 — SWC done=현재 구현·테스트·문서 존재 / SWT done=그 작업의 구현·테스트·문서 완료</caption>
+      <thead><tr><th>status</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">done</td><td>해당 식별자 범위에서 완료</td></tr>
+        <tr><td class="mono">partial</td><td>일부 구현됨</td></tr>
+        <tr><td class="mono">scaffold</td><td>구조만 존재(내용 stub)</td></tr>
+        <tr><td class="mono">planned</td><td>계획(내부 구현 예정). <b class="k">MVP-1에선 SWT를 done 안 만들고 등록만</b></td></tr>
+        <tr><td class="mono">blocked</td><td>선행 결정/외부 요건 대기</td></tr>
+        <tr><td class="mono">deprecated</td><td>기존 구조이나 신규에서 폐기 예정</td></tr>
+        <tr><td class="mono">external</td><td>본 SW-WBS 내부 구현 단위로 관리하지 않는 외부/별도 트랙(<b class="k">영구 제외 아님</b> — 향후 출시 트랙에서 별도 WBS 승격 가능)</td></tr>
+      </tbody>
+    </table>
+    <p class="note"><b class="k">Legacy 매핑.</b> 기존 UX 화면코드는 SWS로 흡수한다 — 예: <span class="mono">C01-00…09</span>→<span class="mono">SWS-OPS-*</span> · <span class="mono">H01-*</span>→<span class="mono">SWS-FIELD-*</span> · <span class="mono">T01-*</span>→<span class="mono">SWS-FIELD-TELEMETRY</span>/<span class="mono">SWS-OPS-TELE-MON</span>(미러). 매핑은 SWS registry(<a href="#h2">H2</a>)의 route/legacy 열에 기록.</p>
+  </section>
+
+  <section id="h2">
+    <h3><span class="sid">H2</span> Product IA &amp; Surface Registry</h3>
+    <p class="sub">이 표들은 현재 화면 나열이 아니라, STATION을 상업용 SaaS 제품군으로 재구성할 때 <b class="k">어떤 제품 표면이 어느 권한·locus·컴포넌트와 연결되는지</b> 고정하는 인덱스다.</p>
+    <table>
+      <caption>표 H2a — Product IA. Ops·Build·Field는 사용자 제품, <b>Agent는 사용자 제품이 아니라 on-robot runtime product</b></caption>
+      <thead><tr><th>Product</th><th>Locus</th><th>User</th><th>Authority</th><th>Purpose</th><th>Key Surfaces</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Ops</td><td>cloud</td><td>운영자·관제자</td><td class="mono">④</td><td>원격 관제·상태·제한적 명령(게이트 경유)</td><td class="mono">SWS-OPS-FLEET · -ROBOT · -COMMAND · -HMI-MIRROR · -TELE-MON</td></tr>
+        <tr><td class="mono">Build</td><td>cloud/desktop</td><td>통합자·개발자·제조사</td><td>non-operational</td><td>모듈·앱·계약·런타임 인스펙션·conformance</td><td class="mono">SWS-BUILD-INSPECTOR · -MANIFESTS · -CONFORMANCE · -FIRMWARE</td></tr>
+        <tr><td class="mono">Field</td><td>on-robot</td><td>현장 작업자</td><td class="mono">③</td><td>현장 조작·안전·보정</td><td class="mono">SWS-FIELD-HMI · -TELEMETRY</td></tr>
+        <tr><td class="mono">Agent</td><td>on-robot daemon</td><td>system / integrator-via-Build</td><td class="mono">②</td><td>command routing·policy·node registry·telemetry bridge (<b class="k">사용자 제품 아님</b>)</td><td class="mono">직접 surface 없음 — SWS-AGENT-STATUS(service) · SWS-BUILD-INSPECTOR 경유</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <caption>표 H2b — Surface Registry (SWS · 대표). 미러 표면은 locus/authority/mirrorOf/controlMode로 "웹=원격 미러"를 명시</caption>
+      <thead><tr><th>id</th><th>product</th><th>route / legacy</th><th>locus</th><th>authority</th><th>mirrorOf</th><th>controlMode</th><th>status</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">SWS-OPS-FLEET</td><td>Ops</td><td class="mono">/fleet</td><td>cloud</td><td class="mono">④</td><td>fleet (PRJ→SITE→RBT)</td><td>navigate</td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWS-OPS-ROBOT</td><td>Ops</td><td class="mono">/control · C01-*</td><td>cloud</td><td class="mono">④</td><td>Robot (1 Agent)</td><td>observe</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWS-OPS-COMMAND</td><td>Ops</td><td class="mono">/control/agent</td><td>cloud</td><td class="mono">④</td><td>CommandRouter</td><td>command-request (gated)</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWS-OPS-HMI-MIRROR</td><td>Ops</td><td class="mono">/hmi-mirror</td><td>cloud</td><td class="mono">④</td><td>Field HMI</td><td>observe / assist</td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWS-OPS-TELE-MON</td><td>Ops</td><td class="mono">/telemetry · T01-*</td><td>cloud</td><td>read-only</td><td>Telemetry GW</td><td><span class="no">none</span></td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWS-BUILD-INSPECTOR</td><td>Build</td><td class="mono">/build/agent</td><td>build</td><td>non-operational</td><td>Local Agent runtime</td><td>inspect-only</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWS-BUILD-CONFORMANCE</td><td>Build</td><td class="mono">/audit · C02-*</td><td>cloud</td><td>non-operational</td><td>contract / suite (F7)</td><td>inspect</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWS-FIELD-HMI</td><td>Field</td><td class="mono">/hmi · H01-*</td><td>on-robot</td><td class="mono">③</td><td>— (실체)</td><td>operate</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWS-FIELD-TELEMETRY</td><td>Field</td><td class="mono">/telemetry setup · T01-*</td><td>on-robot</td><td class="mono">③</td><td>— (실체)</td><td>configure</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWS-AGENT-STATUS</td><td>Agent</td><td class="mono">service (no route)</td><td>on-robot</td><td class="mono">②</td><td>Agent self</td><td><span class="no">none</span></td><td class="mono">planned</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="h3">
+    <h3><span class="sid">H3</span> Component Registry (SWC)</h3>
+    <p class="sub">이 표는 소프트웨어 컴포넌트가 <b class="k">현재 어디 있고 앞으로 어디로 갈지</b>(currentPath → plannedPath)를 고정한다. M1~M5 실재는 done/partial.</p>
+    <table>
+      <caption>표 H3 — Component Registry (대표)</caption>
+      <thead><tr><th>id</th><th>역할</th><th>currentPath</th><th>plannedPath</th><th>exposedIn (SWS)</th><th>status</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">SWC-CONTRACTS</td><td>SSOT 계약·식별자</td><td class="mono">packages/contracts</td><td class="mono">=</td><td class="mono">SWS-BUILD-*</td><td class="mono">done</td></tr>
+        <tr><td class="mono">SWC-LOCAL-AGENT</td><td>Reference Local Agent (M1·M3)</td><td class="mono">packages/local-agent</td><td class="mono">apps/agent</td><td class="mono">SWS-BUILD-INSPECTOR</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWC-NODE-KIT</td><td>NodeTransport·loopback·NodeHost (M2)</td><td class="mono">packages/node-kit</td><td class="mono">=</td><td class="mono">—</td><td class="mono">done</td></tr>
+        <tr><td class="mono">SWC-RUNTIME-CLIENT</td><td>AgentFacade·RemoteAgentClient·hooks (M4·M5)</td><td class="mono">packages/domain/runtime</td><td class="mono">=</td><td class="mono">SWS-OPS-* · SWS-BUILD-INSPECTOR</td><td class="mono">done</td></tr>
+        <tr><td class="mono">SWC-DOMAIN</td><td>도메인 셀렉터·mock SSOT (+Project/Site 예정)</td><td class="mono">packages/domain</td><td class="mono">=</td><td class="mono">all UI</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWC-SHELL</td><td>셸·nav·context (+ScopeContext 예정)</td><td class="mono">packages/shell</td><td class="mono">=</td><td class="mono">all UI</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWC-DS</td><td>디자인 시스템·토큰 (+mirror affordance 예정)</td><td class="mono">packages/design-system</td><td class="mono">=</td><td class="mono">all UI</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWC-AGENT-MIRROR</td><td>미러 본체(RuntimeInspector·HmiMirror·TelemetryMonitor·MirrorHeader)</td><td class="mono">-</td><td class="mono">packages/agent-mirror</td><td class="mono">SWS-OPS-* · SWS-BUILD-INSPECTOR</td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWC-FLEET</td><td>멀티 에이전트 fan-in (connection-scoped)</td><td class="mono">-</td><td class="mono">packages/domain/runtime/fleet-manager</td><td class="mono">SWS-OPS-FLEET</td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWC-SCOPE</td><td>영속 scope(ORG/PRJ/SITE/RBT)</td><td class="mono">-</td><td class="mono">packages/shell/scope</td><td class="mono">all Ops UI</td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWC-PRODUCT-OPS</td><td>Ops 제품 셸/IA</td><td class="mono">apps/console (혼재)</td><td class="mono">apps/ops</td><td class="mono">SWS-OPS-*</td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWC-PRODUCT-BUILD</td><td>Build 제품 셸/IA</td><td class="mono">apps/console (혼재)</td><td class="mono">apps/build</td><td class="mono">SWS-BUILD-*</td><td class="mono">planned</td></tr>
+        <tr><td class="mono">SWC-PRODUCT-FIELD</td><td>Field 제품 셸/IA</td><td class="mono">apps/field</td><td class="mono">=</td><td class="mono">SWS-FIELD-*</td><td class="mono">partial</td></tr>
+        <tr><td class="mono">SWC-AGENT</td><td>on-robot 상주 데몬</td><td class="mono">packages/local-agent/run-agent.ts</td><td class="mono">apps/agent</td><td class="mono">SWS-AGENT-STATUS</td><td class="mono">partial</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="h4">
+    <h3><span class="sid">H4</span> Task Backlog (SWT)</h3>
+    <p class="sub">이 표는 "무엇을 구현해야 하는가"를 작업 단위로 고정한다. <b class="k">내부 SWT는 ≤20개</b>(과세분화 금지) — external 트랙은 별도 소표(아래)로 분리하며 count에 미포함. MVP-1에선 전부 planned로 <b class="k">등록만</b>.</p>
+    <table>
+      <caption>표 H4a — Internal Task Backlog (SWT · ≤20). ownerRole ∈ {Platform·Product IA·Ops UI·Build UI·Field HMI·Local Agent·Cloud}</caption>
+      <thead><tr><th>id</th><th>phase</th><th>title</th><th>SWC</th><th>SWS</th><th>status</th><th>ownerRole</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">SWT-PRODUCT-001</td><td>MVP-2</td><td>Ops/Build/Field/Agent 제품 IA 셸·경계</td><td class="mono">SWC-PRODUCT-*</td><td class="mono">all</td><td class="mono">planned</td><td>Product IA</td></tr>
+        <tr><td class="mono">SWT-PRODUCT-002</td><td>MVP-3</td><td>apps/ops·apps/build 물리분리</td><td class="mono">SWC-PRODUCT-OPS/BUILD</td><td class="mono">—</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-OPS-ROBOT-001</td><td>MVP-2</td><td>Robot detail 상업 구조 목업</td><td class="mono">SWC-PRODUCT-OPS</td><td class="mono">SWS-OPS-ROBOT</td><td class="mono">planned</td><td>Ops UI</td></tr>
+        <tr><td class="mono">SWT-ACK-001</td><td>MVP-2</td><td>Operator command + 3-stage ACK timeline</td><td class="mono">SWC-AGENT-MIRROR</td><td class="mono">SWS-OPS-COMMAND</td><td class="mono">planned</td><td>Ops UI</td></tr>
+        <tr><td class="mono">SWT-SCOPE-001</td><td>MVP-2</td><td>ScopeContext(ORG/PRJ/SITE/RBT) 영속</td><td class="mono">SWC-SCOPE</td><td class="mono">all Ops</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-SCOPE-002</td><td>MVP-2</td><td>ephemeral robotId 버그 수정(nav 유지)</td><td class="mono">SWC-SHELL</td><td class="mono">all Ops</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-MIRROR-001</td><td>MVP-2</td><td>MirrorHeader(authority/locus/mirror badge)</td><td class="mono">SWC-AGENT-MIRROR</td><td class="mono">SWS-OPS-*</td><td class="mono">planned</td><td>Ops UI</td></tr>
+        <tr><td class="mono">SWT-MIRROR-002</td><td>MVP-3</td><td>agent-mirror 패키지 추출</td><td class="mono">SWC-AGENT-MIRROR</td><td class="mono">SWS-OPS-* · BUILD</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-MIRROR-003</td><td>MVP-2</td><td>RuntimeInspector를 Build 고도로 이동</td><td class="mono">SWC-AGENT-MIRROR</td><td class="mono">SWS-BUILD-INSPECTOR</td><td class="mono">planned</td><td>Build UI</td></tr>
+        <tr><td class="mono">SWT-TELE-001</td><td>MVP-2</td><td>TelemetryMonitor read-only 보장(dispatch 미import)</td><td class="mono">SWC-AGENT-MIRROR</td><td class="mono">SWS-OPS-TELE-MON</td><td class="mono">planned</td><td>Ops UI</td></tr>
+        <tr><td class="mono">SWT-FLEET-001</td><td>MVP-3</td><td>FleetManager skeleton(Map&lt;RBT-*,RemoteAgentClient&gt;)</td><td class="mono">SWC-FLEET</td><td class="mono">SWS-OPS-FLEET</td><td class="mono">planned</td><td>Cloud</td></tr>
+        <tr><td class="mono">SWT-FLEET-002</td><td>MVP-3</td><td>robot→endpoint 해소 맵</td><td class="mono">SWC-FLEET</td><td class="mono">SWS-OPS-FLEET</td><td class="mono">planned</td><td>Cloud</td></tr>
+        <tr><td class="mono">SWT-ID-001</td><td>MVP-3</td><td>ids.ts PRJ-/SITE- validator 추가(문서 선행분 반영)</td><td class="mono">SWC-CONTRACTS</td><td class="mono">—</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-DOMAIN-001</td><td>MVP-2</td><td>Project/Site 데이터모델 + fixture</td><td class="mono">SWC-DOMAIN</td><td class="mono">SWS-OPS-FLEET</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-WBS-001</td><td>MVP-2</td><td>핵심 코드 [SWC/SWS] 헤더 주석 패스</td><td class="mono">all</td><td class="mono">—</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-WBS-002</td><td>MVP-2</td><td>핵심 코드 TODO(SWT-*) 부착</td><td class="mono">all</td><td class="mono">—</td><td class="mono">planned</td><td>Platform</td></tr>
+        <tr><td class="mono">SWT-DOC-001</td><td>MVP-2</td><td>레지스트리 ↔ 코드 주석 동기 룰·검증</td><td class="mono">SWC-CONTRACTS</td><td class="mono">—</td><td class="mono">planned</td><td>Platform</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <caption>표 H4b — External Track Notes (status=external · 내부 ≤20 count 미포함 · 향후 별도 WBS 승격 가능)</caption>
+      <thead><tr><th>id</th><th>title</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">SWT-CLOUD-001</td><td>Cloud aggregation 서비스(서버측 N-agent fan-in·롤업)</td><td>cloud 권한 ④(관찰/uplink 티어, 명령 권한 아님)</td></tr>
+        <tr><td class="mono">SWT-AUTH-001</td><td>Tenant isolation · auth · RLS-equivalent (ORG 단위)</td><td>상업 출시 전제, 별도 보안 트랙</td></tr>
+        <tr><td class="mono">SWT-PERSIST-001</td><td>실 DB/persistence(Observation·Signal 이력)</td><td>seam은 코드 주석으로 가이드됨</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="h5">
+    <h3><span class="sid">H5</span> Code Annotation Convention</h3>
+    <p class="sub">MVP-2부터 핵심 코드(<span class="mono">apps/*</span> · <span class="mono">packages/{domain,local-agent,node-kit,shell,design-system,contracts}</span>의 주요 entry/module; generated/vendor/test fixture 제외)에 부착. <span class="mono">grep -r "SWT-"</span> = 전체 backlog 추적.</p>
+    <div class="code"><span class="c">// 컴포넌트/표면 헤더 + 작업 TODO</span>
+/** [SWC-FLEET] FleetManager — N RemoteAgentClient fan-in (connection-scoped). status: planned
+ *  TODO(SWT-FLEET-001): Map&lt;RBT-*,RemoteAgentClient&gt; + agent(robotId) skeleton.
+ *   surface: SWS-OPS-FLEET · deps: SWC-RUNTIME-CLIENT · spec: §B,§F,§H · owner: Cloud */</div>
+    <p class="note">grep 룰: <span class="mono">grep -r "SWC-"</span>(컴포넌트 소유) · <span class="mono">grep "SWT-FLEET"</span>(영역별 작업) · 레지스트리(H3/H4) ↔ 코드 주석 1:1 동기(SWT-DOC-001이 검증).</p>
+  </section>
+
+  <section id="h6">
+    <h3><span class="sid">H6</span> Definition of Done &amp; Shippability</h3>
+    <div class="safe"><span class="tag">SHIPPABILITY</span> &nbsp;<b class="k">SWT 완료 ≠ 출시.</b> SW-WBS는 <b class="k">구조</b>를 고정한다(무엇·어떤 권한·어디서·어느 컴포넌트). 출시 가능한 상업 SaaS는 추가로 (a) 전체 SWT lifecycle(MVP-2~), (b) <span class="mono">external</span> 트랙(cloud aggregation·tenant·auth/RLS·persistence), (c) 비기능 요건(테스트·보안리뷰·성능·배포/운영·관측성·SLA)을 요구한다. <b class="k">본 문서는 출시까지의 지도이지 출시 체크리스트 전체가 아니다.</b></div>
+    <p><b class="k">done 정의(범위별).</b> SWC done = 현재 구현·테스트·문서가 존재함 · SWT done = 그 작업 단위의 구현·테스트·문서 완료. <b class="k">MVP-1에선 SWT를 done으로 만들지 않고 planned/external로 등록만</b> 한다(구조 인덱스 고정이 목적).</p>
+    <p class="note">후속 MVP 로드맵: MVP-1(구조 인덱스 = 본 Part) → MVP-2(UX/UI 상업 구조 목업 + 주석 패스) → MVP-3(핵심 수직 라이브) → MVP-4(출시 트랙=external). 상세는 <a href="station-field-os.md">station-field-os §12</a> · <a href="../adr/ADR-019-commercial-saas-scoping-and-sw-wbs.md">ADR-019</a>.</p>
+  </section>
+
   <!-- ============ ANNEXES ============ -->
   <section id="anx-a">
     <h3><span class="sid">A</span> ProtocolProfile JSON (예시)</h3>
@@ -2318,6 +2501,7 @@ registry/{robotId}/device      ↔ device record                       (IF-X-REG
         <tr><td class="mono">A</td><td class="mono">2026-06-03</td><td>최초 발행. rig.html · build-sheet.html · build-guide.md 통합·대체. RIG-2 신규. 식별자 체계(TEL·AGENT) 정합.</td><td class="mono">ORG-VIA</td></tr>
         <tr><td class="mono">A.1</td><td class="mono">2026-06-03</td><td>Part G(Software-Defined Work Layer, G0–G8) 신설 · §0.1 Positioning(오픈 레퍼런스) 재정의 · B0 <span class="mono">station.app.*</span> 등재 · Annex E(E6–E10)·F(REQ-G01–04) 가산. ADR-016·017 비준.</td><td class="mono">ORG-VIA</td></tr>
         <tr><td class="mono">A.2</td><td class="mono">2026-06-03</td><td>SSOT 정합(동결 해제, ADR-018) — transport enum 개방(+CAN/SERIAL/WS) · <span class="mono">ids.ts</span> robot 일반화 + SCN/OBS/RT/MAP/INC/appId 등록 · node protocolRef·pinching_ee 정합 · AppManifest·panel-host 스키마 신설. codegen·validate(25)·typecheck·test(10) 통과. Annex E를 적용 내역으로 전환.</td><td class="mono">ORG-VIA</td></tr>
+        <tr><td class="mono">A.3</td><td class="mono">2026-06-04</td><td><b>Part H(Software Work-Breakdown &amp; Commercial SaaS Structure, H0–H6) 신설</b> — SW-WBS 식별체계(SWC/SWS/SWT·status 7종·관계규칙) · 상업 SaaS Product IA(Ops/Build/Field/Agent·on-robot↔cloud 미러·권한 ④&lt;③) · Surface/Component/Task 레지스트리 · 코드 주석 컨벤션 · Definition of Done/Shippability. B0에 <span class="mono">PRJ-·SITE-</span> 가산(documented · code-pending SWT-ID-001). <span class="mono">CommandEnvelope</span> 불변(connection-scoped). ADR-019 비준 · ADR-001 timing supersede. 코드 0 변경(MVP-1 문서).</td><td class="mono">ORG-VIA</td></tr>
       </tbody>
     </table>
   </section>

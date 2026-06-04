@@ -67,7 +67,8 @@ hold-to-confirm·Audit 고지·제품 간 Context 핸드오프(`ctx` 쿼리)를 
 ## 설계 문서 ([`docs/`](docs/README.md))
 - **공통 기준서**: [`00-ux-common-standards.md`](docs/00-ux-common-standards.md) (SSOT — 제품 구조·ID·상태·Gate·Audit·권한)
 - **과업지시서 3종**: [`tasks/01·02·03`](docs/tasks/) (+ `.docx`)
-- **결정 기록**: [`adr/ADR-001~009`](docs/adr/)
+- **결정 기록**: [`adr/ADR-001~019`](docs/adr/) (최신: **ADR-019** 상업 SaaS 스코핑 & SW-WBS)
+- **마스터 기준서**: [`architecture/sdv-reference-platform.html`](docs/architecture/sdv-reference-platform.html) — Part A~**H**(H=SW-WBS 식별체계·상업 SaaS 구조)
 - **수행 완료 보고서 3종**: [`reports/04·05·06`](docs/reports/) — 목업 스크린샷 24컷 + `.docx`
 - **커버리지**: [`spec-gap.md`](docs/spec-gap.md)
 
@@ -83,4 +84,5 @@ hold-to-confirm·Audit 고지·제품 간 Context 핸드오프(`ctx` 쿼리)를 
 ## 현황
 typecheck all green · 전 라우트 200. UX/UI 과업(공통기준→과업지시서→목업→완료보고서) 완료.
 **참조 런타임 트랙**: M1(Local Agent 코어) · M2(다중 노드 transport) · M3(App Runtime + `station.app.growth-scan`) · M4(목업을 실제 런타임 위에) · **M5(원격 모니터링 — Local Agent app(`pnpm --filter @station/local-agent start:agent`, HmiHub WS :7101)을 로컬에 띄우면 `/control/agent`가 `RemoteAgentClient`로 원격 접속해 실 Signal·ACK·scan→OBS 모니터링·명령. 인프로세스는 폴백 모드)**. `local-agent` test 20/20. 상세 로드맵 = [docs/architecture/station-field-os.md §12](docs/architecture/station-field-os.md).
-다음: 데모 시나리오 S3~S6 UI 연결 · 앱-레벨 데이터 런타임/DB 연결 · 다중 에이전트 클라우드 fan-in · PolicyEngine(Step4).
+
+**상업 SaaS 재구성 트랙**(SW-WBS · [ADR-019](docs/adr/ADR-019-commercial-saas-scoping-and-sw-wbs.md) · 마스터 Part H): STATION을 VIA 통합관제 SaaS(Ops·Build·Field·Agent)로 재구성하는 식별체계를 SSOT에 고정. **MVP-1 = 구조 인덱스 문서화(완료, 코드 0 변경)** → MVP-2 UX/UI 상업 구조 목업 → MVP-3 핵심 수직 라이브 → MVP-4 출시 트랙. on-robot 실체↔cloud 미러(권한 ④<③)·ORG→PRJ→SITE→RBT 스코핑·`CommandEnvelope` 불변(connection-scoped).

@@ -249,6 +249,19 @@ HMI 셸은 자동차 인포테인먼트 OS의 앱 런처에 대응한다. 모듈
 
 1단계는 **계약과 문서**가 끝났다. 2단계는 **M1**(Reference Local Agent 코어 — SignalStore·EventBus·NodeRegistry·CommandRouter 3단계 ACK·Gate, ADR-015) → **M2**(NodeTransport + 다중 노드 분산 seam) → **M3**(App Runtime + 첫 작업 앱 `station.app.growth-scan`, ADR-016 — scan.start→ACU 미션+VPU capture→GrowthObservation(OBS-*) 합성) → **M4**(목업을 실제 런타임 위에 — `/control/agent`가 라이브 Local Agent 면을 렌더; `@station/domain/runtime` provider/hooks, ws-free browser 서브패스) → **M5**(원격 모니터링 토폴로지 — **Local Agent app**(`run-agent.ts`, 로컬/엣지 상주: 노드+growth-scan+**HmiHub** 옵저버 WS `:7101`) ↔ 웹은 `RemoteAgentClient`(네이티브 WebSocket)로 접속해 모니터링·명령; §11 `HMI↔Local Agent = WS(실시간 신호·ACK·이벤트)` 정합. 인프로세스는 폴백 모드 보존)까지 구현됨(`local-agent` test 20/20 green · console build ws-free · 원격 연결·scan→OBS over WS·미연결 empty 검증). 남은 것: PolicyEngine 전체·Telemetry bridge·앱-레벨 데이터 런타임/DB 연결·다중 에이전트 클라우드 fan-in·`apps/agent` 상주화. HMI(경험층)는 같은 계약 위에 3단계로 올라간다.
 
+### 12.1 상업 SaaS 재구성 MVP 로드맵 (SW-WBS · [ADR-019](../adr/ADR-019-commercial-saas-scoping-and-sw-wbs.md) · [마스터 Part H](sdv-reference-platform.html))
+
+런타임(M1~M5) 위에서 STATION을 **VIA 상업용 통합관제 SaaS 제품군(Ops·Build·Field·Agent)**으로 재구성한다. 구현 전에 **SW 작업분해 식별체계(SW-WBS: SWC 컴포넌트 / SWS 표면 / SWT 작업)**로 구조를 SSOT에 고정하고, 상세 구현은 `SWT-*` backlog로 분배한다.
+
+| MVP | 목표 | Exit |
+| --- | --- | --- |
+| **MVP-1** | **구조 인덱스 문서화** — 마스터 Part H(H0~H6) + ADR-019. 코드 0 변경 | ✅ 레지스트리·관계규칙·출시경계 명시 |
+| **MVP-2 — UX/UI MVP ★** | **상업 SaaS 구조 목업**(= "구조적 목업" 달성) — Ops/Build/Field/Agent 제품 IA + 미러 surface + project→site→robot scope nav. SW-WBS 주석 컨벤션 적용 + 핵심코드 초기 패스 | 클릭 가능한 제품 IA 데모 · 제품경계 nav/header 식별 · surface별 SWS·authority/locus/mirror badge · registry↔핵심코드 1:1 |
+| **MVP-3** | **핵심 수직 라이브** — connection-scoped fleet(1 real + mock) + scope 영속 + 미러 실데이터 + ids.ts/도메인 모델 | 프로젝트→로봇 drill-in 라이브 · scan→OBS over WS · nav 후 scope 유지 |
+| **MVP-4** | **출시 트랙(external)** — cloud aggregation·tenant·auth/RLS·persistence + 비기능(테스트·보안·성능·배포·관측성) | 상업 출시 게이트 |
+
+핵심 결정(ADR-019): on-robot 실체↔cloud 미러(권한 ④<③) · 스코핑 ORG→PRJ→SITE→RBT(=Agent=연결) · **`CommandEnvelope` 불변(connection-scoped, robot_id 미주입)** · Agent=on-robot runtime product · ADR-001 timing supersede(Ops/Build 물리분리). **SWT 완료 ≠ 출시.**
+
 ---
 
 ## 13. `@station/contracts` 스키마·타입 참조
