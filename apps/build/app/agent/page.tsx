@@ -1,7 +1,8 @@
 "use client";
 /* [SWS-BUILD-INSPECTOR / SWC-AGENT-MIRROR] Runtime Inspector — M5 라이브 모니터 재배치.
    신규 런타임 0. 기존 @station/domain/runtime hooks(AgentRuntimeProvider·RemoteAgentClient)
-   를 Build 제품 표면으로 재배치. 실행 중 Local Agent app(ws://localhost:7101)에 연결. */
+   를 Build 제품 표면으로 재배치. 실행 중 Local Agent app(ws://localhost:7101)에 연결.
+   TODO(SWT-MIRROR-003): RuntimeInspector를 Build 고도로 재배치 — 완료. */
 import { useEffect, useRef, useState } from "react";
 import { SurfaceHeader } from "@station/app-kit";
 import { EmptyNote, StatusBadge } from "@station/design-system";
@@ -65,8 +66,8 @@ function Inspector() {
         sws="SWS-BUILD-INSPECTOR"
         right={
           <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11 }}>
-            <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: connected ? "var(--st-normal)" : status.state === "connecting" ? "var(--st-warning)" : "var(--st-critical)" }} />
-            <span className="mono" style={{ color: "var(--ink-3)" }}>{status.endpoint}{status.agentId ? ` · ${status.agentId}` : ""}</span>
+            <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: connected ? "var(--state-normal)" : status.state === "connecting" ? "var(--state-warning)" : "var(--state-critical)" }} />
+            <span className="mono" style={{ color: "var(--text-muted)" }}>{status.endpoint}{status.agentId ? ` · ${status.agentId}` : ""}</span>
             <span className="mono" style={{ fontWeight: 700 }}>{connected ? `connected · ${nodes.length} nodes` : status.state === "connecting" ? "연결 중…" : "연결 끊김"}</span>
           </span>
         }
@@ -83,11 +84,11 @@ function Inspector() {
             <strong style={{ fontSize: 12 }}>노드 레인 · 표준 신호</strong>
             <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
               {nodes.map((n) => (
-                <div key={n.nodeId} style={{ border: "1px solid var(--line)", borderRadius: "var(--r-sm)", padding: 8 }}>
-                  <div className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-2)" }}>{n.kind} · {n.nodeId} · {n.ownerOrg}</div>
+                <div key={n.nodeId} style={{ border: "1px solid var(--line-default)", borderRadius: "var(--radius-sm)", padding: 8 }}>
+                  <div className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--text-secondary)" }}>{n.kind} · {n.nodeId} · {n.ownerOrg}</div>
                   {n.signals.map((ch) => (
                     <div key={ch} className="mono" style={{ fontSize: 10.5, display: "flex", gap: 8, marginTop: 2 }}>
-                      <span style={{ flex: 1, color: "var(--ink-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ch}</span>
+                      <span style={{ flex: 1, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ch}</span>
                       <span className="tnum" style={{ fontWeight: 700 }}>{typeof signals[ch]?.value === "number" ? signals[ch]!.value : String(signals[ch]?.value ?? "—")}</span>
                     </div>
                   ))}
@@ -106,16 +107,16 @@ function Inspector() {
               {latestObs ? (
                 <div className="mono" style={{ fontSize: 10.5 }}>
                   <div style={{ fontWeight: 700 }}>{latestObs.observationId}</div>
-                  <div style={{ color: "var(--ink-2)" }}>ndvi {latestObs.crop.ndvi} · h {latestObs.crop.plant_height} · {observations.length} obs</div>
+                  <div style={{ color: "var(--text-secondary)" }}>ndvi {latestObs.crop.ndvi} · h {latestObs.crop.plant_height} · {observations.length} obs</div>
                   <StatusBadge sev={latestObs.quality === "good" ? "normal" : "warning"} label={latestObs.quality} />
                 </div>
-              ) : <div style={{ fontSize: 11, color: "var(--ink-3)" }}>scan.start로 OBS 합성 시작</div>}
+              ) : <div style={{ fontSize: 11, color: "var(--text-muted)" }}>scan.start로 OBS 합성 시작</div>}
             </div>
             <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-              <div style={{ padding: "8px 12px", borderBottom: "1px solid var(--line)", fontSize: 11, fontWeight: 700 }}>EventBus · live</div>
+              <div style={{ padding: "8px 12px", borderBottom: "1px solid var(--line-default)", fontSize: 11, fontWeight: 700 }}>EventBus · live</div>
               <div style={{ maxHeight: 220, overflow: "auto", padding: "6px 12px" }}>
-                {log.length === 0 ? <div style={{ fontSize: 11, color: "var(--ink-3)" }}>이벤트 대기…</div> : log.map((l, i) => (
-                  <div key={i} className="mono" style={{ fontSize: 10.5, color: "var(--ink-2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l}</div>
+                {log.length === 0 ? <div style={{ fontSize: 11, color: "var(--text-muted)" }}>이벤트 대기…</div> : log.map((l, i) => (
+                  <div key={i} className="mono" style={{ fontSize: 10.5, color: "var(--text-secondary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l}</div>
                 ))}
               </div>
             </div>

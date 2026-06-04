@@ -12,7 +12,7 @@ export function AppFrame({ children }: { children: React.ReactNode }) {
         product={productById("field")}
         nav={nav}
         scopeSlot={<ProjectScopePicker depth="robot" />}
-        headerRight={<span className="mono" style={{ fontSize: 10, color: "var(--st-normal)", fontWeight: 700 }}>local-first · cloud mirror 하위</span>}
+        headerRight={<span className="mono" style={{ fontSize: 10, color: "var(--state-normal)", fontWeight: 700 }}>local-first · cloud mirror 하위</span>}
       >
         {children}
       </ProductShell>

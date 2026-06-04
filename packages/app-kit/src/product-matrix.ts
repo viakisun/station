@@ -2,6 +2,9 @@
    [SWC-APP-KIT / WR-MVP-1] Product Matrix — 상업 SaaS 제품군 단일 기준표.
    hub 카드·ProductShell·SurfaceHeader 가 전부 이 표를 참조한다(일관성의 단일 출처).
    마스터 Part H H2(Product IA & Surface Registry) 정합.
+   TODO(SWT-WBS-001): 핵심 코드 [SWC/SWS] 헤더 주석 패스(진행 중).
+   TODO(SWT-WBS-002): 핵심 코드 TODO(SWT-*) 부착 — grep SWT- = Part H H4 backlog.
+   TODO(SWT-DOC-001): 레지스트리(Part H H3/H4) ↔ 코드 주석 1:1 동기 검증 룰.
    ============================================================ */
 
 export type ProductId = "ops" | "build" | "field" | "agent";

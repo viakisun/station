@@ -50,6 +50,8 @@ export const getHmiData = () => HMI;
 
 // ---- WR-MVP-1 상업 SaaS 스코프 (ORG→PRJ→SITE→RBT) ----
 // [영속화 seam] 향후 repo.query / API 로 교체. 현재는 scope.ts fixture.
+// TODO(SWT-AUTH-001) [external]: org-scoped 가시성/권한(tenant isolation·auth·RLS) — 스코프
+//   selectors가 현재 전체 반환. 향후 테넌트 경계로 필터.
 export const getProjects = () => PROJECTS;
 export const getSites = () => SITES;
 export const getSitesOfProject = (projectId: string) =>

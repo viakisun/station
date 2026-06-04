@@ -21,16 +21,16 @@ export default function Page() {
             </button>
           ))}
         </div>
-        <div style={{ fontSize: 11, color: "var(--ink-3)", marginBottom: 6 }}>3-stage ACK timeline (stub):</div>
+        <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 6 }}>3-stage ACK timeline (stub):</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           {ACK.map((a) => (
             <div key={a.t} className="mono" style={{ fontSize: 11, display: "flex", gap: 8 }}>
-              <span style={{ width: 70, color: "var(--ink-2)" }}>{a.t}</span>
-              <span style={{ color: "var(--ink-3)" }}>{a.note}</span>
+              <span style={{ width: 70, color: "var(--text-secondary)" }}>{a.t}</span>
+              <span style={{ color: "var(--text-muted)" }}>{a.note}</span>
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 10.5, color: "var(--st-warning)", marginTop: 10 }}>
+        <div style={{ fontSize: 10.5, color: "var(--state-warning)", marginTop: 10 }}>
           ※ 모든 명령은 robot-side evaluateGate를 통과. cloud는 요청만(권한 ④ &lt; field ③).
         </div>
       </StubPanel>

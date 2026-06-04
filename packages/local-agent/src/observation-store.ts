@@ -38,6 +38,7 @@ export interface ObservationStore {
  *   latest()           → repo.queryLatest()
  * 백엔드는 SQLite/Postgres 또는 .json append-only 어느 쪽이든 가능 — subscribe
  * fan-out(라이브 구독)은 그대로 두고 저장만 영속화하면 UI/aggregator 불변.
+ * TODO(SWT-PERSIST-001) [external]: 실 DB/persistence(Observation 이력) Repository 구현.
  */
 export class InMemoryObservationStore implements ObservationStore {
   #open = new Set<string>();

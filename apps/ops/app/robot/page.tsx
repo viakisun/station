@@ -1,7 +1,8 @@
 "use client";
 /* [SWS-OPS-ROBOT / SWC-FLEET / MVP-3] Robot detail — scope.robotId 라이브 drill-in.
    connection-scoped: 선택 로봇의 Local Agent(FleetManager)에 연결해 노드·신호·OBS 표시.
-   endpoint 없는 로봇 = offline(mock). 데모는 RBT-THIN-0001 한 대 라이브. */
+   endpoint 없는 로봇 = offline(mock). 데모는 RBT-SCAN-0001 한 대 라이브.
+   TODO(SWT-OPS-ROBOT-001): Robot detail 상업 구조(작업 세션·모듈·incident 탭) 확장. */
 import { SurfaceHeader, useScope } from "@station/app-kit";
 import { EmptyNote, StatusBadge } from "@station/design-system";
 import { FleetAgentProvider, useAgentStatus, useNodes, useSignals, useObservations, useDispatch } from "@station/domain/runtime";
@@ -42,8 +43,8 @@ function RobotLive({ robotId }: { robotId: string | null }) {
         sws="SWS-OPS-ROBOT"
         right={
           <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11 }}>
-            <span className="mono" style={{ color: "var(--ink-3)" }}>{robotId ?? "(robot 미선택)"} · {status.endpoint}</span>
-            <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: connected ? "var(--st-normal)" : status.state === "connecting" ? "var(--st-warning)" : "var(--st-disabled)" }} />
+            <span className="mono" style={{ color: "var(--text-muted)" }}>{robotId ?? "(robot 미선택)"} · {status.endpoint}</span>
+            <span className="live-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: connected ? "var(--state-normal)" : status.state === "connecting" ? "var(--state-warning)" : "var(--state-offline)" }} />
             <span className="mono" style={{ fontWeight: 700 }}>{connected ? `live · ${nodes.length} nodes` : status.state === "connecting" ? "connecting…" : "offline"}</span>
           </span>
         }
@@ -61,11 +62,11 @@ function RobotLive({ robotId }: { robotId: string | null }) {
             <strong style={{ fontSize: 12 }}>노드 · 라이브 신호 — {robotId}</strong>
             <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
               {nodes.map((n) => (
-                <div key={n.nodeId} style={{ border: "1px solid var(--line)", borderRadius: "var(--r-sm)", padding: 8 }}>
-                  <div className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--ink-2)" }}>{n.kind} · {n.ownerOrg}</div>
+                <div key={n.nodeId} style={{ border: "1px solid var(--line-default)", borderRadius: "var(--radius-sm)", padding: 8 }}>
+                  <div className="mono" style={{ fontSize: 10.5, fontWeight: 700, color: "var(--text-secondary)" }}>{n.kind} · {n.ownerOrg}</div>
                   {n.signals.slice(0, 4).map((ch) => (
                     <div key={ch} className="mono" style={{ fontSize: 10.5, display: "flex", gap: 8, marginTop: 2 }}>
-                      <span style={{ flex: 1, color: "var(--ink-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ch}</span>
+                      <span style={{ flex: 1, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ch}</span>
                       <span className="tnum" style={{ fontWeight: 700 }}>{typeof signals[ch]?.value === "number" ? signals[ch]!.value : String(signals[ch]?.value ?? "—")}</span>
                     </div>
                   ))}
@@ -82,11 +83,11 @@ function RobotLive({ robotId }: { robotId: string | null }) {
             {obs ? (
               <div className="mono" style={{ fontSize: 10.5 }}>
                 <div style={{ fontWeight: 700 }}>{obs.observationId}</div>
-                <div style={{ color: "var(--ink-2)" }}>ndvi {obs.crop.ndvi} · {observations.length} obs</div>
+                <div style={{ color: "var(--text-secondary)" }}>ndvi {obs.crop.ndvi} · {observations.length} obs</div>
                 <StatusBadge sev={obs.quality === "good" ? "normal" : "warning"} label={obs.quality} />
               </div>
-            ) : <div style={{ fontSize: 11, color: "var(--ink-3)" }}>scan.start로 OBS 합성</div>}
-            <div style={{ fontSize: 10, color: "var(--st-warning)", marginTop: 10 }}>Cloud ④ — 명령은 robot-side evaluateGate 경유(요청).</div>
+            ) : <div style={{ fontSize: 11, color: "var(--text-muted)" }}>scan.start로 OBS 합성</div>}
+            <div style={{ fontSize: 10, color: "var(--state-warning)", marginTop: 10 }}>Cloud ④ — 명령은 robot-side evaluateGate 경유(요청).</div>
           </div>
         </div>
       )}

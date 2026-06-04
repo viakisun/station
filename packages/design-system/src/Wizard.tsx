@@ -26,7 +26,7 @@ export function WizardStepper({
       {steps.map((s, i) => {
         const state = i < current ? "done" : i === current ? "current" : "todo";
         const color =
-          state === "done" ? "var(--st-normal)" : state === "current" ? "var(--brand)" : "var(--line-strong)";
+          state === "done" ? "var(--state-normal)" : state === "current" ? "var(--product-accent)" : "var(--line-strong)";
         return (
           <div key={s.key} style={{ flex: 1, minWidth: 0, position: "relative" }}>
             {i < steps.length - 1 && (
@@ -37,7 +37,7 @@ export function WizardStepper({
                   left: "calc(50% + 18px)",
                   right: "calc(-50% + 18px)",
                   height: 2,
-                  background: i < current ? "var(--st-normal)" : "var(--line)",
+                  background: i < current ? "var(--state-normal)" : "var(--line-default)",
                 }}
               />
             )}
@@ -61,9 +61,9 @@ export function WizardStepper({
                   borderRadius: "50%",
                   display: "grid",
                   placeItems: "center",
-                  background: state === "todo" ? "var(--surface)" : color,
+                  background: state === "todo" ? "var(--surface-panel)" : color,
                   border: `1.5px solid ${color}`,
-                  color: state === "todo" ? "var(--ink-3)" : "#fff",
+                  color: state === "todo" ? "var(--text-muted)" : "#fff",
                   fontFamily: "var(--font-mono)",
                   fontWeight: 800,
                   fontSize: 13,
@@ -77,7 +77,7 @@ export function WizardStepper({
                 style={{
                   fontSize: 11.5,
                   fontWeight: state === "current" ? 800 : 600,
-                  color: state === "current" ? "var(--ink)" : "var(--ink-3)",
+                  color: state === "current" ? "var(--text-primary)" : "var(--text-muted)",
                   textAlign: "center",
                   lineHeight: 1.3,
                 }}
@@ -117,9 +117,9 @@ export function WizardFrame({
 }) {
   return (
     <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-      <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--line)" }}>
+      <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--line-default)" }}>
         <div style={{ fontSize: 15, fontWeight: 800 }}>{title}</div>
-        {sub && <div style={{ fontSize: 12, color: "var(--ink-3)", marginTop: 3 }}>{sub}</div>}
+        {sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 3 }}>{sub}</div>}
       </div>
       <div style={{ padding: 18 }}>{children}</div>
       <div
@@ -129,8 +129,8 @@ export function WizardFrame({
           justifyContent: "space-between",
           gap: 8,
           padding: "12px 18px",
-          borderTop: "1px solid var(--line)",
-          background: "var(--surface-2)",
+          borderTop: "1px solid var(--line-default)",
+          background: "var(--surface-panel-raised)",
         }}
       >
         <div>{footer}</div>

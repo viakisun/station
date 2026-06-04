@@ -9,6 +9,7 @@ import type { SignalStore } from "@station/contracts/runtime";
  * 이력(시계열)이 필요하면 write() 에 time-series 싱크를 가산:
  *   write(s) → { this.#latest.set(...); fanout; tsdb.append(s) }  // 예: SQLite/Influx/.jsonl
  * 라이브 면(latest/subscribe)은 불변, 이력 조회만 별도 Repository 로.
+ * TODO(SWT-PERSIST-001) [external]: 신호 이력 time-series 영속화(tsdb/.jsonl).
  */
 export class InMemorySignalStore implements SignalStore {
   #latest = new Map<string, Signal>();

@@ -25,10 +25,10 @@ const GATE_META: Record<
   GateSeverity,
   { icon: IconName; label: string; tone: string }
 > = {
-  pass: { icon: "check", label: "사용 가능", tone: "var(--st-normal)" },
-  warn: { icon: "alert", label: "주의 후 진행", tone: "var(--st-warning)" },
-  confirm_required: { icon: "lock", label: "확인 필요 (hold)", tone: "var(--st-notice)" },
-  blocked: { icon: "close", label: "진행 불가", tone: "var(--st-critical)" },
+  pass: { icon: "check", label: "사용 가능", tone: "var(--state-normal)" },
+  warn: { icon: "alert", label: "주의 후 진행", tone: "var(--state-warning)" },
+  confirm_required: { icon: "lock", label: "확인 필요 (hold)", tone: "var(--state-notice)" },
+  blocked: { icon: "close", label: "진행 불가", tone: "var(--state-critical)" },
 };
 
 /* ---- Gate 4단계 표시: blocked/confirm는 사유 + 해결 행동 ---- */
@@ -55,13 +55,13 @@ export function GateNotice({
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontWeight: 700, color: m.tone }}>{title || m.label}</span>
           {gateId && (
-            <span className="mono" style={{ fontSize: 10.5, color: "var(--ink-3)" }}>
+            <span className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)" }}>
               {gateId}
             </span>
           )}
         </div>
         {reason && (
-          <div style={{ fontSize: 12, color: "var(--ink-2)", marginTop: 4, lineHeight: 1.5 }}>
+          <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4, lineHeight: 1.5 }}>
             {reason}
           </div>
         )}
@@ -163,12 +163,12 @@ export function ContextChip({
 }) {
   return (
     <span className="ctx-chip">
-      <Icon name="ext" size={13} style={{ color: "var(--ink-3)" }} />
+      <Icon name="ext" size={13} style={{ color: "var(--text-muted)" }} />
       <span className="from">from {origin}</span>
       {ids && (
         <>
           <span className="mid" />
-          <span className="mono" style={{ color: "var(--ink)" }}>
+          <span className="mono" style={{ color: "var(--text-primary)" }}>
             {ids}
           </span>
         </>
@@ -181,7 +181,7 @@ export function ContextChip({
             style={{
               border: "none",
               background: "transparent",
-              color: "var(--brand)",
+              color: "var(--product-accent)",
               fontWeight: 700,
               fontSize: 11.5,
               padding: 0,
@@ -233,10 +233,10 @@ export function KVStack({
             alignItems: "center",
             gap: 12,
             padding: big ? "12px 0" : "8px 0",
-            borderBottom: i < pairs.length - 1 ? "1px solid var(--line)" : "none",
+            borderBottom: i < pairs.length - 1 ? "1px solid var(--line-default)" : "none",
           }}
         >
-          <span style={{ fontSize: big ? 14 : 12, color: "var(--ink-3)", fontWeight: 600 }}>
+          <span style={{ fontSize: big ? 14 : 12, color: "var(--text-muted)", fontWeight: 600 }}>
             {p[0]}
           </span>
           <span style={{ fontSize: big ? 16 : 13, fontWeight: 700, textAlign: "right" }}>

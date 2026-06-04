@@ -5,6 +5,8 @@
    CommandEnvelope 불변(robot_id 미주입) — robot 스코프는 연결 단위(ADR-019).
    데모: 한 로봇만 실 endpoint(실행 중 start:agent), 나머지는 offline(mock).
    TODO(SWT-FLEET-002): 실 endpoint directory(cloud lookup)로 교체.
+   TODO(SWT-CLOUD-001) [external]: 서버측 cloud aggregation(N-agent fan-in·롤업) — 이 클라이언트
+     측 fan-in을 대체/보완. 권한 ④(관찰 티어, 명령 권한 아님).
    ============================================================ */
 import { RemoteAgentClient } from "./remote-agent";
 

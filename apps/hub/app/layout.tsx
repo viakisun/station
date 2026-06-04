@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" />
       </head>
-      <body style={{ margin: 0, background: "var(--canvas)", color: "var(--ink)", fontFamily: "var(--font-ui)" }}>
+      <body data-theme="hub" style={{ margin: 0, background: "var(--surface-canvas)", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>
         <ScopeProvider seedFirstProject={false}>{children}</ScopeProvider>
       </body>
     </html>

@@ -64,9 +64,9 @@ export function RobotTypeTag({
         fontSize: sm ? 10.5 : 11.5,
         fontWeight: 700,
         letterSpacing: ".2px",
-        color: "var(--ink-2)",
-        background: "var(--surface-2)",
-        border: "1px solid var(--line)",
+        color: "var(--text-secondary)",
+        background: "var(--surface-panel-raised)",
+        border: "1px solid var(--line-default)",
       }}
     >
       <span
@@ -74,8 +74,8 @@ export function RobotTypeTag({
           width: 6,
           height: 6,
           borderRadius: "50%",
-          background: thin ? "var(--ink)" : "transparent",
-          border: thin ? "none" : "1.5px solid var(--ink-2)",
+          background: thin ? "var(--text-primary)" : "transparent",
+          border: thin ? "none" : "1.5px solid var(--text-secondary)",
         }}
       />
       {thin ? "Thin" : "Pinch"}
@@ -87,12 +87,12 @@ export function RobotTypeTag({
 export function Battery({ pct }: { pct: number }) {
   const color =
     pct <= 0
-      ? "var(--st-disabled)"
+      ? "var(--state-offline)"
       : pct < 25
-        ? "var(--st-critical)"
+        ? "var(--state-critical)"
         : pct < 45
-          ? "var(--st-warning)"
-          : "var(--st-normal)";
+          ? "var(--state-warning)"
+          : "var(--state-normal)";
   return (
     <span
       style={{
@@ -101,7 +101,7 @@ export function Battery({ pct }: { pct: number }) {
         gap: 6,
         fontSize: 12,
         fontWeight: 600,
-        color: "var(--ink-2)",
+        color: "var(--text-secondary)",
       }}
     >
       <span
@@ -185,7 +185,7 @@ export function KpiCard({
           style={{
             fontSize: 11.5,
             fontWeight: 600,
-            color: "var(--ink-2)",
+            color: "var(--text-secondary)",
             display: "flex",
             alignItems: "center",
             gap: 6,
@@ -205,7 +205,7 @@ export function KpiCard({
           {label}
         </span>
         {icon && (
-          <span style={{ color: "var(--ink-3)", flex: "none" }}>
+          <span style={{ color: "var(--text-muted)", flex: "none" }}>
             <Icon name={icon} size={15} stroke={1.8} />
           </span>
         )}
@@ -218,18 +218,18 @@ export function KpiCard({
             fontWeight: 700,
             lineHeight: 1,
             letterSpacing: "-.6px",
-            color: alert ? `var(--st-${sev})` : "var(--ink)",
+            color: alert ? `var(--st-${sev})` : "var(--text-primary)",
           }}
         >
           {value}
         </span>
         {unit && (
-          <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-3)" }}>
+          <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-muted)" }}>
             {unit}
           </span>
         )}
       </div>
-      {sub && <span style={{ fontSize: 11, color: "var(--ink-3)" }}>{sub}</span>}
+      {sub && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{sub}</span>}
     </div>
   );
 }
@@ -239,7 +239,7 @@ export function Sparkline({
   data = [],
   w = 120,
   h = 34,
-  color = "var(--brand)",
+  color = "var(--product-accent)",
   fill = true,
 }: {
   data?: number[];
@@ -297,7 +297,7 @@ export function MiniBars({
             style={{
               width: 56,
               fontSize: 12,
-              color: "var(--ink-2)",
+              color: "var(--text-secondary)",
               fontWeight: 600,
               flex: "none",
             }}
@@ -308,7 +308,7 @@ export function MiniBars({
             style={{
               flex: 1,
               height: 8,
-              background: "var(--surface-3)",
+              background: "var(--surface-muted)",
               borderRadius: 999,
               overflow: "hidden",
             }}
@@ -317,7 +317,7 @@ export function MiniBars({
               style={{
                 width: (it.value / m) * 100 + "%",
                 height: "100%",
-                background: it.color || "var(--brand)",
+                background: it.color || "var(--product-accent)",
                 borderRadius: 999,
               }}
             />
@@ -359,13 +359,13 @@ export function PanelHead({
         alignItems: "center",
         justifyContent: "space-between",
         padding: dense ? "10px 14px" : "13px 16px",
-        borderBottom: "1px solid var(--line)",
+        borderBottom: "1px solid var(--line-default)",
       }}
     >
       <div style={{ minWidth: 0 }}>
         <div style={{ fontSize: 13.5, fontWeight: 700 }}>{title}</div>
         {sub && (
-          <div style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: 2 }}>
+          <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 2 }}>
             {sub}
           </div>
         )}
@@ -447,8 +447,8 @@ export function ConfirmModal({
               flex: "none",
               display: "grid",
               placeItems: "center",
-              color: danger ? "var(--st-emergency)" : "var(--brand)",
-              background: danger ? "var(--tint-critical)" : "var(--surface-2)",
+              color: danger ? "var(--state-emergency)" : "var(--product-accent)",
+              background: danger ? "var(--state-critical-bg)" : "var(--surface-panel-raised)",
             }}
           >
             <Icon name={danger ? "alert" : "shield"} size={20} />
@@ -458,7 +458,7 @@ export function ConfirmModal({
             <div
               style={{
                 fontSize: 13,
-                color: "var(--ink-2)",
+                color: "var(--text-secondary)",
                 marginTop: 5,
                 lineHeight: 1.5,
               }}
@@ -472,19 +472,19 @@ export function ConfirmModal({
             margin: "14px 20px 0",
             padding: "9px 11px",
             borderRadius: 7,
-            background: "var(--surface-2)",
-            border: "1px solid var(--line)",
+            background: "var(--surface-panel-raised)",
+            border: "1px solid var(--line-default)",
             display: "flex",
             gap: 8,
             alignItems: "center",
             fontSize: 11.5,
-            color: "var(--ink-2)",
+            color: "var(--text-secondary)",
           }}
         >
           <Icon
             name="audit"
             size={15}
-            style={{ color: "var(--ink-3)", flex: "none" }}
+            style={{ color: "var(--text-muted)", flex: "none" }}
           />
           {auditNote ||
             "This action is recorded to audit_log with operator, time and reason."}
@@ -556,7 +556,7 @@ export function ProgressBar({
           <span
             style={{
               fontSize: 11.5,
-              color: "var(--ink-3)",
+              color: "var(--text-muted)",
               alignSelf: "flex-end",
             }}
           >
@@ -567,7 +567,7 @@ export function ProgressBar({
       <div
         style={{
           height: big ? 8 : 6,
-          background: "var(--surface-3)",
+          background: "var(--surface-muted)",
           borderRadius: 999,
           overflow: "hidden",
         }}
@@ -576,7 +576,7 @@ export function ProgressBar({
           style={{
             width: pct + "%",
             height: "100%",
-            background: "var(--brand)",
+            background: "var(--product-accent)",
             borderRadius: 999,
             transition: "width .4s",
           }}
@@ -605,12 +605,12 @@ export function EmptyNote({
         justifyContent: "center",
         gap: 8,
         padding: "40px 20px",
-        color: "var(--ink-3)",
+        color: "var(--text-muted)",
         textAlign: "center",
       }}
     >
       <Icon name={icon} size={28} />
-      <div style={{ fontWeight: 700, color: "var(--ink-2)", fontSize: 14 }}>
+      <div style={{ fontWeight: 700, color: "var(--text-secondary)", fontSize: 14 }}>
         {title}
       </div>
       {sub && <div style={{ fontSize: 12.5 }}>{sub}</div>}

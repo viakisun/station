@@ -3,6 +3,7 @@
    [SWC-SCOPE / WR-MVP-1] 영속 스코프 — ORG → PRJ → SITE → RBT.
    현 ConsoleShell의 ephemeral robotId(nav마다 소실) 문제 대체(SWT-SCOPE-001/002).
    URL ?ctx= 직렬화(domain encodeCtx/parseCtx 재사용) → nav·deeplink·cross-app 유지.
+   TODO(SWT-SCOPE-002): ephemeral robotId 버그 수정 — 완료(sessionStorage 영속).
    ============================================================ */
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import {
@@ -86,7 +87,7 @@ export function useScope(): ScopeApi {
   return v;
 }
 
-const sel: React.CSSProperties = { height: 26, fontSize: 11, fontFamily: "var(--font-mono)", border: "1px solid var(--line-strong)", borderRadius: "var(--r-sm)", background: "var(--surface)", color: "var(--ink)", padding: "0 6px", maxWidth: 200 };
+const sel: React.CSSProperties = { height: 26, fontSize: 11, fontFamily: "var(--font-mono)", border: "1px solid var(--line-strong)", borderRadius: "var(--radius-sm)", background: "var(--surface-panel)", color: "var(--text-primary)", padding: "0 6px", maxWidth: 200 };
 
 /** project→site→robot 선택. scopeDepth로 노출 깊이 차등(Build의 일부 surface는 robot optional). */
 export function ProjectScopePicker({ depth = "robot" }: { depth?: ScopeDepth }) {
@@ -121,7 +122,7 @@ export function ScopeSummary() {
   const { scope } = useScope();
   const parts = [scope.projectId, scope.siteId, scope.robotId].filter(Boolean);
   return (
-    <span className="mono" style={{ fontSize: 10.5, color: "var(--ink-3)" }}>
+    <span className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)" }}>
       scope: {parts.length ? parts.join(" · ") : "(none)"}
     </span>
   );

@@ -67,7 +67,7 @@ hold-to-confirm·Audit 고지·제품 간 Context 핸드오프(`ctx` 쿼리)를 
 ## 설계 문서 ([`docs/`](docs/README.md))
 - **공통 기준서**: [`00-ux-common-standards.md`](docs/00-ux-common-standards.md) (SSOT — 제품 구조·ID·상태·Gate·Audit·권한)
 - **과업지시서 3종**: [`tasks/01·02·03`](docs/tasks/) (+ `.docx`)
-- **결정 기록**: [`adr/ADR-001~019`](docs/adr/) (최신: **ADR-019** 상업 SaaS 스코핑 & SW-WBS)
+- **결정 기록**: [`adr/ADR-001~020`](docs/adr/) (최신: **ADR-020** 산업용 SDV 토큰 체계(다크))
 - **마스터 기준서**: [`architecture/sdv-reference-platform.html`](docs/architecture/sdv-reference-platform.html) — Part A~**H**(H=SW-WBS 식별체계·상업 SaaS 구조)
 - **수행 완료 보고서 3종**: [`reports/04·05·06`](docs/reports/) — 목업 스크린샷 24컷 + `.docx`
 - **커버리지**: [`spec-gap.md`](docs/spec-gap.md)

@@ -24,7 +24,7 @@ function Mirror({ robotId }: { robotId: string | null }) {
   return (
     <div>
       <SurfaceHeader sws="SWS-OPS-HMI-MIRROR" right={
-        <span className="mono" style={{ fontSize: 11, color: "var(--ink-3)" }}>{robotId ?? "(robot 미선택)"} · {connected ? "live observe" : status.state}</span>
+        <span className="mono" style={{ fontSize: 11, color: "var(--text-muted)" }}>{robotId ?? "(robot 미선택)"} · {connected ? "live observe" : status.state}</span>
       } />
       {!connected ? (
         <div style={{ padding: 16 }}>
@@ -34,16 +34,16 @@ function Mirror({ robotId }: { robotId: string | null }) {
       ) : (
         <div style={{ padding: 14 }}>
           <div className="card" style={{ padding: 12 }}>
-            <div style={{ fontSize: 11, color: "var(--ink-3)", marginBottom: 8 }}>현장 HMI 관찰(observe only · 명령 경로 없음) — {robotId}</div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8 }}>현장 HMI 관찰(observe only · 명령 경로 없음) — {robotId}</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               {watch.map((ch) => (
-                <div key={ch} style={{ border: "1px solid var(--line)", borderRadius: "var(--r-sm)", padding: "8px 10px" }}>
-                  <div className="mono" style={{ fontSize: 9.5, color: "var(--ink-3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ch}</div>
+                <div key={ch} style={{ border: "1px solid var(--line-default)", borderRadius: "var(--radius-sm)", padding: "8px 10px" }}>
+                  <div className="mono" style={{ fontSize: 9.5, color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ch}</div>
                   <div className="mono tnum" style={{ fontSize: 16, fontWeight: 800 }}>{typeof signals[ch]?.value === "number" ? signals[ch]!.value : String(signals[ch]?.value ?? "—")}</div>
                 </div>
               ))}
             </div>
-            <div style={{ fontSize: 10, color: "var(--st-warning)", marginTop: 10 }}>권한 ④ &lt; ③ — cloud 미러는 관찰·보조만, 현장 operator 권한을 넘지 않음.</div>
+            <div style={{ fontSize: 10, color: "var(--state-warning)", marginTop: 10 }}>권한 ④ &lt; ③ — cloud 미러는 관찰·보조만, 현장 operator 권한을 넘지 않음.</div>
           </div>
         </div>
       )}

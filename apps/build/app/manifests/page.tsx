@@ -12,20 +12,20 @@ export default function Page() {
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11.5 }}>
             <thead>
-              <tr style={{ background: "var(--surface-2)", textAlign: "left" }}>
+              <tr style={{ background: "var(--surface-panel-raised)", textAlign: "left" }}>
                 {["module", "type", "vendor", "robots", "protocol", "fw", "audit"].map((h) => (
-                  <th key={h} style={{ padding: "7px 10px", fontSize: 9.5, textTransform: "uppercase", color: "var(--ink-3)", borderBottom: "1px solid var(--line)" }}>{h}</th>
+                  <th key={h} style={{ padding: "7px 10px", fontSize: 9.5, textTransform: "uppercase", color: "var(--text-muted)", borderBottom: "1px solid var(--line-default)" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {mods.map((m) => (
-                <tr key={m.id} style={{ borderBottom: "1px solid var(--line)" }}>
+                <tr key={m.id} style={{ borderBottom: "1px solid var(--line-default)" }}>
                   <td className="mono" style={{ padding: "7px 10px", fontWeight: 700 }}>{m.id}</td>
                   <td style={{ padding: "7px 10px" }}>{m.type}</td>
-                  <td className="mono" style={{ padding: "7px 10px", color: "var(--ink-2)" }}>{m.vendor}</td>
-                  <td style={{ padding: "7px 10px", color: "var(--ink-2)" }}>{m.robots}</td>
-                  <td className="mono" style={{ padding: "7px 10px", color: "var(--ink-3)" }}>{m.proto}</td>
+                  <td className="mono" style={{ padding: "7px 10px", color: "var(--text-secondary)" }}>{m.vendor}</td>
+                  <td style={{ padding: "7px 10px", color: "var(--text-secondary)" }}>{m.robots}</td>
+                  <td className="mono" style={{ padding: "7px 10px", color: "var(--text-muted)" }}>{m.proto}</td>
                   <td className="mono" style={{ padding: "7px 10px" }}>{m.fw}</td>
                   <td style={{ padding: "7px 10px" }}><StatusBadge sev={m.auditState === "approved" ? "normal" : m.auditState === "failed" ? "critical" : m.auditState === "waiver_required" ? "warning" : "notice"} label={m.auditState} /></td>
                 </tr>
@@ -33,7 +33,7 @@ export default function Page() {
             </tbody>
           </table>
         </div>
-        <div className="mono" style={{ fontSize: 10, color: "var(--ink-3)", marginTop: 8 }}>ModuleManifest · AppManifest(station.app.*) · Blueprint — @station/contracts SSOT. project/platform scope.</div>
+        <div className="mono" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8 }}>ModuleManifest · AppManifest(station.app.*) · Blueprint — @station/contracts SSOT. project/platform scope.</div>
       </div>
     </div>
   );

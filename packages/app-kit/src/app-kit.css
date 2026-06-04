@@ -11,6 +11,6 @@
   font-family: var(--font-mono);
   font-size: 8.5px;
   letter-spacing: 0.5px;
-  color: var(--st-warning);
+  color: var(--state-warning);
   opacity: 0.7;
 }
