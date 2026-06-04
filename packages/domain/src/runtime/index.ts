@@ -3,7 +3,8 @@
    기본 = 원격(RemoteAgentClient, WS) · 폴백 = 인프로세스 시뮬(M4).
    SSR-safe 동기 selectors(@station/domain 의 ".")와 분리된 서브패스.
    ============================================================ */
-export { AgentRuntimeProvider, useAgent, useAgentStatus, type AgentStatus } from "./provider";
+export { AgentRuntimeProvider, FleetAgentProvider, useAgent, useAgentStatus, type AgentStatus } from "./provider";
+export { fleet } from "./fleet-manager";
 export { getRuntime, peekRuntime, teardownRuntime } from "./agent-runtime";
 export { RemoteAgentClient } from "./remote-agent";
 export type { AgentFacade, ConnectionState } from "./agent-facade";

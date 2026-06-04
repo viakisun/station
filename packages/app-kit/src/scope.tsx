@@ -30,18 +30,24 @@ interface ScopeApi {
 const DEFAULT: Scope = { orgId: "ORG-VIA", projectId: null, siteId: null, robotId: null };
 const ScopeCtx = createContext<ScopeApi | null>(null);
 
-function fromUrl(): Scope {
+const STORE_KEY = "station.scope";
+
+/** URL ?ctx= 우선(deeplink/cross-app) → sessionStorage 폴백(same-app 전체 nav 유지). */
+function loadScope(): Scope {
   if (typeof window === "undefined") return DEFAULT;
   const env = parseCtx(new URLSearchParams(window.location.search).get("ctx"));
-  return {
-    orgId: "ORG-VIA",
-    projectId: env?.project_id ?? null,
-    siteId: env?.site ?? null,
-    robotId: env?.robot_id ?? null,
-  };
+  if (env && (env.project_id || env.robot_id || env.site)) {
+    return { orgId: "ORG-VIA", projectId: env.project_id ?? null, siteId: env.site ?? null, robotId: env.robot_id ?? null };
+  }
+  try {
+    const raw = window.sessionStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw) as Scope;
+  } catch { /* ignore */ }
+  return DEFAULT;
 }
-function toUrl(s: Scope): void {
+function persist(s: Scope): void {
   if (typeof window === "undefined") return;
+  try { window.sessionStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch { /* ignore */ }
   const ctx = encodeCtx({ project_id: s.projectId ?? undefined, site: s.siteId ?? undefined, robot_id: s.robotId ?? undefined });
   const u = new URL(window.location.href);
   u.searchParams.set("ctx", ctx);
@@ -51,7 +57,7 @@ function toUrl(s: Scope): void {
 export function ScopeProvider({ children, seedFirstProject = true }: { children: ReactNode; seedFirstProject?: boolean }) {
   const [scope, setScope] = useState<Scope>(DEFAULT);
   useEffect(() => {
-    let s = fromUrl();
+    let s = loadScope();
     if (seedFirstProject && !s.projectId) {
       const p = getProjects()[0];
       const site = p ? getSitesOfProject(p.id)[0] : undefined;
@@ -61,7 +67,7 @@ export function ScopeProvider({ children, seedFirstProject = true }: { children:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const commit = (next: Scope): void => { setScope(next); toUrl(next); };
+  const commit = (next: Scope): void => { setScope(next); persist(next); };
   const api: ScopeApi = {
     scope,
     setProject: (id) => {

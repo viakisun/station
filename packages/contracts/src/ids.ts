@@ -17,6 +17,9 @@ export const ID_PATTERNS = {
   manifest: /^[a-z]+\.(module|node)\.[a-z0-9_]+\.v[0-9]+$/,
   // 작업 앱 식별자 (Part G) — platform 네임스페이스
   appId: /^station\.app\.[a-z0-9-]+$/,
+  // 상업 SaaS 스코핑 (Part H · ORG→PRJ→SITE→RBT, SWT-ID-001)
+  project: /^PRJ-[A-Z0-9-]+-\d{4}$/,
+  site: /^SITE-[A-Z0-9]+-\d{2}$/,
   // 런타임 인스턴스 식별자 — 설계 baseline에서 normative (Part B5)
   scanSession: /^SCN-\d{8}-\d{4}$/,
   observation: /^OBS-\d{8}-\d{4}$/,

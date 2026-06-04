@@ -14,6 +14,12 @@
     "@station/contracts": "workspace:*",
     "@station/design-system": "workspace:*",
     "@station/domain": "workspace:*",
+    "@station/local-agent": "workspace:*",
+    "@station/node-kit": "workspace:*",
+    "@station/node-mcu": "workspace:*",
+    "@station/node-vpu": "workspace:*",
+    "@station/node-lpu": "workspace:*",
+    "@station/node-acu": "workspace:*",
     "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

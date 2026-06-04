@@ -194,6 +194,24 @@ importers:
       '@station/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@station/local-agent':
+        specifier: workspace:*
+        version: link:../../packages/local-agent
+      '@station/node-acu':
+        specifier: workspace:*
+        version: link:../../nodes/acu
+      '@station/node-kit':
+        specifier: workspace:*
+        version: link:../../packages/node-kit
+      '@station/node-lpu':
+        specifier: workspace:*
+        version: link:../../nodes/lpu
+      '@station/node-mcu':
+        specifier: workspace:*
+        version: link:../../nodes/mcu
+      '@station/node-vpu':
+        specifier: workspace:*
+        version: link:../../nodes/vpu
       next:
         specifier: ^15.1.6
         version: 15.5.19(react-dom@19.2.6(react@19.2.6))(react@19.2.6)

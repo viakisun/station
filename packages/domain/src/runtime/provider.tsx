@@ -9,6 +9,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { AgentFacade, ConnectionState } from "./agent-facade";
 import { RemoteAgentClient } from "./remote-agent";
 import { getRuntime, peekRuntime } from "./agent-runtime";
+import { fleet } from "./fleet-manager";
 
 const MODE: "remote" | "inproc" =
   process.env.NEXT_PUBLIC_AGENT_MODE === "inproc" ? "inproc" : "remote";
@@ -67,6 +68,40 @@ export function AgentRuntimeProvider({ children }: { children: ReactNode }) {
       alive = false;
     };
   }, []);
+
+  return (
+    <AgentContext.Provider value={agent}>
+      <StatusContext.Provider value={status}>{children}</StatusContext.Provider>
+    </AgentContext.Provider>
+  );
+}
+
+/**
+ * [SWC-FLEET / MVP-3] 로봇-스코프 provider — connection-scoped fan-in.
+ * scope.robotId 의 Local Agent 연결(FleetManager)을 동일 AgentContext/StatusContext로
+ * 제공 → 기존 hooks(useAgent/useSignals/…) 불변 소비. endpoint 없으면 offline.
+ */
+export function FleetAgentProvider({ robotId, children }: { robotId: string | null; children: ReactNode }) {
+  const initEp = robotId ? fleet.endpointFor(robotId) : null;
+  const [agent, setAgent] = useState<AgentFacade | null>(() => (robotId ? fleet.client(robotId) : null));
+  const [status, setStatus] = useState<AgentStatus>(() => ({
+    mode: "remote",
+    state: initEp ? "connecting" : "disconnected",
+    agentId: "",
+    endpoint: robotId ? (initEp ?? "(no live agent · offline)") : "(no robot selected)",
+  }));
+
+  useEffect(() => {
+    const c = robotId ? fleet.client(robotId) : null;
+    setAgent(c);
+    if (!c) {
+      setStatus({ mode: "remote", state: "disconnected", agentId: "", endpoint: robotId ? "(no live agent · offline)" : "(no robot selected)" });
+      return;
+    }
+    const sync = () => setStatus({ mode: "remote", state: c.state, agentId: c.agentId, endpoint: c.endpoint });
+    sync();
+    return c.subscribeState(sync);
+  }, [robotId]);
 
   return (
     <AgentContext.Provider value={agent}>
