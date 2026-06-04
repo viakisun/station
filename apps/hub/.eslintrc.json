@@ -1,4 +1,6 @@
 {
   "root": true,
-  "extends": ["@station/eslint-config"]
+  "extends": [
+    "@station/eslint-config"
+  ]
 }

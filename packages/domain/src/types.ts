@@ -19,9 +19,28 @@ export interface StateMeta {
 }
 export type MetaMap = Record<string, StateMeta>;
 
-export interface Site {
-  id: string;
+/* [SWC-DOMAIN / WR-MVP-1] 상업 SaaS 스코핑 — ORG → PRJ → SITE → RBT (Part H H0).
+   TODO(SWT-ID-001): PRJ-/SITE- 패턴을 contracts ids.ts validator로 이관(이번엔 domain fixture만). */
+export interface Project {
+  id: string; // PRJ-*
   name: string;
+  orgId: string; // ORG-*
+  siteIds: string[];
+}
+
+export interface Site {
+  id: string; // SITE-*
+  name: string;
+  projectId?: string; // PRJ-* (스코핑 — additive)
+}
+
+/** Fleet 스코프용 경량 로봇 요약(project→site→robot 탐색). */
+export interface ScopeRobot {
+  id: string; // RBT-*
+  type: string;
+  state: string;
+  battery: number;
+  siteId: string;
 }
 
 export interface Greenhouse {

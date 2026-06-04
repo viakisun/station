@@ -1,14 +1,8 @@
 {
-  "name": "@station/console",
+  "name": "@station/legacy-console",
   "version": "0.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev --port 7331",
-    "build": "next build",
-    "start": "next start --port 7331",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit"
-  },
+  "scripts": {},
   "dependencies": {
     "@station/contracts": "workspace:*",
     "@station/design-system": "workspace:*",

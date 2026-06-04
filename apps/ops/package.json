@@ -1,0 +1,30 @@
+{
+  "name": "@station/ops",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 7331",
+    "build": "next build",
+    "start": "next start --port 7331",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@station/app-kit": "workspace:*",
+    "@station/contracts": "workspace:*",
+    "@station/design-system": "workspace:*",
+    "@station/domain": "workspace:*",
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@station/eslint-config": "workspace:*",
+    "@station/tsconfig": "workspace:*",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.7.2"
+  }
+}

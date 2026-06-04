@@ -17,6 +17,7 @@ import { INCIDENT } from "./data/incident";
 import { TELEMETRY } from "./data/telemetry";
 import { RELEASE } from "./data/release";
 import { HMI } from "./data/hmi";
+import { PROJECTS, SITES, SCOPE_ROBOTS } from "./data/scope";
 
 // ---- C01 Control ----
 export const getControlData = () => CONTROL;
@@ -46,3 +47,13 @@ export const getModules = () => RELEASE.modules;
 
 // ---- H01 HMI ----
 export const getHmiData = () => HMI;
+
+// ---- WR-MVP-1 상업 SaaS 스코프 (ORG→PRJ→SITE→RBT) ----
+// [영속화 seam] 향후 repo.query / API 로 교체. 현재는 scope.ts fixture.
+export const getProjects = () => PROJECTS;
+export const getSites = () => SITES;
+export const getSitesOfProject = (projectId: string) =>
+  SITES.filter((s) => s.projectId === projectId);
+export const getScopeRobots = () => SCOPE_ROBOTS;
+export const getRobotsOfSite = (siteId: string) =>
+  SCOPE_ROBOTS.filter((r) => r.siteId === siteId);

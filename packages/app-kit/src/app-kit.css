@@ -1,0 +1,16 @@
+/* [SWC-APP-KIT / WR-MVP-1] 미러 affordance — cloud 미러가 field 실체보다 종속으로 보이게(권한 ④<③).
+   design-system tokens.css 위에 가산. 컴포넌트 인라인 스타일이 주, 여기선 전역 보정만. */
+[data-mirror] {
+  position: relative;
+}
+[data-mirror]::after {
+  content: "MIRROR";
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.5px;
+  color: var(--st-warning);
+  opacity: 0.7;
+}

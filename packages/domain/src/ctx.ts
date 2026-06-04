@@ -4,6 +4,7 @@
    서명/handoff_id는 단계 5. 여기선 URL-safe JSON.
    ============================================================ */
 export interface ContextEnvelope {
+  project_id?: string; // PRJ-* (WR-MVP-1 스코프 — additive)
   site?: string;
   robot_id?: string;
   work_session_id?: string;
