@@ -128,7 +128,7 @@
 [data-control-mode="readonly"]{ --mirror-mode-line:var(--line-default);   --mirror-mode-style:dashed; --mirror-mode-width:1px; }
 [data-control-mode="assist"]  { --mirror-mode-line:var(--line-strong);    --mirror-mode-style:solid;  --mirror-mode-width:1px; }
 [data-control-mode="inspect"] { --mirror-mode-line:var(--line-strong);    --mirror-mode-style:solid;  --mirror-mode-width:2px; }
-[data-control-mode="none"]    { --mirror-mode-line:var(--state-critical); --mirror-mode-style:solid;  --mirror-mode-width:1px; }
+[data-control-mode="none"]    { --mirror-mode-line:var(--line-default);   --mirror-mode-style:dashed; --mirror-mode-width:1px; }
 
 /* ── 05 density + component tokens ──────────────────────── */
 :root {

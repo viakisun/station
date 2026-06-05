@@ -48,7 +48,7 @@ export function MirrorBadge({ mirrorOf, controlMode }: { mirrorOf: string; contr
   return (
     <span style={{ display: "inline-flex", gap: 5, alignItems: "center" }}>
       <span style={{ ...chip("var(--surface-panel-raised)", "var(--text-secondary)"), border: "1px dashed var(--line-strong)" }} title="mirror of">⇄ {mirrorOf}</span>
-      <span style={controlMode === "none" ? outline("var(--state-critical)") : { ...chip("var(--surface-panel-raised)", "var(--text-muted)"), border: "1px solid var(--line-default)" }} title="control mode">{controlMode}</span>
+      <span style={{ ...chip("var(--surface-panel-raised)", "var(--text-muted)"), border: "1px solid var(--line-default)" }} title="control mode">{controlMode}</span>
     </span>
   );
 }
