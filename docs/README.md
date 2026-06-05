@@ -3,6 +3,9 @@
 STATION = **Ops·Build·Field 3제품 × 하나의 Platform Core / Integration Fabric**.
 본 디렉터리는 본 개발 착수 전 UX/UI 구조를 확정하는 기준 자료다.
 
+## 0. 디자인 핸드오프 (시각 품질 후속 트랙)
+- **[design/00-design-handoff.md](design/00-design-handoff.md)** — 목업 14화면 신선 캡처 + 전문 비주얼 품질 진단 + 우선순위 백로그. **claude design 세션 진입점.** 재캡처: `node scripts/capture-design-screens.mjs`(4앱 `pnpm dev` 후).
+
 ## 1. 단일 진실 공급원 (SSOT)
 - **[00. UX/UI 공통 설계 기준서](00-ux-common-standards.md)** — 제품 구조·ID 스파인·상태 체계·디자인 DNA·Gate 4단계·Audit/Event·Context handoff·권한. **모든 과업지시서가 이 문서를 단일 참조.**
 
