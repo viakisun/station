@@ -87,7 +87,7 @@ function RobotLive({ robotId }: { robotId: string | null }) {
                 <StatusBadge sev={obs.quality === "good" ? "normal" : "warning"} label={obs.quality} />
               </div>
             ) : <div style={{ fontSize: 11, color: "var(--text-muted)" }}>scan.start로 OBS 합성</div>}
-            <div style={{ fontSize: 10, color: "var(--state-warning)", marginTop: 10 }}>Cloud ④ — 명령은 robot-side evaluateGate 경유(요청).</div>
+            <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 10 }}>Cloud ④ — 명령은 robot-side evaluateGate 경유(요청).</div>
           </div>
         </div>
       )}

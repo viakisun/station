@@ -197,7 +197,7 @@ export function KpiCard({
                 width: 6,
                 height: 6,
                 borderRadius: "50%",
-                background: `var(--st-${sev})`,
+                background: `var(--state-${sev})`,
                 flex: "none",
               }}
             />
@@ -218,7 +218,7 @@ export function KpiCard({
             fontWeight: 700,
             lineHeight: 1,
             letterSpacing: "-.6px",
-            color: alert ? `var(--st-${sev})` : "var(--text-primary)",
+            color: alert ? `var(--state-${sev})` : "var(--text-primary)",
           }}
         >
           {value}

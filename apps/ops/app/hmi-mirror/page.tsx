@@ -43,7 +43,7 @@ function Mirror({ robotId }: { robotId: string | null }) {
                 </div>
               ))}
             </div>
-            <div style={{ fontSize: 10, color: "var(--state-warning)", marginTop: 10 }}>권한 ④ &lt; ③ — cloud 미러는 관찰·보조만, 현장 operator 권한을 넘지 않음.</div>
+            <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 10 }}>권한 ④ &lt; ③ — cloud 미러는 관찰·보조만, 현장 operator 권한을 넘지 않음.</div>
           </div>
         </div>
       )}

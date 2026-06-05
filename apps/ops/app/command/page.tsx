@@ -30,7 +30,7 @@ export default function Page() {
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 10.5, color: "var(--state-warning)", marginTop: 10 }}>
+        <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 10 }}>
           ※ 모든 명령은 robot-side evaluateGate를 통과. cloud는 요청만(권한 ④ &lt; field ③).
         </div>
       </StubPanel>

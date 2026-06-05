@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <div style={{ maxWidth: 1000, margin: "0 auto", padding: "40px 24px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-        <span style={{ width: 30, height: 30, borderRadius: 7, background: "var(--product-accent)", color: "#fff", display: "grid", placeItems: "center", fontSize: 15, fontWeight: 800 }}>S</span>
+        <span style={{ width: 30, height: 30, borderRadius: 7, background: "var(--surface-panel-raised)", border: "1px solid var(--line-strong)", color: "var(--text-primary)", display: "grid", placeItems: "center", fontSize: 15, fontWeight: 800 }}>S</span>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0, letterSpacing: "-.3px" }}>STATION</h1>
         <span style={{ fontSize: 12, color: "var(--text-muted)" }}>VIA 통합관제 SaaS — 제품군 런처</span>
       </div>

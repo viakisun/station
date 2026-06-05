@@ -11,7 +11,7 @@ export default function Page() {
   const quality = getTelemetryData().quality;
   return (
     <div>
-      <SurfaceHeader sws="SWS-OPS-TELE-MON" right={<span className="mono" style={{ fontSize: 10.5, color: "var(--state-critical)" }}>read-only · controlMode none</span>} />
+      <SurfaceHeader sws="SWS-OPS-TELE-MON" right={<span className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)" }}>read-only · controlMode readonly</span>} />
       <div style={{ padding: 14 }}>
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11.5 }}>
@@ -30,7 +30,7 @@ export default function Page() {
                   <td className="mono tnum" style={{ padding: "7px 10px" }}>{q.complete}%</td>
                   <td className="mono tnum" style={{ padding: "7px 10px", color: "var(--text-secondary)" }}>{q.latency}ms</td>
                   <td className="mono" style={{ padding: "7px 10px", color: "var(--text-muted)" }}>{q.drift}</td>
-                  <td style={{ padding: "7px 10px" }}><Sparkline data={q.series} w={80} h={22} color={`var(--st-${qSev(q.q)})`} /></td>
+                  <td style={{ padding: "7px 10px" }}><Sparkline data={q.series} w={80} h={22} color={`var(--state-${qSev(q.q)})`} /></td>
                 </tr>
               ))}
             </tbody>

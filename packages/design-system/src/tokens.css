@@ -65,9 +65,10 @@
   --accent-live:#34d399;            /* live dot (phosphor) */
   --focus-ring:rgba(56,189,248,.48);
 
-  /* product accent default(=hub neutral); [data-theme]가 override */
-  --product-accent:#0891b2; --product-accent-bg:rgba(8,145,178,.12); --product-accent-line:rgba(8,145,178,.34);
-  --product-accent-strong:#22d3ee;
+  /* product accent = NEUTRAL (ADR-021). 제품은 hue로 구분하지 않는다 — 강조는 명도.
+     색은 상태/권한/안전 전용. [data-theme]는 색을 바꾸지 않는다(라벨/density만). */
+  --product-accent:var(--text-primary); --product-accent-bg:var(--surface-panel-raised);
+  --product-accent-line:var(--line-strong); --product-accent-strong:var(--gray-0);
 
   /* terminal/log console */
   --term-bg:#0b0f17; --term-bg-2:#10151f; --term-line:#1f2733; --term-fg:#c9d1dc; --term-dim:#6b7480;
@@ -88,43 +89,46 @@
 }
 
 /* ── 02 product theme ───────────────────────────────────── */
-[data-theme="ops"]   { --product-accent:#2563eb; --product-accent-bg:rgba(37,99,235,.12);  --product-accent-line:rgba(37,99,235,.34);  --product-accent-strong:#3b82f6; }
-[data-theme="build"] { --product-accent:#7c3aed; --product-accent-bg:rgba(124,58,237,.12); --product-accent-line:rgba(124,58,237,.34); --product-accent-strong:#8b5cf6; }
-[data-theme="field"] { --product-accent:#16a34a; --product-accent-bg:rgba(22,163,74,.12);  --product-accent-line:rgba(22,163,74,.34);  --product-accent-strong:#22c55e; }
-[data-theme="hub"]   { --product-accent:#0891b2; --product-accent-bg:rgba(8,145,178,.12);  --product-accent-line:rgba(8,145,178,.34);  --product-accent-strong:#22d3ee; }
+/* (ADR-021) 제품은 색이 없다. [data-theme] 속성은 라벨/분석용으로만 유지하며
+   accent hue를 바꾸지 않는다 — 제품 구분 = 라벨 + density + 아이콘 + 레이아웃.
+   제품별 정보 밀도는 [data-density](§05)가 담당(Field=touch·Build=compact). */
 
-/* ── 03 authority ───────────────────────────────────────── */
+/* ── 03 authority — 명도 rank 계단 (ADR-021) ────────────── */
+/* 권한 위계를 hue가 아니라 *명도*로 인코딩: 밝을수록 고권한(②>③>④>readonly).
+   제품·상태 hue와 충돌하지 않는 중립 사다리. 배지는 outline(채움 금지).
+   유일 예외: physical(①)은 물리/E-stop 안전 적색(state-emergency 의도적 공유). */
 :root {
-  --authority-physical:#ef4444; --authority-agent:#f97316; --authority-field:#16a34a;
-  --authority-cloud:#2563eb; --authority-build:#7c3aed; --authority-readonly:#64748b;
-  --authority-physical-bg:rgba(239,68,68,.16); --authority-agent-bg:rgba(249,115,22,.14);
-  --authority-field-bg:rgba(22,163,74,.12); --authority-cloud-bg:rgba(37,99,235,.12);
-  --authority-build-bg:rgba(124,58,237,.12); --authority-readonly-bg:rgba(100,116,139,.14);
-  --authority-accent:var(--authority-readonly); --authority-bg:var(--authority-readonly-bg);
+  --authority-rank-agent:#f1f5f9;   /* ② on-robot daemon — 최강(가장 밝음) */
+  --authority-rank-field:#cbd5e1;   /* ③ 현장 operator */
+  --authority-rank-cloud:#94a3b8;   /* ④ cloud mirror */
+  --authority-rank-build:#94a3b8;   /* non-operational(통합자) — 중립 */
+  --authority-rank-readonly:#64748b;/* readonly — 최약(가장 흐림) */
+  --authority-rank-physical:var(--state-emergency);
+  --authority-accent:var(--authority-rank-readonly); --authority-bg:transparent;
 }
-[data-authority="physical"]{--authority-accent:var(--authority-physical);--authority-bg:var(--authority-physical-bg);}
-[data-authority="agent"]   {--authority-accent:var(--authority-agent);   --authority-bg:var(--authority-agent-bg);}
-[data-authority="field"]   {--authority-accent:var(--authority-field);   --authority-bg:var(--authority-field-bg);}
-[data-authority="cloud"]   {--authority-accent:var(--authority-cloud);   --authority-bg:var(--authority-cloud-bg);}
-[data-authority="build"]   {--authority-accent:var(--authority-build);   --authority-bg:var(--authority-build-bg);}
-[data-authority="readonly"]{--authority-accent:var(--authority-readonly);--authority-bg:var(--authority-readonly-bg);}
+[data-authority="physical"]{--authority-accent:var(--authority-rank-physical);--authority-bg:var(--state-emergency-bg);}
+[data-authority="agent"]   {--authority-accent:var(--authority-rank-agent);}
+[data-authority="field"]   {--authority-accent:var(--authority-rank-field);}
+[data-authority="cloud"]   {--authority-accent:var(--authority-rank-cloud);}
+[data-authority="build"]   {--authority-accent:var(--authority-rank-build);}
+[data-authority="readonly"]{--authority-accent:var(--authority-rank-readonly);}
 
-/* ── 04 mirror / locus ──────────────────────────────────── */
+/* ── 04 mirror / locus — 중립 (ADR-021) ─────────────────── */
+/* mirror = on-robot 실체의 cloud 그림자. 화려한 색이 아니라 *명도 강등 + 점선
+   hairline + controlMode 라벨*로 종속성을 표현. hue 없음.
+   locus는 색이 아니라 아이콘(⌂ on-robot · ☁ cloud · ⚙ build · ↗ external). */
 :root {
-  --mirror-line:rgba(125,211,252,.28); --mirror-bg:rgba(8,145,178,.06);
-  --mirror-surface:rgba(15,23,42,.72); --mirror-text:#bae6fd;
-  --mirror-readonly-line:rgba(148,163,184,.28); --mirror-readonly-bg:rgba(100,116,139,.10);
-  --mirror-assist-line:rgba(37,99,235,.32); --mirror-assist-bg:rgba(37,99,235,.08);
-  --mirror-inspect-line:rgba(124,58,237,.32); --mirror-inspect-bg:rgba(124,58,237,.08);
+  --mirror-line:var(--line-subtle); --mirror-bg:rgba(148,163,184,.04);
+  --mirror-surface:rgba(15,23,42,.55); --mirror-text:var(--text-muted);
+  /* controlMode → 테두리 스타일(색 아님). 색은 none(위험)만. */
   --mirror-mode-line:var(--line-default); --mirror-mode-bg:transparent;
-
-  --locus-on-robot:#16a34a; --locus-cloud:#2563eb; --locus-build:#7c3aed; --locus-external:#64748b;
-  --locus-on-robot-bg:rgba(22,163,74,.12); --locus-cloud-bg:rgba(37,99,235,.12); --locus-build-bg:rgba(124,58,237,.12);
+  --mirror-mode-style:solid; --mirror-mode-width:1px;
 }
 [data-mirror="true"], [data-mirror=""] { --surface-panel: var(--mirror-surface); --line-default: var(--mirror-line); }
-[data-control-mode="readonly"]{ --mirror-mode-line:var(--mirror-readonly-line); --mirror-mode-bg:var(--mirror-readonly-bg); }
-[data-control-mode="assist"]  { --mirror-mode-line:var(--mirror-assist-line);   --mirror-mode-bg:var(--mirror-assist-bg); }
-[data-control-mode="inspect"] { --mirror-mode-line:var(--mirror-inspect-line);  --mirror-mode-bg:var(--mirror-inspect-bg); }
+[data-control-mode="readonly"]{ --mirror-mode-line:var(--line-default);   --mirror-mode-style:dashed; --mirror-mode-width:1px; }
+[data-control-mode="assist"]  { --mirror-mode-line:var(--line-strong);    --mirror-mode-style:solid;  --mirror-mode-width:1px; }
+[data-control-mode="inspect"] { --mirror-mode-line:var(--line-strong);    --mirror-mode-style:solid;  --mirror-mode-width:2px; }
+[data-control-mode="none"]    { --mirror-mode-line:var(--state-critical); --mirror-mode-style:solid;  --mirror-mode-width:1px; }
 
 /* ── 05 density + component tokens ──────────────────────── */
 :root {
@@ -184,8 +188,9 @@ button { font-family: inherit; cursor: pointer; }
   transition: background var(--motion-fast), border-color var(--motion-fast);
 }
 .btn:hover { background:var(--surface-muted); border-color:var(--text-muted); }
-.btn.primary { background:var(--product-accent); border-color:var(--product-accent); color:#fff; }
-.btn.primary:hover { background:var(--product-accent-strong); border-color:var(--product-accent-strong); }
+/* primary = 중립 강조(명도), 제품 hue 아님 (ADR-021) */
+.btn.primary { background:var(--gray-100); border-color:var(--gray-100); color:var(--text-inverse); }
+.btn.primary:hover { background:var(--gray-0); border-color:var(--gray-0); }
 .btn.ghost { border-color:transparent; background:transparent; }
 .btn.ghost:hover { background:var(--surface-panel-raised); }
 .btn.danger { background:var(--state-emergency); border-color:var(--state-emergency); color:#fff; }
@@ -208,7 +213,7 @@ button { font-family: inherit; cursor: pointer; }
   font-size:12px; font-weight:600; color:var(--text-secondary);
 }
 .chip:hover { background:var(--surface-muted); }
-.chip.active { background:var(--product-accent); border-color:var(--product-accent); color:#fff; }
+.chip.active { background:var(--gray-100); border-color:var(--gray-100); color:var(--text-inverse); }
 .kbd { font-family:var(--font-mono); font-size:10.5px; padding:2px 5px; border-radius:3px;
   background:var(--surface-panel-raised); border:1px solid var(--line-default); color:var(--text-muted); }
 
@@ -246,9 +251,9 @@ button { font-family: inherit; cursor: pointer; }
   padding:0; text-decoration:underline; text-decoration-color:var(--line-strong); text-underline-offset:2px; }
 .linkish:hover { text-decoration-color:var(--text-muted); }
 
-/* ── field theme: 큰 터치 (theme + density=touch 병행) ───── */
-[data-theme="field"] .btn { font-size:15px; font-weight:700; }
-[data-theme="field"] .badge { height:24px; font-size:12px; }
+/* ── touch density: 큰 터치 (Field 등 현장 HMI) ─────────── */
+[data-density="touch"] .btn { font-size:15px; font-weight:700; }
+[data-density="touch"] .badge { height:24px; font-size:12px; }
 
 /* ── safety banner ──────────────────────────────────────── */
 .safety-banner { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:var(--radius-md); font-size:13px; font-weight:700; }

@@ -41,7 +41,7 @@ export function ProductShell({
     <div data-theme={product.theme} data-density={DENSITY[product.id]} style={{ height: "100vh", display: "flex", flexDirection: "column", background: "var(--surface-canvas)", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>
       <header style={{ flex: "none", display: "flex", alignItems: "center", gap: 12, padding: "9px 16px", borderBottom: "1px solid var(--line-default)", background: "var(--surface-panel)" }}>
         <a href={process.env.NEXT_PUBLIC_HUB_URL ?? "http://localhost:7330"} style={{ display: "flex", alignItems: "center", gap: 7, textDecoration: "none", color: "var(--text-primary)" }}>
-          <span style={{ width: 22, height: 22, borderRadius: 5, background: "var(--product-accent)", color: "#fff", display: "grid", placeItems: "center", fontSize: 11, fontWeight: 800 }}>S</span>
+          <span style={{ width: 22, height: 22, borderRadius: 5, background: "var(--surface-panel-raised)", border: "1px solid var(--line-strong)", color: "var(--text-primary)", display: "grid", placeItems: "center", fontSize: 11, fontWeight: 800 }}>S</span>
           <span style={{ fontWeight: 800, fontSize: 13, letterSpacing: "-.2px" }}>STATION</span>
         </a>
         <span style={{ width: 1, height: 18, background: "var(--line-strong)" }} />
@@ -73,7 +73,7 @@ export function ProductNav({ items }: { items: NavItem[] }) {
             textDecoration: "none", fontSize: 12.5, fontWeight: it.active ? 700 : 500,
             color: it.active ? "var(--text-primary)" : "var(--text-secondary)",
             background: it.active ? "var(--surface-panel-raised)" : "transparent",
-            borderLeft: it.active ? "2px solid var(--text-primary)" : "2px solid transparent",
+            borderLeft: it.active ? "2px solid var(--line-strong)" : "2px solid transparent",
           }}
         >
           {it.icon && <Icon name={it.icon} size={15} />}
@@ -87,7 +87,7 @@ export function ProductNav({ items }: { items: NavItem[] }) {
 /** Hub 제품 카드 — Product Matrix의 한 제품을 role/locus/authority로 표현. */
 export function ProductCard({ product }: { product: ProductDef }) {
   return (
-    <a href={product.href} data-theme={product.theme ?? "hub"} className="card" style={{ display: "block", padding: 16, textDecoration: "none", color: "var(--text-primary)", borderLeft: "3px solid var(--product-accent)" }}>
+    <a href={product.href} data-theme={product.theme ?? "hub"} className="card" style={{ display: "block", padding: 16, textDecoration: "none", color: "var(--text-primary)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
         <strong style={{ fontSize: 15 }}>{product.label}</strong>
         <AuthorityBadge authority={product.authority} locus={product.locus} />
