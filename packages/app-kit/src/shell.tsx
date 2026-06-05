@@ -73,7 +73,6 @@ export function ProductNav({ items }: { items: NavItem[] }) {
             textDecoration: "none", fontSize: 12.5, fontWeight: it.active ? 700 : 500,
             color: it.active ? "var(--text-primary)" : "var(--text-secondary)",
             background: it.active ? "var(--surface-panel-raised)" : "transparent",
-            borderLeft: it.active ? "2px solid var(--line-strong)" : "2px solid transparent",
           }}
         >
           {it.icon && <Icon name={it.icon} size={15} />}

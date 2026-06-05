@@ -66,11 +66,8 @@ export function SurfaceHeader({ sws, right }: { sws: string; right?: ReactNode }
         display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
         padding: "10px 16px", borderBottom: "1px solid var(--line-default)",
         background: isMirror ? "var(--mirror-bg)" : "var(--surface-panel)",
-        /* (ADR-021) 좌측 권한 컬러 보더 제거 → 중립 hairline. 미러 surface만
-           controlMode 테두리-스타일(점선/실선/2px)로 종속성을 *형태*로 표현. */
-        borderLeft: isMirror
-          ? "var(--mirror-mode-width) var(--mirror-mode-style) var(--mirror-mode-line)"
-          : "1px solid var(--line-default)",
+        /* (ADR-021) 헤더는 하단 separator만 — 좌측 보더(accent stripe) 패턴 제거.
+           미러 종속성은 배경 명도 강등 + MirrorBadge(⇄·controlMode)로 표현. */
       }}
     >
       <span style={{ ...chip("var(--surface-muted)", "var(--text-primary)"), border: "1px solid var(--line-strong)" }} title="SWS id">{sws}</span>
