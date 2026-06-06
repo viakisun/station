@@ -18,7 +18,8 @@ const LAN_BASE_MS = 0.25;
 function ddsTopic(profile: ProtocolProfile, msg: WireMsg): string {
   const ch = msgChannel(msg) ?? msg.t;
   const fromProfile = profile.topics?.find((t) => (msg.t === "command" ? t.dir === "cmd" : t.dir === "telemetry"))?.topic;
-  return `rt/${(fromProfile ?? ch).replace(/\./g, "/")}`;
+  if (fromProfile) return fromProfile; // 프로파일 토픽은 이미 완전한 DDS 토픽(rt/…)
+  return `rt/${ch.replace(/\./g, "/")}`;
 }
 
 export class Ros2Model implements ProtocolModel {

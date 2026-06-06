@@ -12,9 +12,11 @@ import { AcuSource } from "@station/node-acu";
 import { AppRuntime, createLocalAgent, serveTransport, WsHub, HmiHub } from "./src/index";
 import { NODE_PROFILES, TELEMETRY_PROFILE, ALL_PROFILES } from "./src/rig/profiles";
 import { TransportMonitor } from "./src/rig/transport-monitor";
+import { TraceHub } from "./src/rig/trace-hub";
 
 const NODE_PORT = Number(process.env.NODE_WS_PORT ?? 7100);
 const HMI_PORT = Number(process.env.HMI_WS_PORT ?? 7101);
+const TRACE_PORT = Number(process.env.TRACE_WS_PORT ?? 7102);
 
 const profileId2node = new Map(Object.entries(NODE_PROFILES).map(([k, p]) => [p.id, k]));
 profileId2node.set(TELEMETRY_PROFILE.id, "Telemetry→cloud");
@@ -59,10 +61,13 @@ const wsHub = new WsHub(agent, NODE_PORT);
 const nodePort = await wsHub.start().catch((e: Error) => (console.warn(`[rig] WsHub skip: ${e.message}`), -1));
 const hmiHub = new HmiHub(agent, HMI_PORT);
 const hmiPort = await hmiHub.start().catch((e: Error) => (console.warn(`[rig] HmiHub skip: ${e.message}`), -1));
+const traceHub = new TraceHub(monitor, TRACE_PORT);
+const tracePort = await traceHub.start().catch((e: Error) => (console.warn(`[rig] TraceHub skip: ${e.message}`), -1));
 
 console.log(`\n[rig] Reference SDV Rig up — ${agent.manifests().length} nodes · growth-scan ${agent.apps.state("station.app.growth-scan")}`);
 console.log(`[rig]  · nodes(WsHub)  ws://localhost:${nodePort}   ← 원격 실노드 합류(CAN→ws bridge 등)`);
 console.log(`[rig]  · hmi(HmiHub)   ws://localhost:${hmiPort}   ← 웹 콘솔 접속`);
+console.log(`[rig]  · trace(TraceHub) ws://localhost:${tracePort} ← Build /transport 시각화`);
 console.log(`[rig]  · 전송: MCU=CAN · VPU=ROS2 · LPU=ROS2(best-effort) · ACU=DDS · Telemetry=MQTT/LTE\n`);
 
 // 1Hz: 클라우드 업링크 1건 + 매체별 롤업 표.

@@ -114,6 +114,7 @@ export const SURFACES: SurfaceDef[] = [
   { sws: "SWS-BUILD-MANIFESTS", product: "build", label: "Manifests", route: "/manifests", locus: "cloud/desktop", authority: "non-op", scopeDepth: "project", controlMode: "inspect-only" },
   { sws: "SWS-BUILD-CONFORMANCE", product: "build", label: "Conformance", route: "/conformance", locus: "cloud/desktop", authority: "non-op", scopeDepth: "project", controlMode: "inspect-only" },
   { sws: "SWS-BUILD-FIRMWARE", product: "build", label: "Firmware", route: "/firmware", locus: "cloud/desktop", authority: "non-op", scopeDepth: "project", controlMode: "inspect-only" },
+  { sws: "SWS-BUILD-TRANSPORT", product: "build", label: "Transport", route: "/transport", locus: "cloud/desktop", authority: "non-op", scopeDepth: "robot", mirrorOf: "Rig transports", controlMode: "inspect-only" },
   { sws: "SWS-AGENT-STATUS", product: "agent", label: "Agent Status", route: "/agent-status", locus: "on-robot daemon", authority: "②", scopeDepth: "robot", mirrorOf: "Agent self", controlMode: "none" },
   // Field (on-robot · ③)
   { sws: "SWS-FIELD-HMI", product: "field", label: "HMI", route: "/hmi", locus: "on-robot", authority: "③", scopeDepth: "robot", controlMode: "operate" },

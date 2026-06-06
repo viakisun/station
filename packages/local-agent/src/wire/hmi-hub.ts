@@ -19,10 +19,11 @@ export class HmiHub {
   ) {}
 
   start(): Promise<number> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const wss = new WebSocketServer({ port: this.port });
       this.#wss = wss;
       wss.on("connection", (ws: WebSocket) => this.#serve(ws));
+      wss.on("error", (err) => reject(err)); // EADDRINUSE 등 → .catch 로 graceful degrade
       wss.on("listening", () => {
         const addr = wss.address();
         resolve(typeof addr === "object" && addr ? addr.port : this.port);

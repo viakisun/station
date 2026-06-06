@@ -17,12 +17,13 @@ export class WsHub {
 
   /** 리스닝 시작. 실제 바인딩된 포트를 반환(port 0 = ephemeral). */
   start(): Promise<number> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const wss = new WebSocketServer({ port: this.port });
       this.#wss = wss;
       wss.on("connection", (ws: WebSocket) => {
         serveTransport(this.agent, socketTransport(ws));
       });
+      wss.on("error", (err) => reject(err)); // EADDRINUSE 등 → .catch 로 graceful degrade
       wss.on("listening", () => {
         const addr = wss.address();
         resolve(typeof addr === "object" && addr ? addr.port : this.port);
