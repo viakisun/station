@@ -1,4 +1,4 @@
-import type { CommandAck, CommandEnvelope, ModuleManifest } from "@station/contracts";
+import type { CommandAck, CommandEnvelope, ModuleManifest, PolicyRule } from "@station/contracts";
 import type {
   CommandRouter,
   EventBus,
@@ -16,6 +16,7 @@ import { AppRegistry, AppRuntime, type AppContext, type WorkApp } from "./app-ru
 import { GrowthScanApp } from "./apps/growth-scan";
 import { checkUplink } from "./interface-guard";
 import { HeartbeatMonitor } from "./heartbeat";
+import { PolicyEngine } from "./policy-engine";
 
 export type SchemaValidator<T> = (x: T) => { ok: boolean; errors?: string[] };
 
@@ -30,6 +31,8 @@ export interface LocalAgentOptions {
     command?: SchemaValidator<CommandEnvelope>;
     manifest?: SchemaValidator<ModuleManifest>;
   };
+  /** (P4) PolicyEngine 룰 — 안전·운영 정책. 미지정 시 정책 overlay 없음. */
+  policyRules?: PolicyRule[];
 }
 
 /**
@@ -62,7 +65,11 @@ export class ReferenceLocalAgent implements LocalAgent {
     for (const c of options.calibrations ?? []) this.calibrations.add(c);
     this.#catalog.bindCalibrations(this.calibrations);
     this.#validateManifest = options.validate?.manifest;
-    this.#router = new GatedCommandRouter(this.#registry, this.#catalog, options.validate?.command);
+    // P4: 정책 엔진 — SignalStore latest 를 컨텍스트로. 룰 없으면 overlay 없음.
+    const policy = options.policyRules?.length
+      ? new PolicyEngine(options.policyRules, (ch) => this.signals.latest(ch)?.value)
+      : undefined;
+    this.#router = new GatedCommandRouter(this.#registry, this.#catalog, options.validate?.command, policy);
     this.commands = this.#router;
 
     const ctx: AppContext = {

@@ -1,0 +1,9 @@
+{
+  "id": "TS-MCU",
+  "node": "MCU",
+  "protocolRef": "PRT-CAN-v1",
+  "expectSignals": ["machine.motion.speed", "machine.power.battery_voltage", "machine.safety.estop", "machine.heartbeat.mcu"],
+  "expectCommands": ["motion.stop", "motion.set_speed_limit"],
+  "windowMs": 1500,
+  "maxAckMs": 1000
+}

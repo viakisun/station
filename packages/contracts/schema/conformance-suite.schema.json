@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/conformance-suite.json",
+  "title": "ConformanceSuite",
+  "description": "F7 적합성 스위트 — 노드가 선언 계약대로 동작하는지 실행 검사 정의. conformance-runner 가 노드를 부팅→verb 주입→ACK 체인·신호 emit·SLA 대조→리포트.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "node", "expectSignals", "expectCommands"],
+  "properties": {
+    "id": { "type": "string", "description": "예 TS-MCU" },
+    "node": { "type": "string", "description": "노드 kind. MCU·VPU·LPU·ACU" },
+    "protocolRef": { "type": "string", "description": "기대 ProtocolProfile id" },
+    "expectSignals": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "부팅 후 windowMs 내 emit 되어야 하는 채널"
+    },
+    "expectCommands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "주입 시 executed ACK 가 와야 하는 verb"
+    },
+    "windowMs": { "type": "integer", "minimum": 100, "description": "신호 관측 창(기본 1500)" },
+    "maxAckMs": { "type": "integer", "minimum": 50, "description": "명령 executed 까지 허용(기본 1000)" }
+  }
+}

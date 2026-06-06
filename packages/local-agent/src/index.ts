@@ -11,6 +11,8 @@ export * from "./local-agent";
 export * from "./conformance";
 export * from "./interface-guard";
 export * from "./heartbeat";
+export * from "./policy-engine";
+export * from "./conformance-runner";
 export { MockMcuNode } from "./nodes/mock-mcu";
 export * from "./wire/transport-adapter";
 export * from "./wire/serve";

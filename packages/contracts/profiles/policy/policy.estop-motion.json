@@ -1,0 +1,9 @@
+{
+  "id": "POL-ESTOP-MOTION",
+  "describe": "E-stop 래치 시 전 motion/자율 명령 차단",
+  "applies": ["motion.set_speed_limit", "autonomy.mission.start"],
+  "when": { "signal": "machine.safety.estop", "op": "==", "value": true },
+  "effect": "blocked",
+  "gate": "G-Safety",
+  "reason": "E-stop 래치 — motion 금지"
+}

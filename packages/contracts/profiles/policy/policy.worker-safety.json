@@ -1,0 +1,9 @@
+{
+  "id": "POL-WORKER-SAFETY",
+  "describe": "작업자 감지 시 자율주행 차단 (안전 최우선)",
+  "applies": ["autonomy.mission.start", "autonomy.slow_down"],
+  "when": { "signal": "machine.vision.worker_detected", "op": "==", "value": true },
+  "effect": "blocked",
+  "gate": "G-Safety",
+  "reason": "작업자 근접 감지 — 자율주행 차단"
+}

@@ -14,6 +14,7 @@
     "start:scan": "tsx run-scan.ts",
     "start:agent": "tsx run-agent.ts",
     "start:rig": "tsx run-rig.ts",
+    "conformance": "tsx run-conformance.ts",
     "lint": "echo \"(local-agent) no lint\" && exit 0"
   },
   "dependencies": {

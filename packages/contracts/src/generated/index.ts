@@ -4,6 +4,7 @@ export * from "./app-manifest";
 export * from "./command-ack";
 export * from "./command-descriptor";
 export * from "./command-envelope";
+export * from "./conformance-suite";
 export * from "./event";
 export * from "./gate-result";
 export * from "./interface-spec";

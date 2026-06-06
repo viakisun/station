@@ -2,16 +2,36 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://contracts.station.viasoft.ai/policy-rule.json",
   "title": "PolicyRule",
-  "description": "Local Agent PolicyEngine의 안전·운영 룰 선언(2단계 런타임이 평가). 예: VPU worker_detected → ACU slow_down → MCU speed_limit.",
+  "description": "Local Agent PolicyEngine 안전·운영 룰. when(구조화 조건)이 참이고 applies(verb)에 매칭되면 effect(gate severity)를 명령에 적용. 예: worker_detected → autonomy 차단. eval 없는 안전 평가.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "when", "gate"],
+  "required": ["id", "applies", "when", "effect"],
   "properties": {
-    "id": { "type": "string", "description": "예 P-WORKER-PROXIMITY" },
+    "id": { "type": "string", "description": "예 POL-WORKER-SAFETY" },
     "describe": { "type": "string" },
-    "when": { "type": "string", "description": "트리거 조건. 예 machine.vision.worker_detected == true" },
-    "require": { "type": "string", "description": "명령 발행 전 충족 조건(선택)" },
-    "gate": { "type": "string", "description": "연결 Gate 이름" },
-    "defaultSeverity": { "type": "string", "enum": ["pass", "warn", "confirm_required", "blocked"] }
+    "applies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "적용 대상 verb(glob 접두 *). 예 [\"autonomy.*\", \"motion.set_speed_limit\"]"
+    },
+    "when": { "$ref": "#/$defs/condition", "description": "트리거 조건(참이면 effect 적용)" },
+    "effect": { "type": "string", "enum": ["pass", "warn", "confirm_required", "blocked"], "description": "충족 시 Gate severity" },
+    "gate": { "type": "string", "description": "연결 Gate 이름. 예 G-Safety" },
+    "reason": { "type": "string" }
+  },
+  "$defs": {
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "all(AND)/any(OR) 또는 단일 비교. signal=SignalStore latest 채널, state=컨텍스트 변수.",
+      "properties": {
+        "all": { "type": "array", "items": { "$ref": "#/$defs/condition" } },
+        "any": { "type": "array", "items": { "$ref": "#/$defs/condition" } },
+        "signal": { "type": "string" },
+        "state": { "type": "string" },
+        "op": { "type": "string", "enum": ["==", "!=", "<", ">", "<=", ">="] },
+        "value": { "type": ["number", "string", "boolean"] }
+      }
+    }
   }
 }

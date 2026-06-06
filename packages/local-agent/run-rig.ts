@@ -10,6 +10,10 @@ import { VpuSource } from "@station/node-vpu";
 import { LpuSource } from "@station/node-lpu";
 import { AcuSource } from "@station/node-acu";
 import { validateCommand, validateManifest } from "@station/contracts/runtime";
+import type { PolicyRule } from "@station/contracts";
+import workerSafety from "@station/contracts/profiles/policy/policy.worker-safety.json" with { type: "json" };
+import estopMotion from "@station/contracts/profiles/policy/policy.estop-motion.json" with { type: "json" };
+import lowbattConfirm from "@station/contracts/profiles/policy/policy.lowbatt-confirm.json" with { type: "json" };
 import { AppRuntime, createLocalAgent, serveTransport, WsHub, HmiHub } from "./src/index";
 import { NODE_PROFILES, NODE_BINDINGS, TELEMETRY_PROFILE, ALL_PROFILES } from "./src/rig/profiles";
 import { TransportMonitor } from "./src/rig/transport-monitor";
@@ -27,6 +31,7 @@ const onTrace = (t: TransportTrace): void => monitor.record(t);
 const agent = createLocalAgent({
   calibrations: ["CAL-VPU-NIR", "CAL-VPU-RGB"],
   validate: { command: validateCommand, manifest: validateManifest }, // P0 런타임 검증(node 전용)
+  policyRules: [workerSafety, estopMotion, lowbattConfirm] as PolicyRule[], // P4 안전·정책 overlay
 });
 agent.events.subscribe({}, (e) => console.log(`[rig] EVT ${e.severity} ${e.code} — ${e.message}`));
 await agent.start();

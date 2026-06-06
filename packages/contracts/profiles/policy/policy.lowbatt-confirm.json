@@ -1,0 +1,9 @@
+{
+  "id": "POL-LOWBATT-CONFIRM",
+  "describe": "저전압 시 자율주행 시작 확인 요구",
+  "applies": ["autonomy.mission.start"],
+  "when": { "signal": "machine.power.battery_voltage", "op": "<", "value": 21.5 },
+  "effect": "confirm_required",
+  "gate": "G-Confirm",
+  "reason": "배터리 낮음 — 시작 확인 필요"
+}

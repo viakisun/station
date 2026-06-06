@@ -1,0 +1,9 @@
+{
+  "id": "TS-ACU",
+  "node": "ACU",
+  "protocolRef": "PRT-DDS-v1",
+  "expectSignals": ["machine.autonomy.state", "machine.autonomy.mode", "machine.navigation.deviation", "machine.heartbeat.acu"],
+  "expectCommands": ["autonomy.mission.start", "autonomy.pause", "autonomy.slow_down"],
+  "windowMs": 1500,
+  "maxAckMs": 1000
+}

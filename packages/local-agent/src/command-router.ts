@@ -33,9 +33,20 @@ export class GatedCommandRouter implements CommandRouter {
     private readonly catalog?: CommandCatalog,
     /** (P0) 선택적 런타임 스키마 검증 — node 진입점이 주입(브라우저 인프로세스는 미주입). */
     private readonly validateCommand?: (c: CommandEnvelope) => { ok: boolean; errors?: string[] },
+    /** (P4) 선택적 PolicyEngine — 안전·운영 룰 overlay. */
+    private readonly policy?: { evaluate: (c: CommandEnvelope) => GateResult | undefined },
   ) {}
 
   evaluateGate(cmd: CommandEnvelope): GateResult {
+    // P4: 기본 게이트(등록·health·role·calibration) → blocked 면 즉시. 아니면 정책 overlay.
+    const base = this.#baseGate(cmd);
+    if (base.severity === "blocked") return base;
+    const pol = this.policy?.evaluate(cmd);
+    if (pol && pol.severity !== "pass") return pol; // 정책이 blocked/confirm_required/warn 부과
+    return base;
+  }
+
+  #baseGate(cmd: CommandEnvelope): GateResult {
     // M3 앱 경로 — catalog 가 verb 를 알면 노드 registry/health 를 요구하지 않는다(Agent-hosted).
     const entry = this.catalog?.lookup(cmd.verb);
     if (entry) {
