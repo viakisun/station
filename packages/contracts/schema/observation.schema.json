@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/observation.json",
+  "title": "Observation",
+  "description": "Local Agent App aggregator가 합성하는 관측(OBS-*). SignalStore가 latest-value 면이라면 이쪽은 append-only 관측 면. growth-scan이 첫 구현(GrowthObservation). 후속 앱은 obsType 으로 분기.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "observationId",
+    "scanSessionId",
+    "ts",
+    "obsType",
+    "quality"
+  ],
+  "properties": {
+    "observationId": {
+      "type": "string",
+      "description": "OBS-YYYYMMDD-NNNN"
+    },
+    "scanSessionId": {
+      "type": "string",
+      "description": "SCN-YYYYMMDD-NNNN — 소속 스캔 세션"
+    },
+    "ts": {
+      "type": "string"
+    },
+    "obsType": {
+      "type": "string",
+      "description": "관측 종류. 앱이 합성한 관측 모델 식별. 예 growth",
+      "enum": [
+        "growth"
+      ]
+    },
+    "quality": {
+      "type": "string",
+      "enum": [
+        "good",
+        "warn",
+        "bad"
+      ]
+    },
+    "pose": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "관측 시점 로봇 pose(LPU). pose 서브채널 결합.",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "theta": { "type": "number" }
+      }
+    },
+    "crop": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "growth 관측 페이로드(VPU 생육분석).",
+      "properties": {
+        "plant_height": { "type": "number" },
+        "lai": { "type": "number" },
+        "ndvi": { "type": "number" }
+      }
+    }
+  }
+}

@@ -15,11 +15,19 @@ import { InMemoryObservationStore, type ObservationStore } from "./observation-s
 import { AppRegistry, AppRuntime, type AppContext, type WorkApp } from "./app-runtime";
 import { GrowthScanApp } from "./apps/growth-scan";
 
+export type SchemaValidator<T> = (x: T) => { ok: boolean; errors?: string[] };
+
 export interface LocalAgentOptions {
   /** 시드 보정(gating 입력). 비우면 앱이 gate_blocked. */
   calibrations?: Iterable<string>;
   /** AppRegistry 사전 등록(미지정 시 기본 = growth-scan). */
   apps?: Array<{ appId: string; factory: () => WorkApp }>;
+  /** (P0) 런타임 스키마 검증 주입 — node 진입점만(브라우저 인프로세스는 미주입해 Ajv 미유입).
+      @station/contracts/runtime 의 validateCommand/validateManifest 를 넣는다. */
+  validate?: {
+    command?: SchemaValidator<CommandEnvelope>;
+    manifest?: SchemaValidator<ModuleManifest>;
+  };
 }
 
 /**
@@ -37,9 +45,11 @@ export class ReferenceLocalAgent implements LocalAgent {
 
   readonly #registry = new NodeRegistry();
   readonly #catalog: CommandCatalog = new InMemoryCommandCatalog();
-  readonly #router = new GatedCommandRouter(this.#registry, this.#catalog);
-  readonly commands: CommandRouter = this.#router;
+  readonly #router: GatedCommandRouter;
+  readonly commands: CommandRouter;
   readonly apps: AppRuntime;
+
+  readonly #validateManifest?: SchemaValidator<ModuleManifest>;
 
   #adapters: NodeAdapter[] = [];
   #unsub: Array<() => void> = [];
@@ -48,6 +58,9 @@ export class ReferenceLocalAgent implements LocalAgent {
   constructor(options: LocalAgentOptions = {}) {
     for (const c of options.calibrations ?? []) this.calibrations.add(c);
     this.#catalog.bindCalibrations(this.calibrations);
+    this.#validateManifest = options.validate?.manifest;
+    this.#router = new GatedCommandRouter(this.#registry, this.#catalog, options.validate?.command);
+    this.commands = this.#router;
 
     const ctx: AppContext = {
       signals: this.signals,
@@ -69,6 +82,20 @@ export class ReferenceLocalAgent implements LocalAgent {
 
   register(adapter: NodeAdapter): void {
     const node = adapter.manifest.attachesToNode; // M1: 노드 kind 식별자
+    // P0: manifest 런타임 검증(주입 시) — 불량 manifest 는 등록 거부 + 이벤트.
+    if (this.#validateManifest) {
+      const v = this.#validateManifest(adapter.manifest);
+      if (!v.ok) {
+        this.events.publish({
+          ts: new Date().toISOString(),
+          severity: "warning",
+          source: adapter.manifest.manifestId ?? node,
+          code: "MANIFEST-INVALID",
+          message: `node ${node} manifest 검증 실패: ${(v.errors ?? []).join("; ")}`,
+        });
+        return;
+      }
+    }
     this.#registry.register(adapter, node);
     this.#adapters.push(adapter);
     this.#unsub.push(adapter.onSignal((s) => this.signals.write(s)));

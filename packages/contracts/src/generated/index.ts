@@ -8,6 +8,7 @@ export * from "./event";
 export * from "./gate-result";
 export * from "./module-manifest";
 export * from "./node";
+export * from "./observation";
 export * from "./organization";
 export * from "./panel-host";
 export * from "./policy-rule";

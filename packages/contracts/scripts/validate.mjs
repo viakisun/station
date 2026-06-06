@@ -36,6 +36,10 @@ const schemaFor = (name) => {
   if (name.startsWith("command-ack.")) return "command-ack";
   if (name.startsWith("command-descriptor.")) return "command-descriptor";
   if (name.startsWith("event.")) return "event";
+  if (name.startsWith("observation.")) return "observation";
+  if (name.startsWith("wire.")) return "wire-binding";
+  if (name.startsWith("interface.")) return "interface-spec";
+  if (name.startsWith("conformance.")) return "conformance-suite";
   if (name.startsWith("protocol.")) return "protocol-profile";
   if (name.startsWith("gate.")) return "gate-result";
   if (name.startsWith("policy.")) return "policy-rule";

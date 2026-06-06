@@ -11,7 +11,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "echo \"(contracts) no lint\" && exit 0",
-    "codegen": "node scripts/codegen.mjs",
+    "codegen": "node scripts/codegen.mjs && node scripts/build-verb-registry.mjs",
+    "verbs": "node scripts/build-verb-registry.mjs",
     "validate": "node scripts/validate.mjs"
   },
   "devDependencies": {

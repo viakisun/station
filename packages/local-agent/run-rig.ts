@@ -9,6 +9,7 @@ import { McuSource } from "@station/node-mcu";
 import { VpuSource } from "@station/node-vpu";
 import { LpuSource } from "@station/node-lpu";
 import { AcuSource } from "@station/node-acu";
+import { validateCommand, validateManifest } from "@station/contracts/runtime";
 import { AppRuntime, createLocalAgent, serveTransport, WsHub, HmiHub } from "./src/index";
 import { NODE_PROFILES, TELEMETRY_PROFILE, ALL_PROFILES } from "./src/rig/profiles";
 import { TransportMonitor } from "./src/rig/transport-monitor";
@@ -23,7 +24,10 @@ profileId2node.set(TELEMETRY_PROFILE.id, "Telemetry→cloud");
 const monitor = new TransportMonitor({ nodeOf: (id) => profileId2node.get(id) ?? id });
 const onTrace = (t: TransportTrace): void => monitor.record(t);
 
-const agent = createLocalAgent({ calibrations: ["CAL-VPU-NIR", "CAL-VPU-RGB"] });
+const agent = createLocalAgent({
+  calibrations: ["CAL-VPU-NIR", "CAL-VPU-RGB"],
+  validate: { command: validateCommand, manifest: validateManifest }, // P0 런타임 검증(node 전용)
+});
 agent.events.subscribe({}, (e) => console.log(`[rig] EVT ${e.severity} ${e.code} — ${e.message}`));
 await agent.start();
 

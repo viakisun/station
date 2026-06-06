@@ -31,6 +31,8 @@ export class GatedCommandRouter implements CommandRouter {
   constructor(
     private readonly registry: NodeRegistry,
     private readonly catalog?: CommandCatalog,
+    /** (P0) 선택적 런타임 스키마 검증 — node 진입점이 주입(브라우저 인프로세스는 미주입). */
+    private readonly validateCommand?: (c: CommandEnvelope) => { ok: boolean; errors?: string[] },
   ) {}
 
   evaluateGate(cmd: CommandEnvelope): GateResult {
@@ -91,6 +93,15 @@ export class GatedCommandRouter implements CommandRouter {
   dispatch(cmd: CommandEnvelope, onAck: (a: CommandAck) => void): Promise<CommandAck> {
     const received: CommandAck = { commandId: cmd.commandId, stage: "received", ts: now() };
     onAck(received);
+
+    // P0: 런타임 스키마 검증(주입 시) — malformed 명령 fail-fast.
+    if (this.validateCommand) {
+      const v = this.validateCommand(cmd);
+      if (!v.ok) {
+        onAck({ commandId: cmd.commandId, stage: "rejected", ts: now(), code: "SCHEMA-INVALID", detail: (v.errors ?? []).join("; ") });
+        return Promise.resolve(received);
+      }
+    }
 
     const gate = this.evaluateGate(cmd);
     if (gate.severity === "blocked" || gate.severity === "confirm_required") {
