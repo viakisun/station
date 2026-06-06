@@ -99,30 +99,36 @@ export function ProblemOutcomeSection() {
   );
 }
 
-/* ── 기술 통합: Local Agent / RAL ───────────────────────── */
+/* ── 기술 통합: 적과/적심 로봇 개념도 → 표준 계약 ────────── */
 export function FabricSection() {
   return (
     <Section
       pillar="①"
       eyebrow="Integration Fabric · Local Agent"
       title="이기종 노드를 표준 계약 계층으로 정규화합니다"
-      lead="기관별 노드가 서로 다른 전송 방식과 데이터 모델을 사용해도, Local Agent는 이를 표준 Signal, Command, Event 계약으로 정리합니다. 새 노드는 NodeAdapter와 매니페스트를 통해 같은 통합 구조에 합류합니다."
+      lead="적과·적심 로봇은 여러 기관이 만든 부위(모바일 베이스·측위·비전·매니퓰레이터·게이트웨이)로 이뤄진다. 각 부위는 CAN·ROS2·DDS·MQTT로 제각각 말하지만, Local Agent가 이를 흡수해 표준 Signal·Command·Event 계약 한 면으로 정규화한다."
     >
-      <div id="fabric" style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "stretch" }}>
-        <div style={card({ flex: "1 1 220px" })}>
-          <div className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)", marginBottom: 10 }}>기관별 노드</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-            {D.nodes.map((n) => (
-              <div key={n.kind} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span className="mono" style={{ fontSize: 12, fontWeight: 700, width: 78 }}>{n.kind}</span>
+      <div id="fabric" style={card({ padding: 0, overflow: "hidden" })}>
+        <RobotConcept />
+      </div>
+
+      {/* 노드 범례(자동 도출) + 정규화 면 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.1fr .9fr", gap: 12, marginTop: 12 }}>
+        <div style={card()}>
+          <div className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)", marginBottom: 10 }}>로봇 부위 = 기관별 노드</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {D.nodes.map((n, i) => (
+              <div key={n.kind} style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <span style={{ width: 18, height: 18, borderRadius: "50%", background: "var(--accent-live)", color: "#fff", fontSize: 10, fontWeight: 800, display: "grid", placeItems: "center", flex: "none" }}>{i + 1}</span>
+                <span className="mono" style={{ fontSize: 12, fontWeight: 700, width: 74 }}>{n.kind}</span>
                 <span className="badge" style={{ fontSize: 9.5 }}>{n.transport}</span>
-                <span style={{ fontSize: 10.5, color: "var(--text-muted)", marginLeft: "auto" }}>{n.ownerName}</span>
+                <span style={{ fontSize: 11, color: "var(--text-secondary)", marginLeft: 4 }}>{D.robotRole[n.kind]}</span>
+                <span style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: "auto" }}>{n.ownerName}</span>
               </div>
             ))}
           </div>
         </div>
-        <Arrow />
-        <div style={card({ flex: "1.2 1 260px", borderColor: "var(--line-strong)", background: "var(--surface-panel-raised)" })}>
+        <div style={card({ borderColor: "var(--line-strong)", background: "var(--surface-panel-raised)" })}>
           <strong style={{ fontSize: 13 }}>Local Agent · 계약 정규화</strong>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>
             {["SignalStore", "CommandRouter · 3-step ACK", "Gate", "Conformance", "App Runtime", "Policy"].map((m) => (
@@ -130,21 +136,12 @@ export function FabricSection() {
             ))}
           </div>
           <div className="mono" style={{ fontSize: 10.5, color: "var(--text-secondary)", marginTop: 12, lineHeight: 1.6 }}>
-            Signal / Command / Event contract
-          </div>
-        </div>
-        <Arrow />
-        <div style={card({ flex: ".85 1 190px" })}>
-          <div className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)", marginBottom: 10 }}>업무 화면</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-            <span style={{ fontSize: 12 }}>on-robot HMI</span>
-            <span style={{ fontSize: 12 }}>cloud mirror · Ops</span>
-            <span style={{ fontSize: 12 }}>Build Inspector</span>
+            → 표준 Signal / Command / Event 한 면
           </div>
         </div>
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 18, alignItems: "center" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 14, alignItems: "center" }}>
         {[[`${D.fabric.nodeCount}`, "통합 노드"], [`${D.fabric.transports.length}`, "전송 방식"], [`${D.fabric.ifCount}`, "계약 인터페이스"], [`${D.fabric.verbCount}`, "명령 verb"], ["PASS", "Conformance"]].map(([v, l]) => (
           <div key={l} style={{ ...card({ padding: "10px 14px" }), display: "flex", alignItems: "baseline", gap: 8 }}>
             <span className="mono" style={{ fontSize: 18, fontWeight: 800 }}>{v}</span>
@@ -159,8 +156,84 @@ export function FabricSection() {
   );
 }
 
-function Arrow() {
-  return <div style={{ display: "grid", placeItems: "center", color: "var(--text-muted)", fontSize: 20 }}>→</div>;
+/* 적과·적심 로봇 개념도 — 부위(노드)가 이기종 전송으로 말하고 Local Agent 가 표준 계약으로 정규화. */
+function RobotConcept() {
+  const tx = (k: string) => D.nodes.find((n) => n.kind === k)?.transport ?? "";
+  const A = [
+    { k: "MCU", n: 1, x: 176, y: 266, hy: 140 },
+    { k: "LPU", n: 2, x: 110, y: 242, hy: 164 },
+    { k: "VPU", n: 3, x: 160, y: 103, hy: 188 },
+    { k: "ACU", n: 4, x: 300, y: 196, hy: 212 },
+    { k: "Telemetry", n: 5, x: 250, y: 168, hy: 236 },
+  ];
+  return (
+    <svg viewBox="0 0 1040 350" role="img" aria-label="적과·적심 로봇 개념도 — 이기종 노드를 표준 계약으로 정규화"
+      style={{ width: "100%", height: "auto", display: "block", color: "var(--text-secondary)", padding: "12px 4px" }}>
+      {/* ground */}
+      <line x1="24" y1="314" x2="404" y2="314" stroke="currentColor" strokeWidth="1" strokeDasharray="3 5" style={{ opacity: 0.5 }} />
+      {/* plant target — 적과/적심 대상 */}
+      <g stroke="currentColor" strokeWidth="2" fill="none" style={{ opacity: 0.7 }}>
+        <path d="M348 300 V198" />
+        <path d="M348 232 q-22 -6 -30 -24" />
+        <path d="M348 214 q22 -6 30 -22" />
+      </g>
+      <g stroke="currentColor" strokeWidth="1.5" style={{ fill: "var(--state-warning-bg)" }}>
+        <circle cx="334" cy="210" r="6" /><circle cx="360" cy="222" r="6" /><circle cx="340" cy="240" r="6" />
+      </g>
+      <text x="318" y="332" style={{ fill: "var(--text-muted)" }} fontSize="9.5">적과 · 적심 대상</text>
+      {/* wheels + chassis (MCU) */}
+      <g stroke="currentColor" strokeWidth="2">
+        <circle cx="120" cy="300" r="20" style={{ fill: "var(--surface-muted)" }} />
+        <circle cx="222" cy="300" r="20" style={{ fill: "var(--surface-muted)" }} />
+        <circle cx="120" cy="300" r="5" fill="currentColor" /><circle cx="222" cy="300" r="5" fill="currentColor" />
+        <rect x="86" y="250" width="178" height="34" rx="8" style={{ fill: "var(--surface-panel-raised)" }} />
+      </g>
+      {/* mast */}
+      <rect x="152" y="116" width="16" height="134" rx="3" stroke="currentColor" strokeWidth="2" style={{ fill: "var(--surface-panel-raised)" }} />
+      {/* vision head (VPU) */}
+      <g stroke="currentColor" strokeWidth="2">
+        <rect x="120" y="86" width="74" height="34" rx="6" style={{ fill: "var(--surface-panel)" }} />
+        <circle cx="186" cy="103" r="8" style={{ fill: "var(--surface-muted)" }} /><circle cx="186" cy="103" r="3" fill="currentColor" />
+      </g>
+      {/* lidar (LPU) */}
+      <g stroke="currentColor" strokeWidth="2">
+        <rect x="96" y="234" width="30" height="16" rx="3" style={{ fill: "var(--surface-panel)" }} />
+        <path d="M101 234 q10 -10 20 0" fill="none" />
+      </g>
+      {/* arm + gripper (ACU + EE) */}
+      <g stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M168 150 H250 L300 196" />
+        <path d="M300 196 l16 -9 M300 196 l16 9" />
+      </g>
+      {/* antenna (Telemetry) */}
+      <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round">
+        <path d="M240 250 L256 166" /><path d="M248 162 q8 -8 16 0" /><path d="M244 168 q12 -12 24 0" style={{ opacity: 0.5 }} />
+      </g>
+      {/* anchors + leader lines + transport labels */}
+      {A.map((a) => (
+        <g key={a.k}>
+          <line x1={a.x} y1={a.y} x2={470} y2={a.hy} stroke="currentColor" strokeWidth="1" strokeDasharray="2 4" style={{ opacity: 0.45 }} />
+          <text x={462} y={a.hy} dy="-4" textAnchor="end" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9.5">{tx(a.k)}</text>
+          <circle cx={a.x} cy={a.y} r="11" style={{ fill: "var(--accent-live)" }} />
+          <text x={a.x} y={a.y} dy="3.5" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="800">{a.n}</text>
+        </g>
+      ))}
+      {/* Local Agent hub */}
+      <rect x="470" y="124" width="196" height="128" rx="12" strokeWidth="2" style={{ fill: "var(--surface-panel)", stroke: "var(--line-strong)" }} />
+      <text x="568" y="170" textAnchor="middle" style={{ fill: "var(--text-primary)" }} fontSize="15" fontWeight="800">Local Agent</text>
+      <text x="568" y="190" textAnchor="middle" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="10.5">NodeAdapter · 계약 정규화</text>
+      <text x="568" y="210" textAnchor="middle" className="mono" style={{ fill: "var(--text-secondary)" }} fontSize="10">CAN · ROS2 · DDS · MQTT → 흡수</text>
+      {/* → standard contract */}
+      <line x1="666" y1="188" x2="728" y2="188" stroke="currentColor" strokeWidth="2" />
+      <path d="M722 183 l8 5 l-8 5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <rect x="730" y="150" width="286" height="76" rx="10" strokeWidth="2" style={{ fill: "var(--surface-panel-raised)", stroke: "var(--line-strong)" }} />
+      <text x="746" y="172" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="10">표준 계약</text>
+      {["Signal", "Command", "Event"].map((s, i) => (
+        <text key={s} x={746 + i * 92} y={199} style={{ fill: "var(--text-primary)" }} fontSize="13" fontWeight="700">{s}</text>
+      ))}
+      <text x="746" y="217" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9.5">on-robot HMI · cloud mirror · Build</text>
+    </svg>
+  );
 }
 
 /* ── 기관 / 의존 관계 ──────────────────────────────────── */
