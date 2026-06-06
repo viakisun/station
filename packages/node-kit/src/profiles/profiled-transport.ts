@@ -50,6 +50,7 @@ export class ProfiledTransport implements NodeTransport {
   #clock: () => number;
   #defer: (fn: () => void, ms: number) => void;
   #onTrace?: (t: TransportTrace) => void;
+  #dir: "tx" | "rx";
 
   constructor(
     private readonly inner: NodeTransport,
@@ -61,11 +62,13 @@ export class ProfiledTransport implements NodeTransport {
     this.#clock = opts.clock ?? (() => Date.now());
     this.#defer = opts.defer ?? ((fn, ms) => void setTimeout(fn, ms));
     this.#onTrace = opts.onTrace;
+    this.#dir = opts.dir ?? "tx";
   }
 
   send(msg: WireMsg): void {
     const { frames, appBytes, topic, qos } = this.model.encode(msg);
-    const loss = this.model.lossProb();
+    // hello(디스커버리)는 제어평면 — 매체와 무관하게 신뢰 전달(노드 재announce 의미).
+    const loss = msg.t === "hello" ? 0 : this.model.lossProb();
     const maxRetries = this.model.maxRetries();
     let retries = 0;
     let delivered = true;
@@ -82,7 +85,7 @@ export class ProfiledTransport implements NodeTransport {
       ts: this.#clock(),
       profileId: this.model.profile.id,
       transport: this.model.profile.transport,
-      dir: "tx",
+      dir: this.#dir,
       kind: msg.t,
       channel: msgChannel(msg),
       topic,
