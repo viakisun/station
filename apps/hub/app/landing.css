@@ -1,0 +1,69 @@
+/* ============================================================
+   Hub Landing — LIGHT skin. 커머셜 SaaS 랜딩은 밝은 톤(엔터프라이즈 구매자 대상).
+   디자인시스템(다크)을 Hub 범위에서만 라이트로 오버라이드 — 나머지 제품(Ops/Build/Field)은 다크 유지.
+   semantic 토큰 + authority rank + emphasis(gray-100/inverse)를 라이트로 재정의해
+   기존 컴포넌트(.btn/.chip/.badge/.card)가 그대로 라이트로 적용된다.
+   ============================================================ */
+[data-skin="light"] {
+  /* surfaces */
+  --surface-canvas: #ffffff;
+  --surface-base: #f8fafc;
+  --surface-panel: #ffffff;
+  --surface-panel-raised: #f8fafc;
+  --surface-muted: #f1f5f9;
+
+  /* text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-disabled: #94a3b8;
+  --text-inverse: #ffffff;
+
+  /* lines */
+  --line-subtle: rgba(15, 23, 42, 0.07);
+  --line-default: rgba(15, 23, 42, 0.12);
+  --line-strong: rgba(15, 23, 42, 0.2);
+
+  /* emphasis fill(.btn.primary·.chip.active·pillar 배지) → 라이트에선 다크 칩 */
+  --gray-100: #0f172a;
+
+  /* accents */
+  --accent-live: #0d9488; /* 화이트에서 읽히는 teal */
+  --focus-ring: rgba(8, 145, 178, 0.4);
+
+  /* authority 명도 rank — 라이트에선 *어두울수록* 고권한(다크와 반대) */
+  --authority-rank-agent: #0f172a;
+  --authority-rank-field: #334155;
+  --authority-rank-cloud: #64748b;
+  --authority-rank-build: #64748b;
+  --authority-rank-readonly: #94a3b8;
+
+  /* state-bg 살짝 진하게 + critical 텍스트 라이트 대비 */
+  --state-warning-bg: rgba(217, 119, 6, 0.12);
+  --state-critical-bg: rgba(220, 38, 38, 0.1);
+
+  /* shadows(라이트) */
+  --shadow-2: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-3: 0 16px 40px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.06);
+
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+}
+
+/* 기본 badge — 라이트 표면 */
+[data-skin="light"] .badge {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+[data-skin="light"] .badge.critical {
+  color: #b91c1c;
+}
+[data-skin="light"] .btn.primary:hover {
+  background: #1e293b;
+  border-color: #1e293b;
+}
+/* 스크롤바(라이트) */
+[data-skin="light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
