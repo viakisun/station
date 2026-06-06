@@ -1,12 +1,15 @@
-import type { CommandEnvelope, ModuleManifest } from "@station/contracts";
+import type { CommandEnvelope, ModuleManifest, Signal } from "@station/contracts";
 import type { MockSource, SourceContext } from "@station/node-kit";
+import { round } from "@station/node-kit";
 
 const now = (): string => new Date().toISOString();
 
 /**
- * VPU mock — 비전 FPS 신호 + (스캔 중) 작물 생육 채널.
- * vision.capture.start → crop.growth.{plant_height,lai,ndvi} emit 시작 · stop → 중지.
- * requiredApps 에 station.app.growth-scan 선언(앱 파생 출처, Part G).
+ * VPU — 비전 FSM(P3). idle → scanning. capture.start/stop 으로 스캔 토글, vision.calibrate 처리.
+ * 신호: machine.vision.{fps,framedrop,worker_detected} + (스캔 중) crop.growth.* +
+ *       machine.heartbeat.vpu. worker_detected 는 안전정책(P4) 입력.
+ * 보정 게이팅은 Agent App 레벨(requires.calibration)이 담당 — 노드는 캘 명령만 수행.
+ * 주: crop.growth.* 는 형식상 앱 제공이나, 본 시뮬은 VPU 가 직접 emit 해 growth-scan 폐루프 실증.
  */
 export class VpuSource implements MockSource {
   readonly manifest: ModuleManifest = {
@@ -16,56 +19,78 @@ export class VpuSource implements MockSource {
     ownerOrg: "ORG-META",
     attachesToNode: "VPU",
     requiredApps: [{ id: "station.app.growth-scan", minVersion: "1.0.0" }],
-    signals: ["machine.vision.fps", "crop.growth.plant_height", "crop.growth.lai", "crop.growth.ndvi"],
+    signals: [
+      "machine.vision.fps",
+      "machine.vision.framedrop",
+      "machine.vision.worker_detected",
+      "crop.growth.plant_height",
+      "crop.growth.lai",
+      "crop.growth.ndvi",
+      "machine.heartbeat.vpu",
+    ],
     commands: ["vision.capture.start", "vision.capture.stop", "vision.calibrate"],
   };
-  #fpsTimer: ReturnType<typeof setInterval> | undefined;
-  #scanTimer: ReturnType<typeof setInterval> | undefined;
+
+  #fps: ReturnType<typeof setInterval> | undefined;
+  #scan: ReturnType<typeof setInterval> | undefined;
+  #hb: ReturnType<typeof setInterval> | undefined;
   #ctx: SourceContext | undefined;
   #frame = 0;
+  #scanning = false;
+
+  #emit = (channel: string, value: number | boolean, quality: "good" | "warn" = "good", unit?: string): void =>
+    this.#ctx?.emitSignal({ channel, value, unit, ts: now(), quality, source: { node: "VPU" } } as Signal);
 
   start(ctx: SourceContext): void {
     this.#ctx = ctx;
-    this.#fpsTimer = setInterval(
-      () =>
-        ctx.emitSignal({
-          channel: "machine.vision.fps",
-          value: 29.6,
-          unit: "fps",
-          ts: now(),
-          quality: "good",
-          source: { node: "VPU" },
-        }),
-      200,
-    );
-  }
-  stop(): void {
-    if (this.#fpsTimer) clearInterval(this.#fpsTimer);
-    this.#stopScan();
-    this.#fpsTimer = undefined;
-    this.#ctx = undefined;
-  }
-  onCommand(cmd: CommandEnvelope, ctx: SourceContext): void {
-    if (cmd.verb === "vision.capture.start") this.#startScan(ctx);
-    if (cmd.verb === "vision.capture.stop") this.#stopScan();
-    ctx.emitAck({ commandId: cmd.commandId, stage: "executed", ts: now() });
+    this.#fps = setInterval(() => {
+      this.#emit("machine.vision.fps", 29.6, "good", "fps");
+      this.#emit("machine.vision.framedrop", 0);
+      this.#emit("machine.vision.worker_detected", false); // 안전: 기본 미감지
+    }, 200);
+    this.#hb = setInterval(() => this.#emit("machine.heartbeat.vpu", 1), 1000);
   }
 
-  // 고정 mock(실 추론 아님) — 프레임마다 미세 변동만 줘 aggregator 흐름을 실증.
-  #startScan(ctx: SourceContext): void {
-    if (this.#scanTimer) return;
-    this.#scanTimer = setInterval(() => {
+  stop(): void {
+    for (const t of [this.#fps, this.#scan, this.#hb]) if (t) clearInterval(t);
+    this.#fps = this.#scan = this.#hb = undefined;
+    this.#scanning = false;
+    this.#ctx = undefined;
+  }
+
+  onCommand(cmd: CommandEnvelope, ctx: SourceContext): void {
+    const ack = (stage: "executed" | "rejected", detail?: string): void =>
+      ctx.emitAck({ commandId: cmd.commandId, stage, ts: now(), detail });
+
+    if (cmd.verb === "vision.calibrate") {
+      return ack("executed", "calibrated (NIR+RGB)"); // 보정 수행
+    }
+    if (cmd.verb === "vision.capture.start") {
+      this.#startScan();
+      return ack("executed", "scanning");
+    }
+    if (cmd.verb === "vision.capture.stop") {
+      this.#stopScan();
+      return ack("executed", "stopped");
+    }
+    ack("rejected", `unknown verb ${cmd.verb}`);
+  }
+
+  #startScan(): void {
+    if (this.#scan) return;
+    this.#scanning = true;
+    this.#scan = setInterval(() => {
       this.#frame += 1;
-      const jitter = (this.#frame % 5) * 0.01;
-      const emit = (channel: string, value: number, unit?: string): void =>
-        ctx.emitSignal({ channel, value, unit, ts: now(), quality: "good", source: { node: "VPU" } });
-      emit("crop.growth.plant_height", 1.42 + jitter, "m");
-      emit("crop.growth.lai", 3.1 + jitter);
-      emit("crop.growth.ndvi", 0.78 + jitter); // ndvi 가 aggregator 트리거 → 마지막에 emit
+      // 세션 경과에 따른 결정적 성장 곡선(상수 아님) — frame 으로 천천히 증가.
+      const g = Math.min(1, this.#frame / 120);
+      this.#emit("crop.growth.plant_height", round(1.35 + g * 0.2), "good", "m");
+      this.#emit("crop.growth.lai", round(2.8 + g * 0.6), "good");
+      this.#emit("crop.growth.ndvi", round(0.74 + g * 0.12), "good"); // ndvi 가 aggregator 트리거(마지막)
     }, 120);
   }
   #stopScan(): void {
-    if (this.#scanTimer) clearInterval(this.#scanTimer);
-    this.#scanTimer = undefined;
+    if (this.#scan) clearInterval(this.#scan);
+    this.#scan = undefined;
+    this.#scanning = false;
   }
 }

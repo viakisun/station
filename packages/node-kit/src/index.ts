@@ -3,3 +3,4 @@ export * from "./loopback";
 export * from "./ws-transport";
 export * from "./node-host";
 export * from "./profiles";
+export * from "./sim";

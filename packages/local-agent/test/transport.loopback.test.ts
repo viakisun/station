@@ -50,10 +50,12 @@ describe("M2 — multi-node over Loopback transport", () => {
       issuedAt: now(),
       safety: "safety_critical",
     };
+    const before = Number(agent.signals.latest("machine.motion.speed")?.value ?? 1.2);
     await agent.commands.dispatch(cmd, (a) => stages.push(a.stage));
-    await sleep(80);
+    await sleep(300); // FSM 은 즉시 0 이 아니라 ramp 감속(P3).
     expect(stages).toEqual(["received", "accepted", "executed"]);
-    expect(agent.signals.latest("machine.motion.speed")?.value).toBe(0);
+    const after = Number(agent.signals.latest("machine.motion.speed")?.value);
+    expect(after).toBeLessThan(before); // 감속 중(목표 0 으로 ramp)
   });
 
   it("미등록 노드(Telemetry)는 received→rejected", async () => {

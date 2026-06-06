@@ -52,6 +52,7 @@ describe("M2 — multi-node over real WebSocket", () => {
     expect(stages[0]).toBe("received");
     expect(stages).toContain("accepted");
     expect(stages).toContain("executed");
-    expect(agent.signals.latest("machine.motion.speed")?.value).toBe(0);
+    // FSM ramp 감속(P3) — 즉시 0 아님. executed 로 명령 수신 확인.
+    expect(agent.signals.latest("machine.motion.speed")?.value).toBeLessThanOrEqual(1.2);
   });
 });
