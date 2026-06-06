@@ -10,6 +10,7 @@ STATION = **Ops·Build·Field 3제품 × 하나의 Platform Core / Integration F
 - **[reference/sdv-rig-reference.md](reference/sdv-rig-reference.md)** — 전 노드(MCU=CAN·VPU/LPU=ROS2·ACU=DDS·Telemetry=MQTT)를 *제 실 전송*으로 Local Agent 에 합류해 growth-scan 폐루프까지 도는 참조 구현. 프로토콜-정확 시뮬(단편화·QoS·지연·손실) + 실 드라이버 교체 seam. 실행: `pnpm --filter @station/local-agent start:rig` → Build `/transport` 라이브 시각화.
 
 ## 1. 단일 진실 공급원 (SSOT)
+- **★ [01. 통합 오케스트레이션 — 핵심 가치 모델](01-integration-orchestration.md)** ([ADR-022](adr/ADR-022-integration-orchestration-core-value.md)) — STATION = ① 통합 미들웨어(Local Agent/RAL) + ② 통합 오케스트레이션(readiness·할당·릴리스). **STATION이 무엇이고 누구를 위한 것인지의 정의.** Landing([apps/hub](../apps/hub/app/page.tsx))이 렌더하는 모델.
 - **[00. UX/UI 공통 설계 기준서](00-ux-common-standards.md)** — 제품 구조·ID 스파인·상태 체계·디자인 DNA·Gate 4단계·Audit/Event·Context handoff·권한. **모든 과업지시서가 이 문서를 단일 참조.**
 
 ## 1.5. STATION Field OS 통합 아키텍처
