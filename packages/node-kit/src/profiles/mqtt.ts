@@ -1,6 +1,7 @@
-import type { ProtocolProfile } from "@station/contracts";
+import type { ProtocolProfile, WireBinding } from "@station/contracts";
 import type { WireMsg } from "../transport";
 import { type ProtocolModel, type TransportFrame, msgChannel, wireBytes } from "./model";
+import { entryFor } from "./binding";
 
 /* ============================================================
    MQTT (Telemetry — LTE/5G 업링크 → 클라우드 브로커).
@@ -27,7 +28,10 @@ function mqttTopic(profile: ProtocolProfile, msg: WireMsg): string {
 }
 
 export class MqttModel implements ProtocolModel {
-  constructor(readonly profile: ProtocolProfile) {}
+  constructor(
+    readonly profile: ProtocolProfile,
+    private readonly binding?: WireBinding,
+  ) {}
 
   #qos(): NonNullable<ProtocolProfile["ack"]> {
     return this.profile.ack ?? "at_least_once";
@@ -37,7 +41,8 @@ export class MqttModel implements ProtocolModel {
     const appBytes = wireBytes(msg);
     // 1 MQTT PUBLISH (TCP). 큰 페이로드는 TCP 세그먼트화되나 앱 관점 1 publish.
     const frames: TransportFrame[] = [{ seq: 0, total: 1, bytes: appBytes }];
-    return { frames, appBytes, topic: mqttTopic(this.profile, msg), qos: QOS_LABEL[this.#qos()] };
+    const entry = entryFor(this.binding, msg);
+    return { frames, appBytes, topic: entry?.topic ?? mqttTopic(this.profile, msg), qos: entry?.qos ?? QOS_LABEL[this.#qos()] };
   }
 
   latencyMs(_appBytes: number, rng: () => number): number {

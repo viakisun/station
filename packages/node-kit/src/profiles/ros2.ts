@@ -1,6 +1,7 @@
-import type { ProtocolProfile } from "@station/contracts";
+import type { ProtocolProfile, WireBinding } from "@station/contracts";
 import type { WireMsg } from "../transport";
 import { type ProtocolModel, type TransportFrame, msgChannel, wireBytes } from "./model";
+import { entryFor } from "./binding";
 
 /* ============================================================
    ROS2 / DDS (VPU·ACU·LPU — Jetson·Linux, RTPS over UDP).
@@ -23,9 +24,15 @@ function ddsTopic(profile: ProtocolProfile, msg: WireMsg): string {
 }
 
 export class Ros2Model implements ProtocolModel {
-  constructor(readonly profile: ProtocolProfile) {}
+  constructor(
+    readonly profile: ProtocolProfile,
+    private readonly binding?: WireBinding,
+  ) {}
 
-  #reliable(): boolean {
+  #reliable(msg?: WireMsg): boolean {
+    // 바인딩 엔트리 QoS 우선(토픽별 QoS), 없으면 프로파일 ack.
+    const e = msg && entryFor(this.binding, msg);
+    if (e?.qos) return e.qos.includes("RELIABLE");
     return this.profile.ack === "at_least_once" || this.profile.ack === "exactly_once";
   }
 
@@ -40,8 +47,9 @@ export class Ros2Model implements ProtocolModel {
       frames.push({ seq: i, total, bytes: b });
       left -= b;
     }
-    const qos = this.#reliable() ? "RELIABLE/VOLATILE" : "BEST_EFFORT/VOLATILE";
-    return { frames, appBytes, topic: ddsTopic(this.profile, msg), qos };
+    const entry = entryFor(this.binding, msg);
+    const qos = this.#reliable(msg) ? "RELIABLE/VOLATILE" : "BEST_EFFORT/VOLATILE";
+    return { frames, appBytes, topic: entry?.topic ?? ddsTopic(this.profile, msg), qos };
   }
 
   latencyMs(appBytes: number, rng: () => number): number {

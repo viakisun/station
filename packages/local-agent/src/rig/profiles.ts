@@ -1,4 +1,9 @@
-import type { ProtocolProfile } from "@station/contracts";
+import type { ProtocolProfile, WireBinding } from "@station/contracts";
+import mcuWire from "@station/contracts/profiles/wire/wire.mcu.can.json" with { type: "json" };
+import vpuWire from "@station/contracts/profiles/wire/wire.vpu.ros2.json" with { type: "json" };
+import lpuWire from "@station/contracts/profiles/wire/wire.lpu.dds.json" with { type: "json" };
+import acuWire from "@station/contracts/profiles/wire/wire.acu.dds.json" with { type: "json" };
+import telemetryWire from "@station/contracts/profiles/wire/wire.telemetry.mqtt.json" with { type: "json" };
 
 /* ============================================================
    온실 SDV 리그 — 노드별 통신 계약(ProtocolProfile).
@@ -37,8 +42,8 @@ export const VPU_PROFILE: ProtocolProfile = {
 };
 
 export const LPU_PROFILE: ProtocolProfile = {
-  id: "PRT-ROS2-LPU-v1",
-  transport: "ROS2",
+  id: "PRT-DDS-LPU-v1",
+  transport: "DDS", // SSOT(conformance EXPECTED_PROTOCOL) = DDS. ROS2 도 DDS 위.
   ack: "at_most_once", // 고주기 pose 스트림 — BEST_EFFORT
   timeout: "50ms",
   security: "DDS-Security(X.509) · dev=none",
@@ -85,3 +90,13 @@ export const NODE_PROFILES: Record<string, ProtocolProfile> = {
 };
 
 export const ALL_PROFILES = [MCU_PROFILE, VPU_PROFILE, LPU_PROFILE, ACU_PROFILE, TELEMETRY_PROFILE];
+
+/** 노드 kind → WireBinding(IF-P 페이로드 IDL). ProfiledTransport 가 소비해 선언된
+    frameId/topic/레이아웃으로 프레이밍 — CAN 은 JSON 휴리스틱(수십 프레임)이 아니라 바이너리 단일 프레임. */
+export const NODE_BINDINGS: Record<string, WireBinding> = {
+  MCU: mcuWire as WireBinding,
+  VPU: vpuWire as WireBinding,
+  LPU: lpuWire as WireBinding,
+  ACU: acuWire as WireBinding,
+  Telemetry: telemetryWire as WireBinding,
+};

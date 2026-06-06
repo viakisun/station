@@ -1,0 +1,22 @@
+{
+  "interfaceId": "IF-P-MCU",
+  "transport": "CAN",
+  "signals": [
+    { "channel": "machine.motion.speed", "frameId": "0x18FF5001", "dlc": 8,
+      "fields": [{ "name": "speed", "offset": 0, "type": "i16", "scale": 0.001, "unit": "m/s" }] },
+    { "channel": "machine.power.battery_voltage", "frameId": "0x18FF5002", "dlc": 8,
+      "fields": [{ "name": "voltage", "offset": 0, "type": "u16", "scale": 0.001, "unit": "V" }] },
+    { "channel": "machine.safety.estop", "frameId": "0x18FF5003", "dlc": 8,
+      "fields": [{ "name": "estop", "offset": 0, "type": "bool" }] }
+  ],
+  "commands": [
+    { "verb": "motion.set_speed_limit", "frameId": "0x18EF5001", "dlc": 8,
+      "fields": [{ "name": "limit", "offset": 0, "type": "u16", "scale": 0.001, "unit": "m/s" }] },
+    { "verb": "motion.stop", "frameId": "0x18EF5002", "dlc": 8,
+      "fields": [{ "name": "verb_code", "offset": 0, "type": "u8" }] }
+  ],
+  "events": [
+    { "code": "emergency_stop", "frameId": "0x18FFE000", "dlc": 8,
+      "fields": [{ "name": "latched", "offset": 0, "type": "bool" }] }
+  ]
+}

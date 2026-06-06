@@ -1,4 +1,4 @@
-import type { ProtocolProfile } from "@station/contracts";
+import type { ProtocolProfile, WireBinding } from "@station/contracts";
 import type { NodeTransport, WireMsg } from "../transport";
 import { CanModel } from "./can";
 import { type ProtocolModel, type TransportTrace, msgChannel } from "./model";
@@ -15,15 +15,15 @@ import { SerialModel, WsModel } from "./serial-ws";
    실 드라이버 교체: ProtocolModel 또는 본 클래스를 Real* 로 대체(동일 계약).
    ============================================================ */
 
-export function modelFor(profile: ProtocolProfile): ProtocolModel {
+export function modelFor(profile: ProtocolProfile, binding?: WireBinding): ProtocolModel {
   switch (profile.transport) {
     case "CAN":
-      return new CanModel(profile);
+      return new CanModel(profile, binding);
     case "ROS2":
     case "DDS":
-      return new Ros2Model(profile);
+      return new Ros2Model(profile, binding);
     case "MQTT":
-      return new MqttModel(profile);
+      return new MqttModel(profile, binding);
     case "SERIAL":
       return new SerialModel(profile);
     case "WS":
@@ -42,6 +42,8 @@ export interface ProfiledOpts {
   defer?: (fn: () => void, ms: number) => void;
   /** tx 방향 라벨(트레이스). 기본 노드측. */
   dir?: "tx" | "rx";
+  /** IF-P 페이로드 바인딩 — 선언된 frameId/topic/레이아웃으로 프레이밍(없으면 휴리스틱). */
+  binding?: WireBinding;
 }
 
 export class ProfiledTransport implements NodeTransport {
@@ -57,7 +59,7 @@ export class ProfiledTransport implements NodeTransport {
     profile: ProtocolProfile,
     opts: ProfiledOpts = {},
   ) {
-    this.model = modelFor(profile);
+    this.model = modelFor(profile, opts.binding);
     this.#rng = opts.rng ?? Math.random;
     this.#clock = opts.clock ?? (() => Date.now());
     this.#defer = opts.defer ?? ((fn, ms) => void setTimeout(fn, ms));

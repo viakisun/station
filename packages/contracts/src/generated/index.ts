@@ -16,3 +16,4 @@ export * from "./protocol-profile";
 export * from "./robot-blueprint";
 export * from "./signal-channel";
 export * from "./signal";
+export * from "./wire-binding";

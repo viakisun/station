@@ -1,0 +1,17 @@
+{
+  "interfaceId": "IF-P-VPU",
+  "transport": "ROS2",
+  "signals": [
+    { "channel": "machine.vision.fps", "topic": "rt/vision/fps", "msgType": "station_msgs/Signal", "qos": "BEST_EFFORT" },
+    { "channel": "machine.vision.framedrop", "topic": "rt/vision/framedrop", "msgType": "station_msgs/Signal", "qos": "BEST_EFFORT" },
+    { "channel": "machine.vision.worker_detected", "topic": "rt/vision/worker_detected", "msgType": "station_msgs/Signal", "qos": "RELIABLE" }
+  ],
+  "commands": [
+    { "verb": "vision.capture.start", "topic": "rt/vision/capture", "msgType": "station_msgs/Command", "qos": "RELIABLE" },
+    { "verb": "vision.capture.stop", "topic": "rt/vision/capture", "msgType": "station_msgs/Command", "qos": "RELIABLE" },
+    { "verb": "vision.calibrate", "topic": "rt/vision/calibrate", "msgType": "station_msgs/Command", "qos": "RELIABLE" }
+  ],
+  "events": [
+    { "code": "disease.suspected", "topic": "rt/vision/disease", "msgType": "station_msgs/Event", "qos": "RELIABLE" }
+  ]
+}

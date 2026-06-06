@@ -1,0 +1,13 @@
+{
+  "interfaceId": "IF-P-TEL",
+  "transport": "MQTT",
+  "signals": [
+    { "channel": "env.greenhouse.temperature", "topic": "station/{site}/{robot}/tlm/env/temperature", "qos": "QoS1", "retain": true },
+    { "channel": "env.greenhouse.humidity", "topic": "station/{site}/{robot}/tlm/env/humidity", "qos": "QoS1", "retain": true },
+    { "channel": "env.greenhouse.co2", "topic": "station/{site}/{robot}/tlm/env/co2", "qos": "QoS1", "retain": true },
+    { "channel": "machine.telemetry.cloud_connected", "topic": "station/{site}/{robot}/tlm/cloud_connected", "qos": "QoS1", "retain": true }
+  ],
+  "commands": [
+    { "verb": "telemetry.uplink.flush", "topic": "station/{site}/{robot}/cmd/uplink/flush", "qos": "QoS1" }
+  ]
+}

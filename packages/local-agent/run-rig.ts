@@ -11,7 +11,7 @@ import { LpuSource } from "@station/node-lpu";
 import { AcuSource } from "@station/node-acu";
 import { validateCommand, validateManifest } from "@station/contracts/runtime";
 import { AppRuntime, createLocalAgent, serveTransport, WsHub, HmiHub } from "./src/index";
-import { NODE_PROFILES, TELEMETRY_PROFILE, ALL_PROFILES } from "./src/rig/profiles";
+import { NODE_PROFILES, NODE_BINDINGS, TELEMETRY_PROFILE, ALL_PROFILES } from "./src/rig/profiles";
 import { TransportMonitor } from "./src/rig/transport-monitor";
 import { TraceHub } from "./src/rig/trace-hub";
 
@@ -39,9 +39,10 @@ for (const source of sources) {
   const kind = source.manifest.attachesToNode; // MCU·VPU·LPU·ACU
   const profile = NODE_PROFILES[kind];
   if (!profile) throw new Error(`no ProtocolProfile for node ${kind}`);
+  const binding = NODE_BINDINGS[kind];
   const { nodeEnd, agentEnd } = createLoopbackPair();
-  const nodeTx = new ProfiledTransport(nodeEnd, profile, { onTrace, dir: "tx" }); // 업링크
-  const agentTx = new ProfiledTransport(agentEnd, profile, { onTrace, dir: "rx" }); // 명령 다운링크
+  const nodeTx = new ProfiledTransport(nodeEnd, profile, { onTrace, dir: "tx", binding }); // 업링크
+  const agentTx = new ProfiledTransport(agentEnd, profile, { onTrace, dir: "rx", binding }); // 명령 다운링크
   serveTransport(agent, agentTx);
   const host = new NodeHost(source, nodeTx);
   hosts.push(host);

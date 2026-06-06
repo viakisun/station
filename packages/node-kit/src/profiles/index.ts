@@ -1,4 +1,5 @@
 export * from "./model";
+export * from "./binding";
 export * from "./can";
 export * from "./ros2";
 export * from "./mqtt";

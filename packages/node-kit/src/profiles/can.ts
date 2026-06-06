@@ -1,6 +1,7 @@
-import type { ProtocolProfile } from "@station/contracts";
+import type { ProtocolProfile, WireBinding } from "@station/contracts";
 import type { WireMsg } from "../transport";
 import { type ProtocolModel, type TransportFrame, msgChannel, wireBytes } from "./model";
+import { entryFor, payloadBytes } from "./binding";
 
 /* ============================================================
    CAN 2.0B (MCU — 모터/엔코더/E-stop, 500kbps, 베어메탈).
@@ -31,9 +32,21 @@ function frameCount(bytes: number): number {
 }
 
 export class CanModel implements ProtocolModel {
-  constructor(readonly profile: ProtocolProfile) {}
+  constructor(
+    readonly profile: ProtocolProfile,
+    private readonly binding?: WireBinding,
+  ) {}
 
   encode(msg: WireMsg): { frames: TransportFrame[]; appBytes: number; topic: string; qos: string } {
+    // 바인딩 있으면 선언된 frameId + 바이트 레이아웃(바이너리 ≤8B → 단일 프레임).
+    const entry = entryFor(this.binding, msg);
+    if (entry?.frameId) {
+      const appBytes = payloadBytes(entry);
+      const total = frameCount(appBytes);
+      const frames: TransportFrame[] = Array.from({ length: total }, (_, i) => ({ seq: i, total, bytes: Math.min(i === 0 ? FRAME_DATA : CONSEC_FRAME, appBytes - i * CONSEC_FRAME) }));
+      return { frames, appBytes, topic: entry.frameId, qos: "at_most_once (no E2E ack)" };
+    }
+    // 폴백: 바인딩 없으면 JSON 휴리스틱(레퍼런스 대비용 — 큰 프레임 수).
     const appBytes = wireBytes(msg);
     const total = frameCount(appBytes);
     const frames: TransportFrame[] = [];

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/wire-binding.json",
+  "title": "WireBinding",
+  "description": "IF-P 페이로드 IDL — 한 인터페이스의 채널/verb 를 매체 인코딩에 매핑. CAN 은 frameId+바이트 레이아웃, ROS2/DDS/MQTT 는 topic+QoS. ProfiledTransport 가 소비해 실 프레이밍 산출, 실 드라이버(socketcan/rclcpp/mosquitto)는 동일 정의를 코드젠/참조.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["interfaceId", "transport"],
+  "properties": {
+    "interfaceId": { "type": "string", "description": "예 IF-P-MCU" },
+    "transport": { "type": "string", "enum": ["MQTT", "ROS2", "DDS", "CAN", "SERIAL", "WS"] },
+    "signals": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "commands": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "events": { "type": "array", "items": { "$ref": "#/$defs/entry" } }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "한 채널/verb/code 의 와이어 인코딩. CAN: frameId·dlc·fields. ROS2/DDS/MQTT: topic·msgType·qos.",
+      "properties": {
+        "channel": { "type": "string", "description": "signal 채널(signals 엔트리)" },
+        "verb": { "type": "string", "description": "command verb(commands 엔트리)" },
+        "code": { "type": "string", "description": "event code(events 엔트리)" },
+        "frameId": { "type": "string", "description": "CAN 29-bit 확장 ID. 예 0x18FF5001" },
+        "dlc": { "type": "integer", "minimum": 0, "maximum": 64, "description": "CAN/serial 데이터 길이(byte)" },
+        "fields": {
+          "type": "array",
+          "description": "CAN/serial 바이트 레이아웃. 실 노드는 이대로 패킹(JSON 금지).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "offset", "type"],
+            "properties": {
+              "name": { "type": "string" },
+              "offset": { "type": "integer", "minimum": 0, "description": "byte offset" },
+              "type": { "type": "string", "enum": ["u8", "i8", "u16", "i16", "u32", "i32", "f32", "bool"] },
+              "scale": { "type": "number", "description": "원값 = raw * scale" },
+              "unit": { "type": "string" }
+            }
+          }
+        },
+        "topic": { "type": "string", "description": "ROS2/DDS(rt/…) 또는 MQTT(station/…) 토픽" },
+        "msgType": { "type": "string", "description": "ROS2/DDS 메시지 타입. 예 station_msgs/Signal" },
+        "qos": { "type": "string", "description": "DDS RELIABLE/BEST_EFFORT 또는 MQTT QoS0/1/2" },
+        "retain": { "type": "boolean", "description": "MQTT retain" }
+      }
+    }
+  }
+}

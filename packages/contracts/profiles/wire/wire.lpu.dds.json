@@ -1,0 +1,11 @@
+{
+  "interfaceId": "IF-P-LPU",
+  "transport": "DDS",
+  "signals": [
+    { "channel": "machine.localization.pose", "topic": "rt/localization/pose", "msgType": "station_msgs/Pose", "qos": "BEST_EFFORT" },
+    { "channel": "machine.localization.map_match", "topic": "rt/localization/map_match", "msgType": "station_msgs/Signal", "qos": "BEST_EFFORT" }
+  ],
+  "commands": [
+    { "verb": "localization.relocalize", "topic": "rt/localization/relocalize", "msgType": "station_msgs/Command", "qos": "RELIABLE" }
+  ]
+}

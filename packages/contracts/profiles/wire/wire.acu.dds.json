@@ -1,0 +1,14 @@
+{
+  "interfaceId": "IF-P-ACU",
+  "transport": "DDS",
+  "signals": [
+    { "channel": "machine.autonomy.state", "topic": "rt/autonomy/state", "msgType": "station_msgs/Signal", "qos": "RELIABLE" },
+    { "channel": "machine.autonomy.mode", "topic": "rt/autonomy/mode", "msgType": "station_msgs/Signal", "qos": "RELIABLE" },
+    { "channel": "machine.navigation.deviation", "topic": "rt/navigation/deviation", "msgType": "station_msgs/Signal", "qos": "BEST_EFFORT" }
+  ],
+  "commands": [
+    { "verb": "autonomy.mission.start", "topic": "rt/mission/cmd", "msgType": "station_msgs/Command", "qos": "RELIABLE" },
+    { "verb": "autonomy.pause", "topic": "rt/mission/cmd", "msgType": "station_msgs/Command", "qos": "RELIABLE" },
+    { "verb": "autonomy.slow_down", "topic": "rt/mission/cmd", "msgType": "station_msgs/Command", "qos": "RELIABLE" }
+  ]
+}
