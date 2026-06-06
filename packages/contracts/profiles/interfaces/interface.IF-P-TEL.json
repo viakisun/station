@@ -1,0 +1,32 @@
+{
+  "id": "IF-P-TEL",
+  "class": "IF-P",
+  "provider": "Telemetry",
+  "consumer": "Agent",
+  "transport": "MQTT",
+  "bindingRef": "IF-P-TEL",
+  "carries": {
+    "signals": [
+      "env.greenhouse.temperature",
+      "env.greenhouse.humidity",
+      "env.greenhouse.co2",
+      "machine.telemetry.cloud_connected",
+      "machine.heartbeat.tel"
+    ],
+    "commands": [
+      "telemetry.uplink.flush"
+    ],
+    "events": []
+  },
+  "notCarried": [
+    "machine.motion.*",
+    "machine.autonomy.*",
+    "machine.vision.*",
+    "machine.localization.*"
+  ],
+  "heartbeat": {
+    "channel": "machine.heartbeat.tel",
+    "periodMs": 1000,
+    "timeoutMs": 3000
+  }
+}

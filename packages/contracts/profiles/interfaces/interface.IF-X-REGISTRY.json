@@ -1,0 +1,8 @@
+{
+  "id": "IF-X-REGISTRY",
+  "class": "IF-X",
+  "provider": "Cloud",
+  "consumer": "Agent",
+  "transport": "REST",
+  "note": "노드/모듈/앱 레지스트리 동기."
+}

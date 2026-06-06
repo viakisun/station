@@ -12,9 +12,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "echo \"(contracts) no lint\" && exit 0",
-    "codegen": "node scripts/codegen.mjs && node scripts/build-verb-registry.mjs",
+    "codegen": "node scripts/codegen.mjs && node scripts/build-verb-registry.mjs && node scripts/gen-interface-specs.mjs && node scripts/gen-icd-sheets.mjs",
     "verbs": "node scripts/build-verb-registry.mjs",
     "icd": "node scripts/gen-icd-sheets.mjs",
+    "interfaces": "node scripts/gen-interface-specs.mjs",
     "validate": "node scripts/validate.mjs"
   },
   "devDependencies": {

@@ -4,6 +4,7 @@
    ============================================================ */
 export * from "./generated/index";
 export * from "./generated/verbs";
+export * from "./generated/interfaces";
 export * from "./organizations";
 export * from "./namespace";
 export * from "./ids";

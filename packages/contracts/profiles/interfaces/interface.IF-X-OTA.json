@@ -1,0 +1,8 @@
+{
+  "id": "IF-X-OTA",
+  "class": "IF-X",
+  "provider": "Cloud",
+  "consumer": "Agent",
+  "transport": "REST",
+  "note": "펌웨어/앱 OTA 다운로드."
+}

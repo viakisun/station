@@ -1,0 +1,32 @@
+{
+  "id": "IF-P-ACU",
+  "class": "IF-P",
+  "provider": "ACU",
+  "consumer": "Agent",
+  "transport": "DDS",
+  "bindingRef": "IF-P-ACU",
+  "carries": {
+    "signals": [
+      "machine.autonomy.state",
+      "machine.autonomy.mode",
+      "machine.navigation.deviation",
+      "machine.heartbeat.acu"
+    ],
+    "commands": [
+      "autonomy.mission.start",
+      "autonomy.pause",
+      "autonomy.slow_down"
+    ],
+    "events": []
+  },
+  "notCarried": [
+    "machine.motion.*",
+    "machine.vision.*",
+    "machine.localization.*"
+  ],
+  "heartbeat": {
+    "channel": "machine.heartbeat.acu",
+    "periodMs": 1000,
+    "timeoutMs": 3000
+  }
+}

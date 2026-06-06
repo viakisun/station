@@ -1,0 +1,17 @@
+{
+  "id": "IF-P-HMI",
+  "class": "IF-P",
+  "provider": "HMI",
+  "consumer": "Agent",
+  "transport": "WS",
+  "carries": {
+    "commands": [
+      "scan.start",
+      "scan.stop"
+    ]
+  },
+  "notCarried": [
+    "motion.set_speed_limit"
+  ],
+  "note": "현장 operator 명령. 최종 안전권한 아님(soft only)."
+}

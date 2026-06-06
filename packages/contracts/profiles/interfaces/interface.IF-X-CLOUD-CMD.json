@@ -1,0 +1,8 @@
+{
+  "id": "IF-X-CLOUD-CMD",
+  "class": "IF-X",
+  "provider": "Cloud",
+  "consumer": "Agent",
+  "transport": "MQTT",
+  "note": "클라우드 요청 — Policy Engine 경유(권한 ④<③)."
+}

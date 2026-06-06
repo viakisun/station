@@ -1,0 +1,12 @@
+{
+  "id": "IF-L-ACU-VPU",
+  "class": "IF-L",
+  "provider": "VPU",
+  "consumer": "ACU",
+  "carries": {
+    "signals": [
+      "machine.vision.worker_detected"
+    ]
+  },
+  "note": "ACU 가 VPU 인식 소비."
+}

@@ -6,6 +6,7 @@ export * from "./command-descriptor";
 export * from "./command-envelope";
 export * from "./event";
 export * from "./gate-result";
+export * from "./interface-spec";
 export * from "./module-manifest";
 export * from "./node";
 export * from "./observation";

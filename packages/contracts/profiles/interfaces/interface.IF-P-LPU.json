@@ -1,0 +1,29 @@
+{
+  "id": "IF-P-LPU",
+  "class": "IF-P",
+  "provider": "LPU",
+  "consumer": "Agent",
+  "transport": "DDS",
+  "bindingRef": "IF-P-LPU",
+  "carries": {
+    "signals": [
+      "machine.localization.pose",
+      "machine.localization.map_match",
+      "machine.heartbeat.lpu"
+    ],
+    "commands": [
+      "localization.relocalize"
+    ],
+    "events": []
+  },
+  "notCarried": [
+    "machine.motion.*",
+    "machine.vision.*",
+    "machine.autonomy.*"
+  ],
+  "heartbeat": {
+    "channel": "machine.heartbeat.lpu",
+    "periodMs": 1000,
+    "timeoutMs": 3000
+  }
+}

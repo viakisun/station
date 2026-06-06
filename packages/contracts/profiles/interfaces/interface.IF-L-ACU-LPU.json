@@ -1,0 +1,12 @@
+{
+  "id": "IF-L-ACU-LPU",
+  "class": "IF-L",
+  "provider": "LPU",
+  "consumer": "ACU",
+  "carries": {
+    "signals": [
+      "machine.localization.pose"
+    ]
+  },
+  "note": "ACU 미션이 LPU pose 소비(Agent 경유)."
+}

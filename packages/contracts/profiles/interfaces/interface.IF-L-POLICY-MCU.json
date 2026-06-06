@@ -1,0 +1,13 @@
+{
+  "id": "IF-L-POLICY-MCU",
+  "class": "IF-L",
+  "provider": "Agent",
+  "consumer": "MCU",
+  "carries": {
+    "commands": [
+      "motion.set_speed_limit",
+      "motion.stop"
+    ]
+  },
+  "note": "PolicyEngine 출력 → MCU 속도/정지."
+}

@@ -1,0 +1,35 @@
+{
+  "id": "IF-P-MCU",
+  "class": "IF-P",
+  "provider": "MCU",
+  "consumer": "Agent",
+  "transport": "CAN",
+  "bindingRef": "IF-P-MCU",
+  "carries": {
+    "signals": [
+      "machine.motion.speed",
+      "machine.power.battery_voltage",
+      "machine.safety.estop",
+      "machine.heartbeat.mcu"
+    ],
+    "commands": [
+      "motion.set_speed_limit",
+      "motion.stop"
+    ],
+    "events": [
+      "emergency_stop"
+    ]
+  },
+  "notCarried": [
+    "machine.autonomy.*",
+    "machine.vision.*",
+    "machine.localization.*",
+    "machine.navigation.*",
+    "crop.*"
+  ],
+  "heartbeat": {
+    "channel": "machine.heartbeat.mcu",
+    "periodMs": 1000,
+    "timeoutMs": 3000
+  }
+}

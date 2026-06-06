@@ -1,0 +1,35 @@
+{
+  "id": "IF-P-VPU",
+  "class": "IF-P",
+  "provider": "VPU",
+  "consumer": "Agent",
+  "transport": "ROS2",
+  "bindingRef": "IF-P-VPU",
+  "carries": {
+    "signals": [
+      "machine.vision.fps",
+      "machine.vision.framedrop",
+      "machine.vision.worker_detected",
+      "machine.heartbeat.vpu"
+    ],
+    "commands": [
+      "vision.capture.start",
+      "vision.capture.stop",
+      "vision.calibrate"
+    ],
+    "events": [
+      "disease.suspected"
+    ]
+  },
+  "notCarried": [
+    "machine.motion.*",
+    "machine.autonomy.*",
+    "machine.navigation.*",
+    "machine.localization.*"
+  ],
+  "heartbeat": {
+    "channel": "machine.heartbeat.vpu",
+    "periodMs": 1000,
+    "timeoutMs": 3000
+  }
+}

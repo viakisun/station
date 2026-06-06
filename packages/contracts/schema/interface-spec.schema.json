@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.station.viasoft.ai/interface-spec.json",
+  "title": "InterfaceSpec",
+  "description": "Part F ICD 를 1급 객체로. IF-P(물리 spoke 노드↔Agent) · IF-L(논리 데이터 provider↔consumer) · IF-X(외부/클라우드 경계). carries(나르는 채널/verb/event) + notCarried(금지) + heartbeat 를 코드로 강제.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "class", "provider", "consumer"],
+  "properties": {
+    "id": { "type": "string", "description": "예 IF-P-MCU · IF-L-HMI-AGG · IF-X-OTA" },
+    "class": { "type": "string", "enum": ["IF-P", "IF-L", "IF-X"] },
+    "provider": { "type": "string", "description": "공급측. 노드 kind(MCU…) · Agent · App · Cloud · HMI" },
+    "consumer": { "type": "string", "description": "소비측" },
+    "transport": { "type": "string", "enum": ["MQTT", "ROS2", "DDS", "CAN", "SERIAL", "WS", "REST"] },
+    "bindingRef": { "type": "string", "description": "WireBinding.interfaceId(IF-P 페이로드 IDL)" },
+    "carries": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "이 인터페이스가 나르는 것. carries ⊆ provider 노드 manifest 로 교차검증.",
+      "properties": {
+        "signals": { "type": "array", "items": { "type": "string" } },
+        "commands": { "type": "array", "items": { "type": "string" } },
+        "events": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "notCarried": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "이 인터페이스로 *보내선 안 되는* 채널/verb 접두(glob). 예 MCU 는 autonomy.* 금지. 런타임 가드가 강제."
+    },
+    "heartbeat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel", "periodMs", "timeoutMs"],
+      "description": "노드 생존 신호. periodMs 내 무수신 timeoutMs 초과 → unhealthy.",
+      "properties": {
+        "channel": { "type": "string" },
+        "periodMs": { "type": "integer", "minimum": 50 },
+        "timeoutMs": { "type": "integer", "minimum": 100 }
+      }
+    },
+    "note": { "type": "string" }
+  }
+}

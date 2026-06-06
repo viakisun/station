@@ -1,0 +1,8 @@
+{
+  "id": "IF-X-TEL-UP",
+  "class": "IF-X",
+  "provider": "Agent",
+  "consumer": "Cloud",
+  "transport": "MQTT",
+  "note": "텔레메트리 업링크(흡수 신호 → 클라우드)."
+}

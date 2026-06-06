@@ -1,0 +1,7 @@
+{
+  "id": "IF-L-AGENT-OBS",
+  "class": "IF-L",
+  "provider": "Agent",
+  "consumer": "HMI",
+  "note": "App aggregator 합성 관측(OBS-*) 면."
+}

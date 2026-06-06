@@ -14,6 +14,8 @@ import { InMemoryCommandCatalog, type CommandCatalog } from "./command-catalog";
 import { InMemoryObservationStore, type ObservationStore } from "./observation-store";
 import { AppRegistry, AppRuntime, type AppContext, type WorkApp } from "./app-runtime";
 import { GrowthScanApp } from "./apps/growth-scan";
+import { checkUplink } from "./interface-guard";
+import { HeartbeatMonitor } from "./heartbeat";
 
 export type SchemaValidator<T> = (x: T) => { ok: boolean; errors?: string[] };
 
@@ -50,6 +52,7 @@ export class ReferenceLocalAgent implements LocalAgent {
   readonly apps: AppRuntime;
 
   readonly #validateManifest?: SchemaValidator<ModuleManifest>;
+  readonly #heartbeat: HeartbeatMonitor;
 
   #adapters: NodeAdapter[] = [];
   #unsub: Array<() => void> = [];
@@ -78,6 +81,13 @@ export class ReferenceLocalAgent implements LocalAgent {
     for (const e of entries) registry.register(e.appId, e.factory);
 
     this.apps = new AppRuntime(registry, this.#catalog, ctx, (kind) => this.#registry.get(kind) !== undefined);
+
+    // P2: IF-P heartbeat 감시(관대 — heartbeat 보내는 노드만). setHealthy/이벤트로 sink.
+    this.#heartbeat = new HeartbeatMonitor({
+      setHealthy: (node, healthy) => this.#registry.setHealthy(node, healthy),
+      emit: (node, code, message) =>
+        this.events.publish({ ts: new Date().toISOString(), severity: "warning", source: node, code, message, node }),
+    });
   }
 
   register(adapter: NodeAdapter): void {
@@ -98,8 +108,29 @@ export class ReferenceLocalAgent implements LocalAgent {
     }
     this.#registry.register(adapter, node);
     this.#adapters.push(adapter);
-    this.#unsub.push(adapter.onSignal((s) => this.signals.write(s)));
-    this.#unsub.push(adapter.onEvent((e) => this.events.publish(e)));
+    this.#heartbeat.watch(node);
+    // P2: IF-P notCarried 가드 — 금지 채널 업링크는 드롭+경고. heartbeat 면 모니터 갱신.
+    this.#unsub.push(
+      adapter.onSignal((s) => {
+        const v = checkUplink(node, s.channel);
+        if (!v.ok) {
+          this.events.publish({ ts: new Date().toISOString(), severity: "warning", source: node, code: "IF-NOTCARRIED", message: v.reason ?? "", node, channel: s.channel });
+          return; // 드롭
+        }
+        this.#heartbeat.observe(node, s.channel);
+        this.signals.write(s);
+      }),
+    );
+    this.#unsub.push(
+      adapter.onEvent((e) => {
+        const v = checkUplink(node, e.code);
+        if (!v.ok) {
+          this.events.publish({ ts: new Date().toISOString(), severity: "warning", source: node, code: "IF-NOTCARRIED", message: v.reason ?? "", node });
+          return;
+        }
+        this.events.publish(e);
+      }),
+    );
     this.#unsub.push(adapter.onAck((a) => this.#router.routeAck(a)));
     if (this.#started) {
       // 이미 가동 중에 합류한 노드(동적 디스커버리, A4) — 즉시 start·healthy.
@@ -122,10 +153,12 @@ export class ReferenceLocalAgent implements LocalAgent {
       await a.start();
       this.#registry.setHealthy(a.manifest.attachesToNode, true);
     }
+    this.#heartbeat.start();
     this.#started = true;
   }
 
   async stop(): Promise<void> {
+    this.#heartbeat.stop();
     for (const u of this.#unsub) u();
     this.#unsub = [];
     for (const a of this.#adapters) {

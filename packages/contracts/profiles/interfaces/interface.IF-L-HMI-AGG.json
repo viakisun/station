@@ -1,0 +1,8 @@
+{
+  "id": "IF-L-HMI-AGG",
+  "class": "IF-L",
+  "provider": "Agent",
+  "consumer": "HMI",
+  "transport": "WS",
+  "note": "Agent 집계면 → HMI/콘솔(snapshot+signal/event/observation/ack). hmi-protocol.ts 가 기계가독 정의."
+}
