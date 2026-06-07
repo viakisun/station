@@ -40,9 +40,9 @@ export const verbsByOrg = (() => {
 export const robotRole: Record<string, string> = {
   MCU: "모바일 베이스 · 구동/조향/E-stop",
   LPU: "측위 · LiDAR/맵",
-  VPU: "비전 · 생육분석(RGB/NIR)",
-  ACU: "자율 · 매니퓰레이터 + 적과/적심 EE",
-  Telemetry: "게이트웨이 · LTE/5G 업링크",
+  VPU: "EE 카메라(비전·RGB/NIR)",
+  ACU: "매니퓰레이터 + 적과/적심 EE",
+  Telemetry: "통신 모듈 · LTE/5G 업링크",
 };
 
 /** 미들웨어 실측 요약(P0~P4 + 리그). */

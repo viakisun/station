@@ -156,82 +156,155 @@ export function FabricSection() {
   );
 }
 
-/* 적과·적심 로봇 개념도 — 부위(노드)가 이기종 전송으로 말하고 Local Agent 가 표준 계약으로 정규화. */
+/* 적과·적심 로봇 개념도 — 온실 로버 부위(노드)가 이기종 전송으로 말하고 Local Agent 가 표준 계약으로 정규화. */
 function RobotConcept() {
-  const tx = (k: string) => D.nodes.find((n) => n.kind === k)?.transport ?? "";
+  // 부위 앵커(로봇 위). 번호는 아래 범례와 일치.
   const A = [
-    { k: "MCU", n: 1, x: 176, y: 266, hy: 140 },
-    { k: "LPU", n: 2, x: 110, y: 242, hy: 164 },
-    { k: "VPU", n: 3, x: 160, y: 103, hy: 188 },
-    { k: "ACU", n: 4, x: 300, y: 196, hy: 212 },
-    { k: "Telemetry", n: 5, x: 250, y: 168, hy: 236 },
+    { k: "MCU", n: 1, x: 178, y: 332 }, // 모바일 베이스(본체)
+    { k: "LPU", n: 2, x: 101, y: 294 }, // 측위 라이다(본체)
+    { k: "VPU", n: 3, x: 308, y: 218 }, // 비전 — EE eye-in-hand 카메라
+    { k: "ACU", n: 4, x: 232, y: 214 }, // 매니퓰레이터(본체→작물)
+    { k: "Telemetry", n: 5, x: 237, y: 293 }, // 통신 모듈(본체)
   ];
+  const ink = "var(--text-secondary)";
+  const transports = ["CAN", "ROS2", "DDS", "MQTT"];
   return (
-    <svg viewBox="0 0 1040 350" role="img" aria-label="적과·적심 로봇 개념도 — 이기종 노드를 표준 계약으로 정규화"
-      style={{ width: "100%", height: "auto", display: "block", color: "var(--text-secondary)", padding: "12px 4px" }}>
-      {/* ground */}
-      <line x1="24" y1="314" x2="404" y2="314" stroke="currentColor" strokeWidth="1" strokeDasharray="3 5" style={{ opacity: 0.5 }} />
-      {/* plant target — 적과/적심 대상 */}
-      <g stroke="currentColor" strokeWidth="2" fill="none" style={{ opacity: 0.7 }}>
-        <path d="M348 300 V198" />
-        <path d="M348 232 q-22 -6 -30 -24" />
-        <path d="M348 214 q22 -6 30 -22" />
+    <svg viewBox="0 0 1040 440" role="img" aria-label="적과·적심 로봇 개념도 — 이기종 노드를 표준 계약으로 정규화"
+      style={{ width: "100%", height: "auto", display: "block", color: ink, padding: "8px 4px 4px" }}>
+      <defs>
+        <filter id="rcShadow" x="-20%" y="-20%" width="140%" height="150%">
+          <feDropShadow dx="0" dy="5" stdDeviation="8" floodColor="#0f172a" floodOpacity="0.12" />
+        </filter>
+        <linearGradient id="rcChassis" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" /><stop offset="1" stopColor="#eef2f7" />
+        </linearGradient>
+        <linearGradient id="rcBeam" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="var(--accent-live)" stopOpacity="0.28" /><stop offset="1" stopColor="var(--accent-live)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {/* zone labels + divider */}
+      <text x="26" y="26" className="mono" style={{ fill: "var(--text-muted)", letterSpacing: "0.12em" }} fontSize="10">ON-ROBOT · 적과·적심 로버</text>
+      <text x="590" y="26" className="mono" style={{ fill: "var(--text-muted)", letterSpacing: "0.12em" }} fontSize="10">INTEGRATION FABRIC</text>
+      <text x="836" y="26" className="mono" style={{ fill: "var(--text-muted)", letterSpacing: "0.12em" }} fontSize="10">STANDARD CONTRACT</text>
+      <line x1="548" y1="54" x2="548" y2="392" stroke="currentColor" strokeWidth="1" strokeDasharray="2 6" style={{ opacity: 0.25 }} />
+
+      {/* greenhouse trellis + crop row */}
+      <g stroke="currentColor" fill="none" style={{ opacity: 0.55 }}>
+        <line x1="250" y1="92" x2="430" y2="92" strokeWidth="2" />
+        <line x1="300" y1="92" x2="300" y2="382" strokeWidth="1.25" strokeDasharray="1 4" />
+        <line x1="372" y1="92" x2="372" y2="382" strokeWidth="1.25" strokeDasharray="1 4" />
       </g>
-      <g stroke="currentColor" strokeWidth="1.5" style={{ fill: "var(--state-warning-bg)" }}>
-        <circle cx="334" cy="210" r="6" /><circle cx="360" cy="222" r="6" /><circle cx="340" cy="240" r="6" />
+      {/* worked truss (적과·적심 대상) on x=300 */}
+      <g style={{ opacity: 0.9 }}>
+        <path d="M300 250 q-20 -4 -28 -20 M300 230 q20 -4 28 -20" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.6 }} />
+        <g stroke="currentColor" strokeWidth="1.5" style={{ fill: "var(--surface-muted)" }}>
+          <circle cx="292" cy="236" r="6.5" /><circle cx="308" cy="244" r="6.5" /><circle cx="300" cy="258" r="6.5" />
+        </g>
       </g>
-      <text x="318" y="332" style={{ fill: "var(--text-muted)" }} fontSize="9.5">적과 · 적심 대상</text>
-      {/* wheels + chassis (MCU) */}
+      {/* far truss on x=372 (context) */}
+      <g stroke="currentColor" strokeWidth="1.5" style={{ fill: "var(--surface-muted)", opacity: 0.55 }}>
+        <circle cx="366" cy="250" r="5" /><circle cx="380" cy="258" r="5" />
+      </g>
+
+      {/* pipe-rail ground */}
+      <g stroke="currentColor" style={{ opacity: 0.6 }}>
+        <line x1="34" y1="382" x2="424" y2="382" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="34" y1="388" x2="424" y2="388" strokeWidth="1" style={{ opacity: 0.5 }} />
+      </g>
+
+      {/* ── rover ── */}
+      {/* wheels */}
       <g stroke="currentColor" strokeWidth="2">
-        <circle cx="120" cy="300" r="20" style={{ fill: "var(--surface-muted)" }} />
-        <circle cx="222" cy="300" r="20" style={{ fill: "var(--surface-muted)" }} />
-        <circle cx="120" cy="300" r="5" fill="currentColor" /><circle cx="222" cy="300" r="5" fill="currentColor" />
-        <rect x="86" y="250" width="178" height="34" rx="8" style={{ fill: "var(--surface-panel-raised)" }} />
+        <circle cx="118" cy="378" r="22" style={{ fill: "var(--surface-muted)" }} />
+        <circle cx="214" cy="378" r="22" style={{ fill: "var(--surface-muted)" }} />
+        <circle cx="118" cy="378" r="7" style={{ fill: "var(--surface-panel)" }} />
+        <circle cx="214" cy="378" r="7" style={{ fill: "var(--surface-panel)" }} />
       </g>
-      {/* mast */}
-      <rect x="152" y="116" width="16" height="134" rx="3" stroke="currentColor" strokeWidth="2" style={{ fill: "var(--surface-panel-raised)" }} />
-      {/* vision head (VPU) */}
+      {/* chassis */}
+      <rect x="74" y="300" width="186" height="54" rx="14" stroke="currentColor" strokeWidth="2" style={{ fill: "url(#rcChassis)" }} filter="url(#rcShadow)" />
+      <line x1="86" y1="316" x2="248" y2="316" stroke="currentColor" strokeWidth="1" style={{ opacity: 0.3 }} />
+      {/* LiDAR (LPU ②) — 본체 측위 + scan arcs */}
       <g stroke="currentColor" strokeWidth="2">
-        <rect x="120" y="86" width="74" height="34" rx="6" style={{ fill: "var(--surface-panel)" }} />
-        <circle cx="186" cy="103" r="8" style={{ fill: "var(--surface-muted)" }} /><circle cx="186" cy="103" r="3" fill="currentColor" />
+        <rect x="88" y="284" width="32" height="18" rx="6" style={{ fill: "var(--surface-panel)" }} />
+        <path d="M93 284 q11 -9 22 0" fill="none" />
       </g>
-      {/* lidar (LPU) */}
+      <g fill="none" stroke="var(--accent-live)" strokeLinecap="round">
+        <path d="M70 300 a30 30 0 0 0 0 -16" style={{ opacity: 0.4 }} /><path d="M62 306 a40 40 0 0 0 0 -28" style={{ opacity: 0.25 }} /><path d="M54 312 a50 50 0 0 0 0 -40" style={{ opacity: 0.14 }} />
+      </g>
+
+      {/* Telemetry (⑤) — 통신 모듈(본체, 모뎀/게이트웨이). 구식 안테나 아님 */}
+      <rect x="220" y="284" width="34" height="18" rx="5" stroke="currentColor" strokeWidth="2" style={{ fill: "var(--surface-panel)" }} />
+      <g fill="none" stroke="var(--accent-live)" strokeLinecap="round">
+        <path d="M250 282 q6 -7 12 0" style={{ opacity: 0.7 }} /><path d="M246 286 q10 -11 20 0" style={{ opacity: 0.4 }} />
+      </g>
+
+      {/* Manipulator (ACU ④) — 본체에서 작물로 뻗는 다관절 팔 */}
+      <g fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M196 300 L196 224 L256 206 L296 230" />
+      </g>
+      <g style={{ fill: "var(--surface-panel)" }} stroke="currentColor" strokeWidth="2">
+        <circle cx="196" cy="300" r="5" /><circle cx="196" cy="224" r="5" /><circle cx="256" cy="206" r="5" />
+      </g>
+      {/* End-effector gripper */}
+      <g fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M296 230 l13 -5 M296 230 l6 12" />
+      </g>
+      {/* VPU (③) — EE eye-in-hand 카메라 + FOV(토마토 생육) */}
+      <polygon points="318,219 300,252 328,250" style={{ fill: "var(--accent-live)", fillOpacity: 0.1, stroke: "var(--accent-live)", strokeOpacity: 0.32 }} strokeDasharray="3 4" />
       <g stroke="currentColor" strokeWidth="2">
-        <rect x="96" y="234" width="30" height="16" rx="3" style={{ fill: "var(--surface-panel)" }} />
-        <path d="M101 234 q10 -10 20 0" fill="none" />
+        <rect x="296" y="206" width="30" height="22" rx="5" style={{ fill: "var(--surface-panel)" }} />
+        <circle cx="318" cy="219" r="5" style={{ fill: "var(--surface-muted)" }} /><circle cx="318" cy="219" r="2" fill="currentColor" />
       </g>
-      {/* arm + gripper (ACU + EE) */}
-      <g stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M168 150 H250 L300 196" />
-        <path d="M300 196 l16 -9 M300 196 l16 9" />
-      </g>
-      {/* antenna (Telemetry) */}
-      <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round">
-        <path d="M240 250 L256 166" /><path d="M248 162 q8 -8 16 0" /><path d="M244 168 q12 -12 24 0" style={{ opacity: 0.5 }} />
-      </g>
-      {/* anchors + leader lines + transport labels */}
-      {A.map((a) => (
-        <g key={a.k}>
-          <line x1={a.x} y1={a.y} x2={470} y2={a.hy} stroke="currentColor" strokeWidth="1" strokeDasharray="2 4" style={{ opacity: 0.45 }} />
-          <text x={462} y={a.hy} dy="-4" textAnchor="end" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9.5">{tx(a.k)}</text>
-          <circle cx={a.x} cy={a.y} r="11" style={{ fill: "var(--accent-live)" }} />
-          <text x={a.x} y={a.y} dy="3.5" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="800">{a.n}</text>
+
+      {/* 단일 I/O 트렁크: 로봇 → Local Agent (이질 전송을 한 채널로 흡수) */}
+      <path d="M338 252 C 432 252, 500 219, 576 219" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.5 }} />
+      <path d="M570 214 l8 5 l-8 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }} />
+      {transports.map((t, i) => (
+        <g key={t}>
+          <rect x={374 + i * 46} y={222} width="42" height="18" rx="9" style={{ fill: "var(--surface-panel)", stroke: "var(--line-default)" }} strokeWidth="1" />
+          <text x={374 + i * 46 + 21} y={231} dy="3.2" textAnchor="middle" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9">{t}</text>
         </g>
       ))}
-      {/* Local Agent hub */}
-      <rect x="470" y="124" width="196" height="128" rx="12" strokeWidth="2" style={{ fill: "var(--surface-panel)", stroke: "var(--line-strong)" }} />
-      <text x="568" y="170" textAnchor="middle" style={{ fill: "var(--text-primary)" }} fontSize="15" fontWeight="800">Local Agent</text>
-      <text x="568" y="190" textAnchor="middle" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="10.5">NodeAdapter · 계약 정규화</text>
-      <text x="568" y="210" textAnchor="middle" className="mono" style={{ fill: "var(--text-secondary)" }} fontSize="10">CAN · ROS2 · DDS · MQTT → 흡수</text>
-      {/* → standard contract */}
-      <line x1="666" y1="188" x2="728" y2="188" stroke="currentColor" strokeWidth="2" />
-      <path d="M722 183 l8 5 l-8 5" fill="none" stroke="currentColor" strokeWidth="2" />
-      <rect x="730" y="150" width="286" height="76" rx="10" strokeWidth="2" style={{ fill: "var(--surface-panel-raised)", stroke: "var(--line-strong)" }} />
-      <text x="746" y="172" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="10">표준 계약</text>
-      {["Signal", "Command", "Event"].map((s, i) => (
-        <text key={s} x={746 + i * 92} y={199} style={{ fill: "var(--text-primary)" }} fontSize="13" fontWeight="700">{s}</text>
+      <text x="392" y="262" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9">이질 전송 → NodeAdapter 흡수</text>
+      {/* numbered anchors on robot parts */}
+      {A.map((a) => (
+        <g key={`a-${a.k}`}>
+          <circle cx={a.x} cy={a.y} r="11" style={{ fill: "var(--accent-live)" }} filter="url(#rcShadow)" />
+          <text x={a.x} y={a.y} dy="3.6" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="800">{a.n}</text>
+        </g>
       ))}
-      <text x="746" y="217" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9.5">on-robot HMI · cloud mirror · Build</text>
+
+      {/* Local Agent hub */}
+      <rect x="580" y="150" width="182" height="138" rx="18" strokeWidth="1.5" style={{ fill: "var(--surface-panel)", stroke: "var(--line-strong)" }} filter="url(#rcShadow)" />
+      {/* hub glyph: 중앙 + 흡수 노드 */}
+      <g transform="translate(671,184)">
+        <circle r="13" fill="none" style={{ stroke: "var(--accent-live)" }} strokeWidth="1.5" />
+        <circle r="4.5" style={{ fill: "var(--accent-live)" }} />
+        {[0, 72, 144, 216, 288].map((d) => {
+          const r = (d * Math.PI) / 180;
+          return <circle key={d} cx={Math.cos(r) * 22} cy={Math.sin(r) * 22} r="2.6" style={{ fill: "var(--text-muted)" }} />;
+        })}
+      </g>
+      <text x="671" y="224" textAnchor="middle" style={{ fill: "var(--text-primary)" }} fontSize="15" fontWeight="800">Local Agent</text>
+      <text x="671" y="244" textAnchor="middle" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="10">NodeAdapter · RAL</text>
+      <text x="671" y="262" textAnchor="middle" className="mono" style={{ fill: "var(--text-secondary)" }} fontSize="9.5">이질 전송 → 계약 정규화</text>
+
+      {/* → standard contract */}
+      <line x1="762" y1="219" x2="826" y2="219" stroke="currentColor" strokeWidth="2" />
+      <path d="M820 214 l8 5 l-8 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="830" y="170" width="190" height="98" rx="14" strokeWidth="1.5" style={{ fill: "var(--surface-panel-raised)", stroke: "var(--line-strong)" }} filter="url(#rcShadow)" />
+      <text x="848" y="194" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="10">표준 계약</text>
+      {["Signal", "Command", "Event"].map((s, i) => (
+        <g key={s}>
+          <circle cx={853} cy={214 + i * 18} r="3" style={{ fill: "var(--accent-live)" }} />
+          <text x={864} y={214 + i * 18} dy="4" style={{ fill: "var(--text-primary)" }} fontSize="12.5" fontWeight="600">{s}</text>
+        </g>
+      ))}
+      <text x="848" y="284" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9">consumers: HMI · cloud · Build</text>
+
+      {/* caption */}
+      <text x="26" y="420" className="mono" style={{ fill: "var(--text-muted)" }} fontSize="9.5">① 모바일 베이스 · ② 측위(LiDAR) · ③ EE 카메라(비전) · ④ 매니퓰레이터+EE · ⑤ 통신 모듈 — 각 부위의 이질 전송을 NodeAdapter 가 흡수해 한 계약으로</text>
     </svg>
   );
 }
