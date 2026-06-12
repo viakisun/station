@@ -1,0 +1,27 @@
+{
+  "name": "@station/audit-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "snapshot": "node scripts/snapshot-sources.mjs",
+    "lint": "echo \"(audit-kit) no lint\" && exit 0"
+  },
+  "dependencies": {
+    "@station/contracts": "workspace:*",
+    "@station/local-agent": "workspace:*",
+    "@station/node-kit": "workspace:*",
+    "@station/node-mcu": "workspace:*",
+    "@station/node-vpu": "workspace:*",
+    "@station/node-lpu": "workspace:*",
+    "@station/node-acu": "workspace:*"
+  },
+  "devDependencies": {
+    "@station/tsconfig": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

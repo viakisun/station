@@ -1,0 +1,17 @@
+[project]
+name = "vpu_vision"
+version = "2.4.2"
+description = "STATION VPU — 비전 처리 (fps·framedrop·worker_detect·생육지표), ROS2/MQTT 브리지. 벤더: 메타파머스."
+requires-python = ">=3.10"
+dependencies = [
+    # "rclpy",        # ROS2 런타임(보드)
+    # "numpy",        # 영상/지표 연산
+    # "opencv-python" # RGB/NIR 파이프라인
+]
+
+[project.scripts]
+vpu-node = "vpu.node:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

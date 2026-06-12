@@ -1,5 +1,6 @@
 import "@station/design-system/tokens.css";
 import "@station/app-kit/app-kit.css";
+import "@station/design-system/skin-light.css";
 import type { Metadata } from "next";
 import { AppFrame } from "./_frame";
 
@@ -16,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" />
       </head>
-      <body>
+      <body data-skin="light">
         <AppFrame>{children}</AppFrame>
       </body>
     </html>

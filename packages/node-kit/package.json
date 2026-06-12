@@ -5,7 +5,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./browser": "./src/browser.ts"
+    "./browser": "./src/browser.ts",
+    "./sim": "./src/sim/index.ts",
+    "./profiles": "./src/profiles/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

@@ -16,6 +16,9 @@ export * from "./mint";
 export * from "./apps/growth-scan";
 export * from "./local-agent";
 export * from "./conformance";
+export * from "./conformance-runner"; // runConformance — 브라우저 실행(타입-only 임포트뿐)
+export * from "./interface-guard"; // checkUplink·isDeclared — IF-P 검사(contracts 만 의존)
+export * from "./policy-engine"; // PolicyEngine — 안전규칙 평가(타입-only)
 export { MockMcuNode } from "./nodes/mock-mcu";
 export * from "./wire/transport-adapter";
 export * from "./wire/serve";

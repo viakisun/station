@@ -10,6 +10,8 @@ export { CONTROL, type ControlData } from "./data/control";
 export { INCIDENT, type IncidentData, type Incident } from "./data/incident";
 export { TELEMETRY, type TelemetryData } from "./data/telemetry";
 export { RELEASE, type ReleaseData } from "./data/release";
+export * from "./data/releases";
+export * from "./data/audit-packages";
 export { HMI, type HmiData } from "./data/hmi";
 
 // STATION Contracts 정합(비파괴 가산) — 표준 타입·로직 + mock→표준형 어댑터

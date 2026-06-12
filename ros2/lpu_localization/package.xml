@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- LPU 측위 노드 — 대동로보틱스 (MOD-NAV / IF-P-LPU, DDS). -->
+<package format="3">
+  <name>lpu_localization</name>
+  <version>4.0.5</version>
+  <description>STATION LPU — LiDAR/맵 측위 (pose·confidence·map_match), DDS 전송.</description>
+  <maintainer email="dev@daedong.example">Daedong Robotics</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,6 +1,6 @@
 import type { CommandEnvelope, ModuleManifest, Signal } from "@station/contracts";
 import type { MockSource, SourceContext } from "@station/node-kit";
-import { clamp, round } from "@station/node-kit";
+import { clamp, round } from "@station/node-kit/sim";
 
 const now = (): string => new Date().toISOString();
 

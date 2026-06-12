@@ -406,7 +406,10 @@ export function ReadinessSection() {
           })}
         </div>
       </div>
-      <p className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 10 }}>Readiness = Conformance + 계약 의존 + 소유 기관 기준. 채널 = draft / canary / beta / stable.</p>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
+        <p className="mono" style={{ fontSize: 10.5, color: "var(--text-muted)", margin: 0 }}>Readiness = Conformance + 계약 의존 + 소유 기관 기준. 채널 = draft / canary / beta / stable.</p>
+        <a href={`${process.env.NEXT_PUBLIC_BUILD_URL ?? "http://localhost:7333"}/projects`} className="linkish" style={{ fontSize: 12.5 }}>프로젝트별 통합·감사 보기 → /projects</a>
+      </div>
     </Section>
   );
 }

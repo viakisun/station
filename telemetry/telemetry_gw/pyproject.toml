@@ -1,0 +1,15 @@
+[project]
+name = "telemetry_gw"
+version = "1.0.0"
+description = "STATION Telemetry Gateway — env 신호 MQTT 업링크 (IF-P-TEL). 벤더: 비아."
+requires-python = ">=3.10"
+dependencies = [
+    # "paho-mqtt>=2.0",
+]
+
+[project.scripts]
+telemetry-gw = "telemetry_gw.gateway:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

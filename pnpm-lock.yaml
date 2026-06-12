@@ -29,6 +29,9 @@ importers:
       '@station/app-kit':
         specifier: workspace:*
         version: link:../../packages/app-kit
+      '@station/audit-kit':
+        specifier: workspace:*
+        version: link:../../packages/audit-kit
       '@station/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
@@ -332,6 +335,37 @@ importers:
       '@types/react':
         specifier: ^19.0.0
         version: 19.2.15
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  packages/audit-kit:
+    dependencies:
+      '@station/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@station/local-agent':
+        specifier: workspace:*
+        version: link:../local-agent
+      '@station/node-acu':
+        specifier: workspace:*
+        version: link:../../nodes/acu
+      '@station/node-kit':
+        specifier: workspace:*
+        version: link:../node-kit
+      '@station/node-lpu':
+        specifier: workspace:*
+        version: link:../../nodes/lpu
+      '@station/node-mcu':
+        specifier: workspace:*
+        version: link:../../nodes/mcu
+      '@station/node-vpu':
+        specifier: workspace:*
+        version: link:../../nodes/vpu
+    devDependencies:
+      '@station/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
       typescript:
         specifier: ^5.7.2
         version: 5.9.3

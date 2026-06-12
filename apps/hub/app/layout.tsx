@@ -1,6 +1,6 @@
 import "@station/design-system/tokens.css";
 import "@station/app-kit/app-kit.css";
-import "./landing.css";
+import "@station/design-system/skin-light.css";
 import type { Metadata } from "next";
 import { ScopeProvider } from "@station/app-kit";
 

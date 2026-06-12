@@ -109,12 +109,10 @@ export const SURFACES: SurfaceDef[] = [
   { sws: "SWS-OPS-COMMAND", product: "ops", label: "Command", route: "/command", locus: "cloud", authority: "④", scopeDepth: "robot", mirrorOf: "CommandRouter", controlMode: "request" },
   { sws: "SWS-OPS-HMI-MIRROR", product: "ops", label: "HMI Mirror", route: "/hmi-mirror", locus: "cloud", authority: "④", scopeDepth: "robot", mirrorOf: "Field HMI", controlMode: "observe / assist" },
   { sws: "SWS-OPS-TELE-MON", product: "ops", label: "Telemetry Monitor", route: "/telemetry", locus: "cloud", authority: "④", scopeDepth: "robot", mirrorOf: "Telemetry Gateway", controlMode: "none" },
-  // Build (cloud · non-op)
+  // Build (cloud · non-op) — 프로젝트 단일 계층. audit·검증·전송은 워크벤치로 편입.
+  // 구 평면 메뉴(Conformance/Firmware/Manifests/Releases/Transport)는 제거 — 감사 워크벤치로 흡수.
+  { sws: "SWS-BUILD-PROJECTS", product: "build", label: "Projects", route: "/projects", locus: "cloud/desktop", authority: "non-op", scopeDepth: "project", controlMode: "inspect-only" },
   { sws: "SWS-BUILD-INSPECTOR", product: "build", label: "Runtime Inspector", route: "/agent", locus: "cloud/desktop", authority: "non-op", scopeDepth: "robot", mirrorOf: "Local Agent runtime", controlMode: "inspect-only" },
-  { sws: "SWS-BUILD-MANIFESTS", product: "build", label: "Manifests", route: "/manifests", locus: "cloud/desktop", authority: "non-op", scopeDepth: "project", controlMode: "inspect-only" },
-  { sws: "SWS-BUILD-CONFORMANCE", product: "build", label: "Conformance", route: "/conformance", locus: "cloud/desktop", authority: "non-op", scopeDepth: "project", controlMode: "inspect-only" },
-  { sws: "SWS-BUILD-FIRMWARE", product: "build", label: "Firmware", route: "/firmware", locus: "cloud/desktop", authority: "non-op", scopeDepth: "project", controlMode: "inspect-only" },
-  { sws: "SWS-BUILD-TRANSPORT", product: "build", label: "Transport", route: "/transport", locus: "cloud/desktop", authority: "non-op", scopeDepth: "robot", mirrorOf: "Rig transports", controlMode: "inspect-only" },
   { sws: "SWS-AGENT-STATUS", product: "agent", label: "Agent Status", route: "/agent-status", locus: "on-robot daemon", authority: "②", scopeDepth: "robot", mirrorOf: "Agent self", controlMode: "none" },
   // Field (on-robot · ③)
   { sws: "SWS-FIELD-HMI", product: "field", label: "HMI", route: "/hmi", locus: "on-robot", authority: "③", scopeDepth: "robot", controlMode: "operate" },

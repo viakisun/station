@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- ACU 자율 노드 — 메타파머스 (IF-P-ACU, DDS). -->
+<package format="3">
+  <name>acu_autonomy</name>
+  <version>1.0.0</version>
+  <description>STATION ACU — 미션/자율 (state·mode·deviation), DDS 전송.</description>
+  <maintainer email="dev@metafarmers.example">MetaFarmers</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
