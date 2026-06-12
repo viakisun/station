@@ -31,3 +31,7 @@ next-env.d.ts
 # confidential / artifacts (do NOT publish to public repo)
 _reference/plans/
 docs/scenarios.zip
+
+# Python bytecode cache
+__pycache__/
+*.pyc
